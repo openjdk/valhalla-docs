@@ -1,0 +1,14 @@
+
+Welcome to valhalla-docs!
+=========================
+
+This repository is for design notes, presentations, guides, FAQs, and
+other collateral surrounding [OpenJDK Project Valhalla](http://openjdk.java.net/projects/valhalla).
+
+Most documents here are written in (pandoc) Markdown, and changes made
+to Markdown sources are automatically formatted and pushed to the
+[OpenJDK website](http://openjdk.java.net/projects/valhalla).
+
+See https://openjdk.java.net/ for more information about
+the OpenJDK Community and the JDK.
+
