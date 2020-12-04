@@ -7,6 +7,7 @@
 Contents:
 
 1. [The Road to Valhalla](01-background.html)
+2. [Unifying the Java Type System](02-object-model.html)
 
 :::
 
