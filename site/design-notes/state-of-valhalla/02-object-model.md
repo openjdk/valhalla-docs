@@ -13,7 +13,7 @@ Contents:
 
 This document describes the directions for the Java _language_ charted by
 Project Valhalla.  (In this document, we use "currently" to describe the
-language as it stands today, without primitive types.)
+language as it stands today, without primitive objects.)
 
 ## Primitive and reference types
 
@@ -21,8 +21,8 @@ The Java type system circa Java 1.0 has eight primitive types (integer and
 floating point numbers of various sizes, booleans, and characters),
 user-declared classes and interfaces (including the special root class
 `Object`), and a type operator `[]` for "array of" that can operate
-on any type (including array types.)  Types that are not primitive types
-are called _reference types_.   
+on any type (including array types).  Types that are not primitive types
+are called _reference types_.
 
 Reference and primitive types differ in almost every conceivable way.  Reference
 types have _members_ (methods and fields) and supertypes (superclasses and
@@ -52,12 +52,13 @@ An _object_ is an instance of a class; currently, all objects have a unique
 _object identity_.  The value set for a reference type consists not of
 _objects_, but of _references to objects_; the possible values of a variable of
 type `String` are not the `String` objects themselves, but references to those
-`String` objects.  (It may come as a surprise to even experienced Java
+`String` objects. The value set for a reference type also includes the `null`
+reference. (It may come as a surprise to even experienced Java
 developers that it is not possible to store, manipulate, or access objects
 directly; we're so used to dealing with object references that we don't even
 notice the difference.  Indeed, it is a common "gotcha" question about whether
 Java objects are passed by value or by reference, and the answer is "neither":
-_object references_ are passed  _by value_.)
+_object references_ are passed _by value_.)
 
 > The value set of primitive types consists of primitive values; the value set
 of reference types consists of references to object instances, or null.
@@ -73,9 +74,9 @@ _references to objects_.
 To summarize the current world:
 
   - Types are divided into primitive and reference types;
-  - Reference types are those that are not primitive types, including declared
-    classes and interfaces, array types, and parameterizations of generic
-    classes and interfaces;
+  - Reference types are those that are not primitive types, including the types
+    of declared classes and interfaces, array types, and parameterizations of
+    generic classes and interfaces;
   - Primitives have a corresponding wrapper type, which is a reference type, and
     there are boxing and unboxing conversion between primitive types and their
     corresponding wrappers;
@@ -86,15 +87,14 @@ To summarize the current world:
 
 Project Valhalla will subtly realign this division so that we can unify
 primitives with classes, but maintain the runtime behavior of today's
-primitives, and allow us to declare new classes that have the runtime behavior
-of primitives.
+primitives and support the declaration of new primitives.
 
 ## Java's original sin
 
-As an OO language, the separation between primitive and reference types embodies
+As an object-oriented language, the separation between primitive and reference types embodies
 a significant compromise: an OO language would like to start from the premise of
 "everything is an object".  But, an `int` is not an object; it is something
-special and magical unto itself (and so are its arrays), and this nonuniformity
+special and magical unto itself (and so are its arrays), and this non-uniformity
 ripples throughout the language, libraries, and runtime.
 
 The compromise made in 1995 was that _everything the user can define_ is an
@@ -118,10 +118,10 @@ only grew larger.
 
 It got worse again when lambdas came along in in 2014.  Lambdas build heavily on
 generics, so many of the consequences faced by generics were inherited by
-lambdas.  This rippled into the libraries; `java.util.function` suffers a
+lambdas.  This rippled into the libraries: `java.util.function` suffers a
 combinatorial explosion of hand-specialized versions (`IntPredicate`,
 `IntToLongFunction`), rather than being able to parameterize more general types
-(`Predicate<int>`, `Function<int, long>`.)  The goal of generics is to abstract
+(`Predicate<int>`, `Function<int, long>`).  The goal of generics is to abstract
 over representational differences, but the primitive-reference divide was
 getting harder to bridge.
 
@@ -139,7 +139,7 @@ easily, but interpretation gave way to JIT compilation only two years later.
 
 At the language level, primitives and objects differ in almost every way.
 Objects have members such as fields and methods; primitives do not.  Objects
-have identity; primitives do not.  Object references are nullable; primitives
+have identity; primitives do not.  Object reference types are nullable; primitive types
 are not.  Objects participate in polymorphism through superclasses and
 interfaces; primitives cannot (even though it would be quite sensible for `int`
 to implement `Comparable`).  `Object` is the top type -- but only for classes
@@ -156,9 +156,9 @@ whereas primitives do not, and boxing is not able to fully paper over this gap.
 Each time we convert from `Integer` to `int` the identity is lost, and each time
 we convert from `int` to an `Integer`, a fresh (but accidental) identity is
 created.  While `int` boxes to `Integer`, `int[]` does not box to `Integer[]`.
-And the relationship between primitives and their corresponding wrappers are
+And the relationships between primitives and their corresponding wrappers are
 entirely ad-hoc (they're even sometimes, but not always, spelled the same way!);
-you just have to keep this in your head (and in your code.)
+you just have to keep this in your head (and in your code).
 
 At the library level, developers face further difficult choices.  The most
 fundamental libraries -- collections and streams -- are prime examples of the
@@ -169,8 +169,8 @@ streams tried to walk a narrow line with hand-rolled specializations for `int`,
 `long`, and `double`, but the existence of `IntStream` at all is evidence of the
 contortions that library designers often have to twist themselves into.  Worse,
 hand specialization begets more hand specialization (`IntStream` gave rise to
-`IntToLongFunction` and `PrimitiveIterator.OfInt`, and there are always calls
-for more ("where's my `CharStream`?").)  And hand-specialization almost always
+`IntToLongFunction` and `PrimitiveIterator.OfInt`), and there are always calls
+for more ("where's my `CharStream`?").  And hand-specialization almost always
 introduces asymmetries.  Finally, the mere existence of hand-specialized stream
 types was a significant constraint on the design and implementation of the
 library.
@@ -196,7 +196,7 @@ primitives and classes.  Boxing purported to fill this gap, but in doing so, it
 created new gaps of its own -- syntactic (having to convert between `int` and
 `Integer`), semantic (converting back and forth doesn't always mean the same
 thing, primarily because boxes have accidental object identity), and performance
-(boxing is expensive, again in part because of accidental object identity.)
+(boxing is expensive, again in part because of accidental object identity).
 Autoboxing may paper over the syntactic gap, but the semantic and performance
 gaps remain.
 
@@ -233,12 +233,10 @@ _object identity_.  If we can incorporate object identity (or the lack thereof)
 more explicitly into the object model, we can derive most of these behaviors
 from a unified view of classes and objects.
 
-Object identity exists primarily to serve mutability and polymorphism (even
-though not all classes will avail themselves of these features.)  The need to
-support these essentially forces us to keep objects "at arms length", only
-interacting with them through _object references_.  Null is not an instance of
-any class; nullability is a property of accessing instances through references;
-it is referring to objects via references that introduces nullability.
+Object identity exists primarily to serve mutability (even
+though not all classes will avail themselves of this feature).  The need to
+support identity essentially forces us to keep objects "at arms length", only
+interacting with them through _object references_.
 
 We can reframe our view of classes and objects to support the notion that not
 all classes intend for their instances to have object identity; whether or not
@@ -263,10 +261,10 @@ far more effectively.
 We call these classes whose instances have no identity _primitive classes_.
 (This name may take some getting used to, since we're so used to thinking of
 primitives as being the eight built-in types.)  Instances of primitive classes
-are then called _primitive objects_.  (And so we finally arrive at the OO
-nirvana -- everything is an object -- only 25 years later.)  The dichotomy of
+are then called _primitive objects_.  And so we finally arrive at the OO
+nirvana -- everything is an object -- only 25 years later.  The dichotomy of
 "primitives vs classes" gives way to "primitive classes vs identity classes."
-Having given up identity, the JVM is free to _inline_ (flatten) their layout
+Having given up identity, the JVM is free to _inline_ (flatten) primitive objects
 into other object and array layouts, and in general, represent or pass them by
 value, giving us the optimized layout we want.
 
@@ -283,15 +281,15 @@ primitive class Point {
 ```
 
 Primitive classes are implicitly `final`, cannot be `abstract`, can implement
-interfaces, can only extend `Object` or certain abstract classes, and their
-fields are implicitly `final`.  They can still have almost all the trappings of
+interfaces, can only extend `Object` or certain abstract classes, and have fields
+that are implicitly `final`.  They can still have almost all the trappings of
 classes -- type variables, static and instance fields, constructors, static and
 instance methods, nested classes, etc.  Member inheritance works exactly the
 same way for primitive classes as for identity classes.  (The abstract classes
 that a primitive class can extend are those with no fields, empty no-arg
 constructor bodies, no other constructors, no instance initializers, no
 synchronized methods, and whose superclasses all meet this same set of
-conditions (`Object` and `Number` are examples of such classes.))
+conditions. `Object` and `Number` are examples of such classes.)
 
 > The slogan for primitive classes is _codes like a class, works like an int_.
 
@@ -360,15 +358,16 @@ them  explicitly.  For a primitive class `P`, we will denote the corresponding
 primitive value type by `P.val` and the corresponding primitive reference type
 by `P.ref`, and `P` will (usually) be an alias for `P.val`.  It should only be
 in rare cases that code will have to explicitly name the `.ref` and `.val`
-types.  There is an automatic widening conversion from `P.val` to `P.ref`
-(similar to boxing) and a narrowing conversion from `P.ref` to `P.val` (similar
-to unboxing.)
+types.  There is an automatic conversion from `P.val` to `P.ref`
+(similar to boxing) and another conversion from `P.ref` to `P.val` (similar
+to unboxing).
 
-Every type has a _default value_.  For the built-in primitives, the default
+Every type has a _default value_.  For the built-in primitive types, the default
 value is some sort of zero (`0`, `0.0`, `false`, etc); for reference types, the
-default value is `null`.  For primitive classes, the default value is the
-instance of that type where all fields take on the default value for their type.
-For any class type `C`, the default value of `C` may be denoted as `C.default`.
+default value is `null`.  For primitive value types, the default value is the
+_default instance_ of the corresponding primitive class -- an instance where all
+fields take on the default value for their type. For any primitive class `C`,
+the default instance of `C` may be denoted as `C.default`.
 
 #### Why do we need primitive reference types?
 
@@ -377,27 +376,21 @@ types at all?  Why not just have primitive value types, and reference types only
 for identity classes?  There are several reasons why references to primitive
 objects are important to have, even if they will be used somewhat rarely.
 
+ - **Interoperation with reference types.**  If primitive classes can extend
+   classes (including `Object`) and implement interfaces, then some class and
+   interface types are going to be polymorphic over both identity and primitive
+   objects.  This polymorphism is achieved through object references -- a
+   reference may point to a primitive object.  It follows that primitive class's
+   reference type is what you get when you convert a primitive object to a
+   reference.
+
  - **Nullability.**  Nullability is a property of object _references_, not
-   objects themselves.  Most of the time, it makes sense for primitive classes
-   to be non-nullable (as the primitives are today), though there may be
-   situations where null is a semantically important value, but for which we
-   want to disavow identity (and gain the benefits that flow from that.)  Using
+   objects themselves.  Most of the time, it makes sense for primitive types
+   to be non-nullable (as the primitives are today), but there may be
+   situations where null is a semantically important value, even though we
+   want to disavow identity (and gain the benefits that flow from that).  Using
    `P.ref` when nullability is required is semantically clear, and avoids the
    need to invent new sentinel values for "no value."
-
-   This need may come up when migrating existing classes, such as the method
-   `Map::get`, which uses `null` to signal that the requested key was not
-   present in the map.  But, if the `V` parameter to `Map` is a primitive class,
-   `null` is not a valid value.  We can capture the "`V` or null" requirement
-   by changing the descriptor of `Map::get` to be:
-
-```
-public V.ref get(K key);
-```
-
-   This captures the notion that the return type of `Map::get` will either be a
-   reference to a `V`, or the `null` reference.  (This is a compatible change,
-   since both erase to the erasure of `V`.)
 
  - **Non-flattening is sometimes desirable.**  Most primitive classes will be
    relatively small aggregates, such as the `Point` example above.  However,
@@ -412,26 +405,18 @@ public V.ref get(K key);
    the representation of the type parameter into the resulting type;
    `Foo<P.ref>` is a natural way to specify that.)
 
- - **Interoperation with Object and interface types.**  If primitive classes can
-   implement interfaces, than an interface type is going to be polymorphic over
-   both identity and primitive objects.  Interfaces achieve this polymorphism
-   through object references, so in order to bring primitive objects under the
-   umbrella of interfaces, we need to be able to represent them with object
-   references.  (The special top type `Object` is the same; it is often helpful
-   to think of `Object` as an "honorary interface.")
-
  - **Self-reference.**  Some types, such as the "next" field in the "node" type
    of a linked list, may want to directly or indirectly refer back to the type
    of the enclosing type, but circularities in the definition of primitive
    classes are not allowed (because that would make their layout of
    indeterminate size).  This can be done via a primitive reference type:
 
-```
-primitive class Node<T> {
-    T element;
-    Node.ref<T> next;
-}
-```
+    ```
+    primitive class Node<T> {
+        T element;
+        Node.ref<T> next;
+    }
+    ```
 
  - **Compatible migration.**  Some classes, such as `Optional`, are good
    candidates for migration to being primitive classes, and we would like for
@@ -450,7 +435,7 @@ primitive class Node<T> {
    reference types today -- that if you dereference an uninitialized (null)
    reference, you fail with `NullPointerException`.  For classes for which the
    default value is dangerous, we can use the corresponding primitive reference
-   class to ensure fail-fast behavior for uninitialized values.
+   type to ensure fail-fast behavior for uninitialized values.
 
  - **Compatibility with existing boxing.**  Autoboxing is convenient, in that it
    lets us pass a primitive where a reference is required.  But boxing affects
@@ -462,16 +447,16 @@ primitive class Node<T> {
    user-written primitive classes.
 
 It may appear that all we did here was to "rename" boxing in a complicated way
-(and if we did this entirely through compiler trickery, that would be true.)
-What has changed here is that the JVM has also been upgraded to understand the
+(and if we did this entirely through compiler trickery, that would be true).
+But what has changed is that the JVM has also been upgraded to understand the
 notion of primitive classes, and the relationship between primitive value types
 and their corresponding primitive reference type (and more), so that
-user-written primitives can have the performance of the built-in ones, and this
+user-written primitives can have the performance of the built-in primitives, and this
 "new boxing" has better performance than the old boxing.  This mostly comes down
 to the JVM understanding that primitive objects do not have object identity, and
 therefore the JVM can more easily optimize how they are stored in memory, how
 their method invocations are dispatched, and how they are passed between methods
-(such as by scalarization.)
+(such as by scalarization).
 
 > Rather than back away from boxing, we double down on it by making it more
 > regular and optimizable.
@@ -493,16 +478,16 @@ Some classes, such as `Optional`, were originally implemented as identity
 classes, but with the intention that some day they could become primitive
 classes.  (These classes often include a disclaimer in their specification that
 they are
-[_value-based_](https://docs.oracle.com/javase/8/docs/api/java/lang/doc-files/ValueBased.html);
+[_value-based_](https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/lang/doc-files/ValueBased.html);
 this captures most of the requirements for a compatible migration to primitive
 classes.)
 
 However, to the extent these classes appear in APIs (such as the return type of
 a method), the existing semantics are that of reference types, not primitive
-types; it is allowable for an `Optional` to be `null`.  So when these classes
+types -- it is allowable for an `Optional` to be `null`.  So when these classes
 are migrated to primitives, we must arrange that the unadorned name corresponds
-to the primitive _reference_ type, rather than corresponding to the primitive
-value type (which is the sensible default for new code.)  For migration
+to the primitive _reference_ type, rather than (as is the case for new code)
+corresponding to the primitive value type.  For migration
 compatibility,  we need a way to declare a primitive class such that the class
 name is an alias for the primitive reference type rather than the primitive
 value type.  We might declare this (syntax TBD) as:
@@ -528,13 +513,13 @@ alias for `Optional.ref` rather than `Optional.val`.  This allows such a
 migration to be source- and binary-compatible; implementations could use
 `Optional.val` internally for describing variables to get maximal flattening and
 density, but the API could continue to work in terms of `Optional`, and the
-widening and narrowing conversions would make up the difference.
+reference and value conversions would make up the difference.
 
 #### Migrating the built-in primitives
 
 If Java's original sin is the division between primitive and reference types, we
 don't want to solve this problem by ending up with _three_ kinds of types.  We
-want for the built-in primitive types to "just" be predefined primitive classes.
+want for the built-in primitive types to "just" be predefined primitive class types.
 There are a few rough edges we need to file down in order to achieve this.  We
 would like to be able to declare `Integer` as an ordinary (migrated) primitive
 class, just as we did with `Optional`:
@@ -553,25 +538,27 @@ for this migration is that the primitive classes corresponding to the built-in
 primitive types are allowed to refer to their corresponding built-in primitive
 type in their declaration; ordinarily this sort of circularity would be banned.
 
-There is one significant price to pay for this migration: synchronization on
+There are two significant prices to pay for this migration: first, synchronization on
 instances of `Integer` will no longer be supported, instead throwing
 `IllegalMonitorStateException`.  This is not a behaviorally compatible change,
 but based on analysis of existing codebases, synchronizing on wrappers is rare
--- and usually a mistake.  Similarly, the constructors for the primitive wrapper
-types, which were deprecated in Java 9, will be deprecated for removal, which is
+-- and usually a mistake.  Second, the constructors for the primitive wrapper
+classes, which were deprecated in Java 9, will be removed. This is
 not a binary-compatible change.  While we do not take making any incompatible
-change lightly, the benefit of unifying primitives with objects is significant
-and may justify this incompatibility.
+change lightly, the benefits of unifying primitives with objects make it
+worthwhile. Some binaries, especially older ones, still reference the wrapper
+class constructors, and we'll investigate tooling to help run code that depends on
+these removed APIs.
 
 #### Identity-sensitive operations
 
 Certain operations are currently defined in terms of object identity.  As we've
 already seen, some of these, like equality, can be sensibly extended to cover
 all object instances.  Others, like synchronization, will become partial.  These
-include:
+identity-sensitive operations include:
 
   - **Equality.**  We totalize `==` on `Object`; where it currently has a
-    meaning, the new definition coincides with that meaning.  
+    meaning, the new definition coincides with that meaning.
   - **System::identityHashCode.**  The main use of `identityHashCode` is in the
     implementation of data structures such as `IdentityHashMap`.  We can
     totalize `identityHashCode` in the same way we totalize equality -- deriving
@@ -584,7 +571,6 @@ include:
     is intrinsically imprudent to lock on an object for which you do not have a
     clear understanding of its locking protocol; locking on an arbitrary
     `Object` or interface instance is doing exactly that.
-  - **Object::wait and Object::notify.**  Same as for synchronization.
   - **Weak references.**  If we made creating weak references a partial
     operation on `Object`, weak references become almost useless, as every class
     that wants to maintain some sort of weak data structure would have to
@@ -601,19 +587,18 @@ type `Object` (or abstract type) which can hold a reference to either a
 primitive or identity class.  We do this by saying that two object references
 are equal if they are both null, or are both references to the same identity
 object, or are both references to inline objects that are `==` to each other.
-This extends the _substitutability_ semantics of `==` to all values -- two
+This extends the _substitutability_ semantics of `==` to all types -- two
 values are `==` only if it is not possible to distinguish between them in any
-way (excepting the legacy behavior of `NaN`.)
+way (excepting the legacy behavior of `NaN`).
 
 This gives us the following useful invariants about `==` (all modulo the legacy
 behavior of `NaN`):
 
    - `==` is reflexive -- for all `v`, `v == v`;
-   - when two inline values are widened to references, the results are `==` if
+   - when two inline values are converted to references, the results are `==` if
      and only if the initial values were;
-   - when two non-null references are narrowed to inline objects, the results
-     are
-     `==` if and only if the original references were.
+   - when two non-null references are converted to inline objects, the results
+     are `==` if and only if the original references were.
 
 The base implementation of `Object::equals` is to delegate to `==`; for an
 inline class that does not explicitly override `Object::equals`, this is the
@@ -622,14 +607,14 @@ delegates to `System::identityHashCode`; this is also the default we want.)
 
 #### Identifying identity
 
-To distinguish between primmitive and identity classes at compile and run time,
-we introduce a restricted interface `IdentityObject`, which is implicitly
+To distinguish between primitive and identity classes at compile and run time,
+we introduce an interface `IdentityObject`, which is implicitly
 implemented by identity classes and cannot be implemented by primitive classes.
 This enables us to write code that dynamically tests for object identity before
 performing identity-sensitive operations:
 
 ```
-if (x instanceof IdentityObject)) {
+if (x instanceof IdentityObject) {
     synchronized(x) { ... }
 }
 ```
@@ -665,9 +650,10 @@ _anonymous identity subclass_ of `Object`.
 
 A primitive class `P` gives rise to two distinct types (`P.ref` and `P.val`,
 plus the type alias `P`, which is aliased to one or the other), and so it also
-gives rise to two distinct class mirrors.  However, no instance will ever report
-that it is an instance of `P.ref`; a non-null reference to a value of `P` will
-always report that it is an instance of `P.val`.  
+gives rise to two distinct `java.lang.Class` mirrors.  However, no instance will
+ever report (via `getClass()`) that it is an instance of `P.ref`; a non-null
+reference to a value of `P` will always report that it is an instance of
+`P.val`.  
 
 The role of `P.ref.class` is similar to (though the dual of) the role of
 `int.class` today.  No object ever reports it is an instance of `int.class`;
@@ -680,7 +666,7 @@ We've raised several issues that could have compatibility consequences:
 
  - Locking (or performing other partialized identity-sensitive operations) on
    instances of primitive wrappers will raise an exception;
- - Code that depends invoking the (deprecated) constructors of primitive
+ - Code that depends on invoking the (deprecated) constructors of primitive
    wrappers, rather than using the preferred `valueOf` factories, will require
    remediation;
  - Comparison of `x.getClass()` to `Integer.class`, or to the class literal for
