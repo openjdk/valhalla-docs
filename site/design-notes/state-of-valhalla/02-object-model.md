@@ -1,13 +1,14 @@
 # State of Valhalla
 
 #### Section 2: Unifying the Java Type System
-#### Brian Goetz, Mar 2020
+#### Brian Goetz, Mar 2021
 
 ::: sidebar
 Contents:
 
 1. [The Road to Valhalla](01-background.html)
 2. [Unifying the Java Type System](02-object-model.html)
+3. [JVM Model](03-vm-model.html)
 
 :::
 
@@ -20,14 +21,14 @@ language as it stands today, without primitive objects.)
 The Java type system circa Java 1.0 has eight primitive types (integer and
 floating point numbers of various sizes, booleans, and characters),
 user-declared classes and interfaces (including the special root class
-`Object`), and a type operator `[]` for "array of" that can operate
-on any type (including array types).  Types that are not primitive types
-are called _reference types_.
+`Object`), and a type operator `[]` for "array of" that can operate on any type
+(including array types.)  Types that are not primitive types are called
+_reference types_.
 
 Reference and primitive types differ in almost every conceivable way.  Reference
-types have _members_ (methods and fields) and supertypes (superclasses and
-interfaces), and all (directly or indirectly) extend `Object`; primitive types
-have no members and are "islands" in the type system, with no supertypes or
+types have _members_ (methods and fields) and supertypes (classes and
+interfaces), and all extend `Object` directly or indirectly; primitive types
+have no members, and are "islands" in the type system with no supertypes or
 subtypes.  Arrays of reference types are covariant (`String[]` is a subtype of
 `Object[]`); arrays of primitives are not.  To connect primitive types to
 reference types, each primitive type is associated with a _wrapper_ type
@@ -131,7 +132,7 @@ The primitive-reference divide has consequences at nearly every level of the
 platform.
 
 At the classfile level, a significant amount of the surface area is dedicated to
-primitives.  Not only do the primitive types each have their own special type
+primitives.  Not only do the primitive types each have their own type
 descriptors, but over 60% of the bytecodes are some sort of primitive-specific
 operation (e.g., `iload`, `dmul`, `fstore`, `i2l`).  This helped in the days
 when Java was interpreted and the JVM could identify the primitive operations
@@ -149,7 +150,7 @@ of class types, but not for arrays of primitives).  The lack of subtyping with
 libraries such as reflection (where everything is expressed as `Object` or
 `Object[]`) -- they can only do so through their wrapper companions.
 
-Having to go through the wrapper companions is not intrinsically terrible; the
+Having to go through the wrapper companions is not necessarily awful; the
 meaning of `ArrayList<Integer>` is clear enough, and autoboxing lets us deal
 with such types in a syntactically convenient way.  But objects have identity
 whereas primitives do not, and boxing is not able to fully paper over this gap.
@@ -180,11 +181,11 @@ behavior and good abstraction.
 
 Users are not immune from having to reason about the gap between primitives and
 objects either.  Nearly every Java developer has written an ad-hoc, hand-rolled
-equivalent of `ArrayList<int>`, because `ArrayList<Integer>` is not (or is
+equivalent of `ArrayList<int>`, because `ArrayList<Integer>` was not (or was
 perceived to be not) good enough for the situation.  And this hand-rolled
-version rarely has any connection to `List`, which often distorts any APIs that
-want to use it.  The tradeoff between good memory behavior and good abstraction
-hits users as hard as it does library designers.
+version rarely has any connection to `List`, which inhibits interoperability and
+further distorts any APIs that want to use it.  The tradeoff between good memory
+behavior and good abstraction hits users as hard as it does library designers.
 
 > The gap between primitives and objects is the original sin of Java; it's time
 to address this.
@@ -195,16 +196,16 @@ The path forward is to address the problem at the root -- the gap(s) between
 primitives and classes.  Boxing purported to fill this gap, but in doing so, it
 created new gaps of its own -- syntactic (having to convert between `int` and
 `Integer`), semantic (converting back and forth doesn't always mean the same
-thing, primarily because boxes have accidental object identity), and performance
-(boxing is expensive, again in part because of accidental object identity).
-Autoboxing may paper over the syntactic gap, but the semantic and performance
-gaps remain.
+thing, because boxes have accidental object identity), and performance (boxing
+is expensive, again in part because of accidental object identity.) Autoboxing
+may paper over the syntactic gap, but the semantic and performance gaps remain.
 
 Given that boxing seems to involved in all of the problems, it might be tempting
 to say "then let's just get rid of boxing", but of course such "bold" thinking
 skips over the hard part of having a clear story of what to replace it with.
 Instead, we restore order by generalizing primitives to be full classes, called
-_primitive classes_, but special classes that lack object identity.
+_primitive classes_, but special classes that lack object identity -- and
+therefore which are more amenable to optimization by the JVM.
 
 Then we upgrade (or downgrade, depending on your perspective) the existing
 primitives and their wrappers to be primitive classes.  We can allow users to
@@ -321,7 +322,7 @@ terminology, because two significant things have changed:
 
 Classes are either _identity classes_ or _primitive classes_; instances of
 classes are either _identity objects_ or _primitive objects_.  Identity objects
-can only be described by reference; primitive objects can either be described
+can only be described by reference; primitive objects can be described _either_
 directly (by value) or by reference.  We can update our values diagram as
 follows, to show that instances of primitive classes can be represented either
 by reference or by value:
@@ -332,18 +333,19 @@ Classes give rise to _types_; when we declare `class C`, this gives rise to a
 type called `C` which consists of references to instances of `C`.  In Java 1.0,
 classes and types existed in 1:1 relation; when generics were added, a single
 class `C<T>` gave rise to an infinite family of types (`C<String>`,
-`C<Integer>`, `C<?>`.)  We now extend this one-to-many relationship further, by
-saying that a primitive class gives rise to two (families of) types, one
-consisting of primitive objects, and the other consisting of references to those
-primitive objects.  We call these _primitive value types_ and _primitive
-reference types_.  Most of the time, we'll want to use the primitive value type,
-so for a primitive class `P`, the type `P` will be the primitive value type
-corresponding to `P` -- but in some cases we may want to specify this more
-explicitly.  The term _reference type_ continues to mean any type which consists
-of references to objects, which now also includes the primitive reference types.
-Reference types continue to be nullable; primitive value types are not nullable.
-The eight legacy primitives will be called the _built-in primitives_ going
-forward.  We can update our value set diagram to capture this:
+`C<Integer>`, `C<? extends Megaphone>`.)  We now extend this one-to-many
+relationship further, by saying that a primitive class gives rise to two
+(families of) types, one consisting of primitive objects, and the other
+consisting of references to those primitive objects, called _primitive value
+types_ and _primitive reference types_.  Most of the time, we'll want to use the
+primitive value type, so for a primitive class `P`, the type `P` will refer to
+the primitive value type corresponding to `P` -- but in some cases we may want
+to specify this more explicitly.  The term _reference type_ continues to mean
+any type which consists of references to objects, which now also includes the
+primitive reference types.  Reference types continue to be nullable; primitive
+value types are not nullable.  The eight legacy primitives will be called the
+_built-in primitives_ going forward.  We can update our value set diagram to
+capture this:
 
 ![Types, Valhalla](types-1.png){ width=100% }
 
@@ -392,6 +394,20 @@ objects are important to have, even if they will be used somewhat rarely.
    `P.ref` when nullability is required is semantically clear, and avoids the
    need to invent new sentinel values for "no value."
 
+   This need may come up when migrating existing classes, such as the method
+   `Map::get`, which uses `null` to signal that the requested key was not
+   present in the map.  But, if the `V` parameter to `Map` is a primitive class,
+   `null` is not a valid value.  We can capture the "`V` or null" requirement
+   by changing the descriptor of `Map::get` to be:
+
+```
+public V.ref get(K key);
+```
+
+   This captures the notion that the return type of `Map::get` will either be a
+   reference to a `V`, or the `null` reference.  (This is a compatible change,
+   since both erase to the same thing.)
+
  - **Non-flattening is sometimes desirable.**  Most primitive classes will be
    relatively small aggregates, such as the `Point` example above.  However,
    some may be larger.  If we have an array of a "large" primitive class, the
@@ -405,11 +421,20 @@ objects are important to have, even if they will be used somewhat rarely.
    the representation of the type parameter into the resulting type;
    `Foo<P.ref>` is a natural way to specify that.)
 
- - **Self-reference.**  Some types, such as the "next" field in the "node" type
-   of a linked list, may want to directly or indirectly refer back to the type
-   of the enclosing type, but circularities in the definition of primitive
-   classes are not allowed (because that would make their layout of
-   indeterminate size).  This can be done via a primitive reference type:
+ - **Interoperation with Object and interface types.**  If primitive classes can
+   implement interfaces, than an interface type is going to be polymorphic over
+   both identity and primitive objects.  Interfaces achieve this polymorphism
+   through object references, so in order to bring primitive objects under the
+   umbrella of interfaces, we need to be able to represent them with object
+   references.  (The special top type `Object` is the same; it is often helpful
+   to think of `Object` as an "honorary interface.")
+
+ - **Self-referential types.**  Some types may want to directly or indirectly
+   refer back to the type of the enclosing type; an example of such a situation
+   is the "next" field in the "node" type of a linked list.  Circularities in
+   the definition of primitive classes are not allowed (because that would make
+   their layout of indeterminate size), so in these cases we can break the
+   circularity with a reference:
 
     ```
     primitive class Node<T> {
@@ -512,8 +537,8 @@ The only difference here is that the undecorated name -- `Optional` -- is an
 alias for `Optional.ref` rather than `Optional.val`.  This allows such a
 migration to be source- and binary-compatible; implementations could use
 `Optional.val` internally for describing variables to get maximal flattening and
-density, but the API could continue to work in terms of `Optional`, and the
-reference and value conversions would make up the difference.
+density on the heap, but the API could continue to work in terms of `Optional`,
+and the widening and narrowing conversions would make up the difference.
 
 #### Migrating the built-in primitives
 
@@ -594,10 +619,10 @@ way (excepting the legacy behavior of `NaN`).
 This gives us the following useful invariants about `==` (all modulo the legacy
 behavior of `NaN`):
 
-   - `==` is reflexive -- for all `v`, `v == v`;
-   - when two inline values are converted to references, the results are `==` if
+   - `==` is reflexive -- for all `x`, `x == x`;
+   - when two inline values are widened to references, the results are `==` if
      and only if the initial values were;
-   - when two non-null references are converted to inline objects, the results
+   - when two non-null references are narrowed to inline objects, the results
      are `==` if and only if the original references were.
 
 The base implementation of `Object::equals` is to delegate to `==`; for an
@@ -608,10 +633,11 @@ delegates to `System::identityHashCode`; this is also the default we want.)
 #### Identifying identity
 
 To distinguish between primitive and identity classes at compile and run time,
-we introduce an interface `IdentityObject`, which is implicitly
-implemented by identity classes and cannot be implemented by primitive classes.
-This enables us to write code that dynamically tests for object identity before
-performing identity-sensitive operations:
+we introduce two restricted interfaces `IdentityObject` and `PrimitiveObject`.
+`IdentityObject` is implicitly implemented by identity classes;
+`PrimitiveObject`  is implicitly implemented by primitive classes; and no class
+can implement both.  This enables us to write code that dynamically tests for
+object identity before performing identity-sensitive operations:
 
 ```
 if (x instanceof IdentityObject) {
@@ -630,8 +656,9 @@ static void runWithLock(IdentityObject lock, Runnable r) {
 }
 ```
 
-If an interface or abstract class implements `IdentityObject`, this serves as a
-constraint that it may only be extended by identity classes.
+If an interface or abstract class implements `IdentityObject` or
+`PrimitiveObject`, this serves as a constraint that it may only be extended by
+the appropriate sort of class.
 
 #### What about Object?
 
@@ -650,15 +677,16 @@ _anonymous identity subclass_ of `Object`.
 
 A primitive class `P` gives rise to two distinct types (`P.ref` and `P.val`,
 plus the type alias `P`, which is aliased to one or the other), and so it also
-gives rise to two distinct `java.lang.Class` mirrors.  However, no instance will
-ever report (via `getClass()`) that it is an instance of `P.ref`; a non-null
-reference to a value of `P` will always report that it is an instance of
-`P.val`.  
+gives rise to two distinct class mirrors.  The `Object::getClass` method on
+primitive objects will always return the `P.ref` mirror.
 
-The role of `P.ref.class` is similar to (though the dual of) the role of
-`int.class` today.  No object ever reports it is an instance of `int.class`;
+This behavior of the primitive mirrors is consistent with the role of the
+`int.class` mirror today.  No object reports it is an instance of `int.class`;
 `int.class` exists solely for use in reflection, to identify the types in method
-and field descriptors, and the same is true for `P.ref.class`.  
+and field descriptors -- and the same will true for `P.val.class`.  The value
+mirrors (including the legacy primitive mirrors) will be upgraded to be
+_operational_ -- you will be able to use them to invoke behavior on primitive
+objects.
 
 #### Known compatibility concerns
 
@@ -668,10 +696,7 @@ We've raised several issues that could have compatibility consequences:
    instances of primitive wrappers will raise an exception;
  - Code that depends on invoking the (deprecated) constructors of primitive
    wrappers, rather than using the preferred `valueOf` factories, will require
-   remediation;
- - Comparison of `x.getClass()` to `Integer.class`, or to the class literal for
-   any value-based class migrated to a `ref-default primitive class`, may
-   produce surprising results.
+   remediation.
 
 We are working on quantifying the effect of these potential incompatibilities,
 and exploring remediation options.

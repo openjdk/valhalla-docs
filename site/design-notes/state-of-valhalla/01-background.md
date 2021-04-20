@@ -1,20 +1,21 @@
 # State of Valhalla
 
 #### Section 1: The Road to Valhalla
-#### Brian Goetz, Nov 2020
+#### Brian Goetz, Apr 2021
 
 ::: sidebar
 Contents:
 
 1. [The Road to Valhalla](01-background.html)
 2. [Unifying the Java Type System](02-object-model.html)
+3. [JVM Model](03-vm-model.html)
 
 :::
 
 ## Background
 
 [_Project Valhalla_][valhalla] got its start in 2014, with the goal of bringing
-more flexible flattened data types to JVM-based languages, in order to  restore
+more flexible flattened data types to JVM-based languages, in order to restore
 alignment between the programming model and the performance characteristics of
 modern hardware.  (In some ways, it got started much earlier; the designers of
 Java wanted to include value types in the initial version of the language.)
@@ -22,16 +23,19 @@ Initially, Valhalla was described in terms of the features we anticipated adding
 to meet this goal: _primitive classes_ (known in various iterations as _inline
 classes_ or _value types_) and _specialized generics_.  In the initial phase of
 the project, we focused primarily on understanding how the language and JVM
-would have to change to support these features, and what the migration
+would have to evolve to support these features, and what the migration
 compatibility implications for user code would be.
 
-We now believe we have a coherent path to enhance the Java language and virtual
-machine with primitive classes, have a compatible path for migrating both the
-existing primitive types and existing value-based classes to primitive classes,
-have primitive classes interoperate cleanly with erased generics, and migrate
+While it is possible to release these features incrementally, it is necessary to
+have a coherent vision of how they will all work together before committing to
+an implementation.  We now believe we have a coherent path to enhancing the Java
+language and virtual machine with primitive classes, migrating both the existing
+primitive types and existing value-based classes to primitive classes, having
+primitive classes interoperate cleanly with erased generics, and migrating
 existing generic classes to specialized generics.  This set of documents
-summarizes that path, to be  delivered in stages.  (If you want to compare with
-where we started, see our [founding document][values0].)
+summarizes that path, to be delivered in stages.  The first two of these are
+described in [JEP 401][jep401] and [JEP 402][jep402].  (If you want to compare
+with where we started, see our [founding document][values0].)
 
 However, Project Valhalla is not just about the features it will deliver, or
 about improving performance; it has the more ambitious agenda to _unify the Java
@@ -70,15 +74,13 @@ What we would like is to have the option to get a layout more like this:
 ![Flattened layout of XY points](flattened-points.png){ width=60% }
 
 This layout is both flatter (no indirections) and denser (no headers) than the
-previous version.
-
-(Related to object layout is _calling convention_, which is how the JVM passes
-values from one method to another.  In the absence of heroic JVM optimizations,
-when a method passes a `Point` to another, it passes a pointer, and then the
-callee must dereference the pointer to access the object's state.  Enabling a
-flatter representation is also likely to enable a flatter calling convention,
-where a `Point` can be passed by passing the `x` and `y` components by value, in
-registers.)
+previous version.  (Related to object layout is _calling convention_, which is
+how the JVM passes values from one method to another.  In the absence of heroic
+JVM optimizations, when a method passes a `Point` to another, it passes a
+pointer, and then the callee must dereference the pointer to access the object's
+state.  Enabling a flatter representation is also likely to enable a flatter
+calling convention, where a `Point` can be passed by passing the `x` and `y`
+components by value, in registers.)
 
 One of the key questions that Project Valhalla addresses itself to is: _what
 code would we want to write to get this layout?_
@@ -97,42 +99,39 @@ identity just in case someone might eventually perform an identity-sensitive
 operation -- even if that is never going to happen.  Thus, identity leads to the
 pointer-rich memory layout we have today.
 
-Separately, classes today support subclassing (unless the author opts out with
-the `final` keyword).  When a class can be extended, its type has an
-unpredictable layout -- at any point during program execution, some subclasses
-might not even be loaded yet!  So it's impossible to allocate a fixed amount of
-memory large enough to store any future subclass instance.
-
-The direction that Valhalla has pursued here is to say that some classes can
-disavow identity, mutation, and extension; instances are entirely represented by
-their fixed-size state, and therefore can be routinely flattened into arrays and
-into other objects, and passed as flat vectors between methods.
-
-Such classes are called _primitive classes_, to highlight the fact that they
-have the runtime behavior of primitives.  (The terminology has changed during
-the course of the project; previously-used synonyms include _inline classes_ and
-_value classes_.)  The slogan for such classes is
+Valhalla enables some classes to disavow identity.  Instances of these classes
+are just their state, and therefore can be routinely flattened into enclosing
+objects or arrays, and passed by value between methods.  The trade-off is that
+we have to give up some flexibility -- they must be immutable and cannot be
+layout-polymorphic -- but in return for giving up these characteristics, we are
+be rewarded with a flatter and denser memory layout and optimized calling
+conventions.  The terminology for these classes has changed during the course of
+the project; while they were originally called _value types_ and then _inline
+classes_,  such classes are now called _primitive classes_.  This naming
+highlights the fact that they are classes with the runtime behavior of
+primitives.  The slogan for Valhalla is:
 
 > Codes like a class, works like an int.
 
-Despite the restrictions on mutability and subclassing, primitive classes can use
-most mechanisms available to classes: methods, constructors, fields,
+Despite the restrictions on mutability and subclassing, primitive classes can
+use most mechanisms available to classes: methods, constructors, fields,
 encapsulation, supertypes, type variables, annotations, etc.
 
 There are applications for primitive classes at every level.  Aside from the
-obvious -- turning primitive types into real classes -- many API abstractions,
-such as numerics, dates, cursors, and wrappers like `Optional`, are naturally
-modeled as identity-free classes.  Additionally, many data structures, such as
-`HashMap`, can profitably use primitive classes in their implementations to
-improve efficiency.  And language compilers can use them as a compilation target
-for features like built-in numeric types, tuples, or multiple return.
+obvious -- turning the built-in primitive types into real classes -- many API
+abstractions, such as numerics, dates, cursors, and wrappers like `Optional`,
+can be naturally modeled as identity-free classes.  Additionally, many data
+structures, such as `HashMap`, can profitably use primitive classes in their
+implementations to improve efficiency.  And language compilers can use them as a
+compilation target for features like built-in numeric types, tuples, or multiple
+return.
 
 ## What about generics?
 
 One of the early compromises of Java Generics is that generic type variables can
 only be instantiated with reference types, not primitive types.  This is both
 inconvenient (we have to say `List<Integer>` when we mean `List<int>`) and
-expensive (boxing imposes a performance overhead).  With eight primitive types,
+expensive (boxing has performance overhead.)  With eight primitive types,
 this restriction is something we learned to live with, but if we can write our
 own flattenable data types like our `Point` above, having an `ArrayList<Point>`
 not be backed by a flattened array of `Point` seems to defeat, well, the point.
@@ -163,8 +162,9 @@ class from non-generic to generic, without breaking existing sources or binary
 class files, and leaving clients and subclasses with the flexibility to migrate
 immediately, later, or never.  Offering users generics, but at the cost of
 throwing away all their libraries, would have been a bad trade in 2004, when
-Java already had a large and vibrant installed base (and would be a worse trade
-today).
+Java already had a large and vibrant installed base -- and would be a worse
+trade today.  (See [In defense of erasure](erasure) for more detail on the
+forces that led to the current design of Java generics.)
 
 Our goal today is even more ambitious than it was in 2004: to extend generics so
 that we can instantiate them over primitive classes with specialized
@@ -187,15 +187,15 @@ then, we've built six distinct prototypes, each aimed at a understanding a
 separate aspect of the problem.
 
 The first three prototypes explored the challenges of generics specialized
-directly to primitives, and worked by bytecode rewriting.  The first ("Model 1")
-was primarily aimed at the mechanics of specialization, identifying what type
-behavior needed to be retained by the compiler and acted on by the specializer.
-The second ("Model 2") explored how we might represent wildcards (and by
-extension, bridge methods) in a specializable generic model, and started to look
-at the challenges of migrating existing libraries.  The third ("Model 3")
-consolidated what we'd learned, building a sensible `class` file format that could
-be used to represent specialized generics.  (For a brief tour of some of the
-challenges and lessons learned from each of these experiments, see [this
+directly to primitives, and operated by bytecode rewriting.  The first ("Model
+1") was primarily aimed at the mechanics of specialization, identifying what
+type behavior needed to be retained by the compiler and acted on by the
+specializer.  The second ("Model 2") explored how we might represent wildcards
+(and by extension, bridge methods) in a specializable generic model, and started
+to look at the challenges of migrating existing libraries.  The third ("Model
+3") consolidated what we'd learned, building a sensible classfile format that
+could be used to represent specialized generics.  (For a brief tour of some of
+the challenges and lessons learned from each of these experiments, see [this
 talk][adventures] ([slides here][adventures-slides]).
 
 The results of these experiments were a mixed bag.  On the one hand, it worked
@@ -214,17 +214,20 @@ descriptors, bytecodes and top types -- in part because it seemed too daunting
 at the time to unify references and primitives under one set of type
 descriptors, bytecodes, and types.  L-world gave us this unification, which
 addressed a significant number of the challenges we encountered in the early
-rounds of prototypes.
+rounds of prototypes, and leading to a true unification of primitives with
+classes.  (The mantra for this part of the work could be described as "`Object`
+is the new `Any`.")
 
 ## Moving forward
 
 We intend to divide delivery of Project Valhalla into two broad phases:
-primitive classes, and specialized generics.  (These may be further divided into
-delivery milestones.)  The first phase will focus on support for primitive
-classes in the Java language and virtual machine, and migrating the existing
-primitive types to primitive classes.  This phase will also lay the groundwork
-for the use of primitive classes in the JDK, and even migrating some existing
-value-based classes (such as `Optional` or `LocalDate`).
+primitive classes first, followed by specialized generics.  (These may be
+further divided into delivery milestones.)  The first phase will focus on
+support for primitive classes in the Java language and virtual machine, and
+migrating the existing primitive types to primitive classes.  This phase will
+also lay the groundwork for the use of primitive classes in the JDK, and even
+migrating some existing value-based classes (such as `Optional` or
+`LocalDateTime`), and is described by JEPs [401](jep401) and [402](jep402).
 
 The second phase will focus on generics, extending the generic type system to
 support instantiation with primitive classes and extending the JVM to support
@@ -236,3 +239,6 @@ specialized layouts.
 [adventures]: https://www.youtube.com/watch?v=TkpcuL1t1lY
 [adventures-slides]: http://cr.openjdk.java.net/~briangoetz/valhalla/Adventures%20in%20Parametric%20Polymorphism.pdf
 [model3]: http://cr.openjdk.java.net/~briangoetz/valhalla/eg-attachments/model3-01.html
+[jep401]: https://openjdk.java.net/jeps/401
+[jep402]: https://openjdk.java.net/jeps/402
+[erasure]: ../in-defense-of-erasure.md
