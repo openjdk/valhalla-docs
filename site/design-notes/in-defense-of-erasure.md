@@ -24,7 +24,7 @@ when compiling from Java source to bytecode, or compiling C source to native
 code.)  This is because as we move down the stack from high-level languages to
 intermediate representations to native code to hardware, the type abstractions
 offered by the lower level are almost always simpler and weaker than those at
-the higher level -- and rightly so.  (We wouldn't want bake the semantics of
+the higher level -- and rightly so.  (We wouldn't want to bake the semantics of
 virtual dispatch into the X86 instruction set, or mimic the set of Java's
 primitive types in its registers.)  Erasure is the technique of mapping richer
 types at one level to less rich types at a lower level (ideally, after
@@ -315,7 +315,7 @@ at the time, not only would it have been a significant engineering investment
 requiring substantial coordination and agreement between the many implementors,
 the ecosystem of languages on the JVM might also have had an opinion about
 reified generics.  If, for example, the interpretation of reification included
-type checking at runtime, would Scala (with its declaration-site generics) be
+type checking at runtime, would Scala (with its declaration-site variance) be
 happy to have the JVM enforce Java's (invariant) generic subtyping rules?
 
 #### Erasure was the pragmatic compromise
