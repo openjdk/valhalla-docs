@@ -58,7 +58,7 @@ as `L` descriptors (e.g., `Qjava/lang/int;`).
 
 In addition to reusing the syntactic form of `L` descriptors, `Q` descriptors
 also reuse the `L` carrier -- in the JVM, there is no structural difference
-between a reference to an primitive object and a reference to an identity object.
+between a reference to a primitive object and a reference to an identity object.
 
 Both `Q`-carried and `L`-carried values are references are operated on by the
 same set of `a*` bytecodes.  The JVM verifier ensures, however, that `Q`-carried
@@ -115,7 +115,7 @@ the `L` descriptor contract:
    a class name) performs eager resolution.
  - `Q` fields and array elements _may be_ (and are routinely) flattened.
  - Multi-word `Q` fields and array elements may exhibit "struct tearing" during
-   races, unless other measures are taken to preven this.
+   races, unless other measures are taken to prevent this.
  - `Q` descriptor names are not required to store class loader constraints.
    (Because of eager loading, the constraints can be checked using resolved
    classes when methods are prepared.  This is a variation of class loader
@@ -156,13 +156,13 @@ seeks the "quiddity" of the type by quickly loading its class file.)
 
 Primitive classes may implement interfaces, and may extend certain restricted
 abstract classes as well as the special class `Object`.  This means that a
-variable of an interface type, suitable abstract class types, or `Object` may be
-a reference to _either_ an identity object or an Primitive object.  The JVM treats
+variable of an interface type, a suitable abstract class types, or `Object` may be
+a reference to _either_ an identity object or a primitive object.  The JVM treats
 such extension as ordinary subtyping, and so references to primitive objects may be
 widened to references to `Object` or suitable interface or abstract class type
 without casting.  Primitive classes do not have constructor methods; instead,
 source level constructors are translated to static factory methods with the same
-argument list as the declared constructor, whose name is `<new>`.  Unlike an
+argument list as the declared constructor, with method name `<new>`.  Unlike an
 `<init>` method, which must return `void`, a static factory method must return
 the `Q` descriptor type of the class being constructed.  (A static factory
 method named `<new>` is also allowed to return `Object` or perhaps one of the
@@ -175,11 +175,12 @@ will play a role with primitive values, the descriptors associated with their
 supertypes will never be `Q` descriptors.  In particular, there is no legal use
 for `Qjava/lang/Object;`.
 
-An abstract class is a _primitive superclass candidate_ if it has no fields,  no
-static initializer (`<clinit>`) method, its no-arg constructor is empty (marked
-`ACC_ABSTRACT`), and its superclass is either `Object` or a primitive superclass
-candidate.  (The static factory of the primitive class does not call the superclass
-constructor, because by definition it must be empty anyway.)
+An abstract class is a _primitive superclass candidate_ if it has no fields, its
+no-arg constructor is empty (marked `ACC_ABSTRACT`), it has no other `<init>`
+methods, and its superclass is either `Object` or a primitive superclass
+candidate.  (The static factory of the primitive class does not call the
+superclass constructor.  This can be safe only if the constructor is empty
+anyway.)
 
 The properties of being a primitive superclass candidate are "contagious" up the
 superclass chain.  That is, if some abstract class has an empty no-arg
@@ -190,24 +191,43 @@ classes) is allowed to have a truly empty concrete constructor method.  Thus,
 `Object` is exempt from the "contagion" of the requirement of empty
 constructors.
 
+If an identity class declares a primitive superclass candidate as its super, it
+must (as usual) call the superclass `<init>` method, but the JVM links this call
+straight up to the no-arg constructor of `Object`, skipping the intervening
+abstract (empty) `<init>` methods.
+
+If a primitive superclass candidate were allowed to have either fields or
+non-empty `<init>` methods, they would presumably be available in the usual way
+to identity subclasses of the superclass.  But those extra `<init>` methods
+would be unusable by primitive subclasses of the same superclass, and even if
+the fields were somehow "pulled down" into the primitive class, they would not
+properly initialized by it.  If these obstacles could be worked around somehow,
+it would be possible to create primitive subclasses of `java.lang.Enum` and
+other important classes.  We may revisit and relax the restrictions on primitive
+superclasses when we have more experience.
+
 #### Restrictions
 
 Primitive classes come with some restrictions compared to their identity
-counterparts.  Instance fields of an primitive class must be marked `ACC_FINAL`.
+counterparts.  Instance fields of a primitive class must be marked `ACC_FINAL`.
 Primitive classes must implement the interface `PrimitiveObject` (and may not
 implement `IdentityObject`, directly or indirectly.)  If they extend a class
 other than `Object`, that class must be a primitive superclass candidate.  The
-non-`static` fields of an primitive class `V` may not, either directly or
-indirectly, have a field of type `V` using a `Q` descriptor.  (Such an object
+instance fields of a primitive class `Foo` may not, either directly or
+indirectly, have a field of type `Foo` using a `Q` descriptor.  (Such an object
 would have no definite size; each one would contain an infinite regression of
 sub-objects of the same type.)
 
 An `L` descriptor can be applied to a primitive class in any case; any infinite
 regress is stopped immediately by a `null` reference.
 
-A `static` field of type `V` using a `Q` descriptor in `V` is not problematic,
-although it requires careful preparation, and (in general) a hidden indirection
-to manage lazy initialization.
+A `static` field of type `Foo` using a `Q` descriptor in `Foo` is not
+problematic, although it requires careful preparation, and (in general) a hidden
+indirection to manage lazy initialization.  Such `static` fields of type `QFoo;`
+must be initialized to the default value of `Foo`, but the JVM may need to
+prepare such static fields before the default value is materialized, which may
+possibly require lazy or indirect access to the field.  If so, this internal
+logic can be hidden within the `getstatic` bytecode.
 
 ## Bytecodes and constants
 
@@ -216,15 +236,18 @@ new, and others gain additional behavior or restrictions when applied to primiti
 types.  The existing `a*` bytecodes are extended to uniformly support references
 to both identity and primitive classes.
 
-There are two new instruction used for constructing instances of primitive classes.
+There are two new bytecode instructions used for constructing instances of
+primitive classes.
 
  - `defaultvalue` is the analogue of `new` for primitive class instances; it leaves
-   a reference to the default (all zero) instance of an primitive class on the
-   stack.  (Uninitialized fields and array elements are also initialized to the
-   default value for that type, as if by `defaultvalue`.)
+   a reference to the default (all zero) instance of a primitive class on the
+   stack.  (Fields and array elements of a `Q` type are also initialized to the
+   default value for that type, as if by `defaultvalue`.)  The sole operand of
+   this bytecode is a reference to a `CONSTANT_Class` item giving the name
+   of the primitive class (not its `Q` descriptor).
 
  - `withfield` is the analogue of `putfield` for primitive class instances; it
-   takes a reference to an primitive object and a new field value on the stack, and
+   takes a reference to a primitive object and a new field value on the stack, and
    leaves  a reference on the stack to an instance of the primitive class whose
    fields are all the same as the original instance, except for the specified
    field.
@@ -264,12 +287,33 @@ the requirements found in the class file (which at present will always reject a
 
 The `anewarray` instruction is similarly extended to apply to a `Q` descriptor;
 this determines whether the resulting array is flattened (`Q`) or not (`L`).
+Note that the `anewarray` instruction returns a plain (`L`) reference to an
+array regardless of its component type.
+
+The `aaload` instruction, as always, takes an array of a particular reference
+element type, and returns an element of that type.  If the array element type is
+a `Q` type, the value pushed on the stack by `aaload` is tracked by the verifier
+as a `Q` type.  The `aastore` instruction, as always, relies fully on the
+dynamic array store check; the verifier is indifferent to the precise component
+type of the array input to `aastore`.
 
 The `ldc` instruction, applied to a `CONSTANT_Class` item which contains a `Q`
 descriptor, will return the secondary (`val`) mirror for the class.  The normal
 syntax (of a plain class name in a `CONSTANT_Class` item) will return the
 primary (`ref`) mirror; again, it is as if the normal syntax works like an `L`
 descriptor.
+
+Most uses of `CONSTANT_Class` continue to require plain class names, not array
+descriptors or `Q` descriptors.  A `CONSTANT_Class` item that specifies `Q`
+descriptor is valid only for the following uses:
+
+ - as a loadable constant: an operand of `ldc` or a bootstrap method
+ - as an operand of `checkcast` or `anewarray`
+ - in a stack map table for the verifier (to distinguish `L` and `Q` types)
+
+In particular, `CONSTANT_Fieldref`, `CONSTANT_Methodref`, and
+`CONSTANT_InterfaceMethodref` items and `instanceof` instructions must not refer
+to `CONSTANT_Class` items with `Q` descriptors.
 
 ## Verifier rules
 
@@ -279,16 +323,44 @@ descriptors is in every way more lenient (for value sets) than that of `Q`
 descriptors, the verifier behaves as if `QFoo;` is a subtype of the plain
 reference `Foo` (also known as `LFoo;`), for every `Foo`.
 
-There is no need for a verifier rule that demands `checkcast` when promoting
-from `QFoo;` to `LFoo;` or any of its supers, all of them also plain `L`
+The verifier tracks `Q`-carried values, deriving them from from the following
+sources:
+
+ - any `Q` descriptors in the argument types of the current method
+ - the `invoke` family (when the return value is a `Q` type)
+ - `getfield`, `getstatic` (when the field is a `Q` type)
+ - `defaultvalue`, `withfield` (always produces a `Q` type)
+ - `aaload` (when the array component type is a `Q` type, not an `L` type)
+ - `checkcast` (when the `CONSTANT_Class` operand is a `Q` descriptor)
+ - `ldc` (when the constant is a `Q` type)
+
+The verifier enforces the `Q` marking of values when it sends them to
+the following consumers:
+
+ - `areturn` (when the return value is a `Q` type)
+ - the `invoke` family (any `Q` descriptors for outgoing arguments)
+ - `putfield`, `putstatic`, `withfield` (when the field is a `Q` type)
+ - `withfield` (the stacked object to update must be a `Q` type)
+
+In some cases the JVM uses dynamic checks to ensure type safety, and the
+verifier does not enforce marking of `Q` types for these consumers, but
+rather accepts `Q` and `L` marked types indiscriminately:
+
+ - the receiver of `getfield`, `putfield`, and the `invoke` family
+   (these already include a mandatory `null` check)
+ - `aastore` (this has always been purely dynamic)
+ - `checkcast` (`Q` promotes to `L`, which is then cast)
+
+There is no need for a verifier rule that demands a `checkcast` when promoting
+from `QFoo;` to `LFoo;` or any of its supers, all of which are also plain `L`
 descriptor types.  By its nature, an `L` descriptor can never constrain anything
 but the class named by the descriptor.  There may be technical reasons to
-voluntarily issue a `checkcast` against a super of `QFoo;` other than `LFoo;` or
+voluntarily issue a `checkcast` against a super of `QFoo;` other than `Foo` or
 `Object`, since that would avoid having the verifier load `Foo.class` in order
 to ensure that the conversion is a widening conversion.  Note that the verifier
 is not required to load a class when it is being implicitly converted to
 `Object`, to an interface, or to a class of the same name but different
-"flavor", `Q` vs. `L`.
+"flavor", such as `QFoo;` converting to plain `Foo` (`LFoo;`).
 
 In the verifier, the `null` type is a subtype of every plain (`L` descriptor)
 type, but is not a subtype of any `Q` type.  (Note that as a result of these
@@ -330,6 +402,29 @@ are smaller or larger than an object reference.  Memory referencing
 patterns (say, during a loop traversing the array in order) are likely
 to be more predictable in the flattened case.
 
+A flattened array (whose component is a `Q` descriptor), loads values of that
+`Q`-carried type.  A referance value of any kind (whether `Q` or `L` or null or
+array) may be presented to the `aastore` instruction to store into the flattened
+array, but the store check will apply the same logic as `checkcast`, to ensure
+that the incoming value can actually be stored as a flattened array element.
+This behavior is essentially unchanged from before Valhalla.
+
+A `Q` type may be viewed as a subtype of its corresponding `L` type, but only in
+a limited sense, specifically in the verifier's specialized type system.  Array
+covariance also "pretends" that the `Q` type is a subtype of the `L` type, so
+that if two arrays have the same element class, but one is flattened, the
+flattened one can be stored in a reference to the non-flattened type, but not
+vice versa.  The `checkcast`, `instanceof`, and `aastore` logic, which applies
+covariance rules to arrays, enforces this relation between flattened and
+non-flattened arrays of the same class, and also (transitively) allows any
+flattened array to be stored in a variable of type `Object[]`.
+
+(At present, `int[]` is still not a subtype of `Object[]`, even though
+`Point.val[]` is a subtype of `Object[]`, since it works with `aastore`.  At
+some point, if the built-in primitives are brought into alignment with primitive
+classes, the subtyping links to `int[]` and the other primitive arrays may be
+set up.)
+
 ## Mirror, mirror
 
 When a class is reflected, its field and method types directly represent the
@@ -355,7 +450,7 @@ exotic descriptor returns `int.val.class`.
 
 In particular, `Class::forName` and `Object::getClass` will always return a
 `ref` projection.  If you want the mirror that "works like `int.class`", you
-have to look somewhere special, as with `int` today, or  ask the primary mirror
+have to look somewhere special, as with `int` today, or ask the primary mirror
 for its corresponding secondary mirror.  There will be an API point on `Class`
 for obtaining the `val` mirror from the `ref` mirror, and vice versa.
 
