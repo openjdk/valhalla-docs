@@ -425,6 +425,101 @@ some point, if the built-in primitives are brought into alignment with primitive
 classes, the subtyping links to `int[]` and the other primitive arrays may be
 set up.)
 
+## Heap effects
+
+A primitive object may be stored either nested inside another object or array,
+or directly on the heap.  In the latter case, we say that the primitive object
+has been _buffered_ on the heap.  This is sometimes necessary in order to treat
+the object as a regular reference.  (For example, adding it to a `List<Object>`
+requires buffering.)  The JVM handles buffering transparently, and tries avoid
+buffering when possible, lifting them into registers or storing them in flat
+variables.
+
+A sudden buffering of many large primitive objects, transferring their contents
+from the stack to the heap, could in principle cause an `OutOfMemoryError`.
+This could happen, in particular, when a very large optimized stack frame
+deoptimizes back to the interpreter, flushing temporary objects to the heap.
+Such an error will probably appear "out of band" or causeless to the user.
+
+Mutable state on the heap is subject to the rules of the Java Memory Model.
+Relative to the JMM, a buffered primitive object must be treated comparably to
+an identity object which has all final fields.  In both cases, some platforms
+may require a memory barrier after all fields have been stored to heap, and
+before the resulting pointer is published.
+
+When an array element or mutable instance field is of a `Q` type, the effect of
+loading or storing a `Q` value is tracked by the Java Memory Model as if the
+primitive object were recursively broken down into the component subfields of it
+and all of its embedded sub-objects, all the way down to plain pointers and
+scalar (non-object) primitives like `int` and `long`.
+
+In other words, a flattened value in the heap is "scalarized", decomposed into a
+set of machine words.
+
+#### Struct-tearing
+
+It follows that a multi-threaded program can contain races on changes to these
+individual pointers and scalars.  Thus, a thread can witness an "impossible"
+combination of fields in a primitive object, given the right (or wrong!) race
+condition.  We call this _struct-tearing_, a multi-word analogue of word-tearing
+seen on some processors.  It is also analogous to the racing update of two
+32-bit halves of a `long` or `double` value, which can also cause "impossible"
+`long` or `double` values to appear in Java programs.  We also use the term
+struct-tearing retroactively to refer to these effects on `long` and `double`.
+
+Struct-tearing may not appear on some platforms.  On other platforms it may be
+rare, although mischievous code might force it to happen on command.  In any
+case, struct-tearing cannot be ruled out absolutely.  Java provides a workaround
+to suppress struct-tearing of values stored in fields: Declare the field
+`volatile`.  The JVM then excludes struct-tearing by any means it chooses:
+Software transactions, hardware locking, hidden synchronization, extra
+buffering, or some combination of the above.  This workaround does not apply to
+values stored in array elements.
+
+For 64-bit scalar values, struct tearing is inconvenient but has a limited
+impact.  Since primitive classes will often carefully control their internal
+invariants, struct-tearing can cause new kinds of failures, if it violates those
+invariants.  The JVM is likely in the future to support some way to mark a
+primitive class "non-tearable", instructing the JVM to ensure that
+struct-tearing is impossible for all variables of that type, including array
+elements.  The simplest way to do this is to always buffer and never flatten.
+There may be other ways to get the effect, but there is likely always to be
+a cost, so this "non-tearable" marking is not going to be the default.
+The likely syntax in the class file is a modifier bit on the class itself,
+perhaps `ACC_VOLATILE` (renamed `ACC_NONTEARABLE` in this use).
+
+#### Weakness
+
+Like one of today's `Integer` objects, a buffered primitive object may be used
+as a key to a weak hash map.  (There are many such in the Java ecosystem.)  The
+implementation of a weak hash map probably appeals to the `WeakReference` JDK
+class or something similar.  In any case, applications make varying use of
+`WeakReference` and related types, as well as JNI weak references.  It appears
+that we cannot exclude buffered primitive objects from such uses, and so we
+need to assign a meaning to a weak reference to a primitive object.
+
+What does it mean to wait for a primitive object to become unreachable?  If the
+primitive object is simply a bit-pattern of scalars, the unhappy answer is that
+it is alway reachable in principle, since the bit-pattern could be read from
+disk, loaded into a fresh copy of the primitive, and presented as a witness of
+reachability.  After all, a reference is reachable if some other code can
+produce a reference which `acmp` will compare as indistinguishable from the
+original reference.  But `acmp` on a primitive pays attention only to object
+content, not to object identity.
+
+If a primitive object is composed of a combination of scalars and references
+to identity objects, the problem is less hopeless, though still complicated.
+A primitive object becomes unreachable (in the modified definition of the
+previous paragraph) if and only if _at least one_ of its component identity
+object references becomes unreachable.
+
+It seems possible to implement this standard of reachability for primitive
+objects using a combination of GC adjustments, JDK library changes to
+`WeakReference`, and runtime code changes for JNI weak references. It also seems
+terribly inconvenient to do this, and we are looking for use cases to help us
+weigh the alternatives, such as refusing to build such `WeakReference`s (forcing
+library authors to recode) or just holding on to primitives forever and ever.
+
 ## Mirror, mirror
 
 When a class is reflected, its field and method types directly represent the
