@@ -191,6 +191,18 @@ classes) is allowed to have a truly empty concrete constructor method.  Thus,
 `Object` is exempt from the "contagion" of the requirement of empty
 constructors.
 
+In its role as a sort of "honorary interface", `Object` commits to neither kind
+of class; it implements neither of the marker interfaces `IdentityObject` nor
+`PrimitiveObject`.  Yet the existing behavior of the expression `new Object()`
+creates an identity object.  It seems that `Object` is wearing too many hats!
+The JVM will have to give special treatment to the bytecode instruction `new
+java/lang/Object`, which after link resolution will create an identity object of
+a secret substitute class which has no fields (like `Object`) and implements
+`IdentityObject`.  The verifier does not have to know about this, and the
+subsequent `invokespecial` of `Object::<init>` will be the only initialization
+the object ever experiences.  This secret class will be designed to allow this
+treatment.
+
 If an identity class declares a primitive superclass candidate as its super, it
 must (as usual) call the superclass `<init>` method, but the JVM links this call
 straight up to the no-arg constructor of `Object`, skipping the intervening
@@ -252,12 +264,19 @@ primitive classes.
    fields are all the same as the original instance, except for the specified
    field.
 
-The `withfield` instruction is restricted; it can only be executed by the class
+The `withfield` instruction is restricted; it can only be executed within the
+nest of the class
 that declares the primitive class being modified.  This encapsulates creation of
 novel values, so the class can ensure that any value escaping the implementation
 is seen to adhere to its invariants.  The `new` and `putfield` bytecodes may
 not be used with instances of primitive classes, and the `withfield` bytecode may
 not be used with identity classes.
+
+(In a future version of a VM, a class may be able to grant access to `withfield`
+instructions to other clients, on an opt-in basis, if this seems useful.  In
+fact, in a future JVM a class may also ber able to revoke access to
+`defaultvalue` instructions in other clients, on an opt-out basis, again if this
+seems useful.)
 
 The `aastore` instruction performs a null check on the element value before
 storing a value into an array of primitive class instances.
@@ -485,8 +504,31 @@ struct-tearing is impossible for all variables of that type, including array
 elements.  The simplest way to do this is to always buffer and never flatten.
 There may be other ways to get the effect, but there is likely always to be
 a cost, so this "non-tearable" marking is not going to be the default.
-The likely syntax in the class file is a modifier bit on the class itself,
-perhaps `ACC_VOLATILE` (renamed `ACC_NONTEARABLE` in this use).
+The likely syntax in the class file is a marker interface implemented by
+the class itself, `java.lang.NonTearable`.
+
+#### Uninitialized variables
+
+Heap variables also must be initialized to default values, even before they are
+initialized by user code.  This is most visible with array elements, which are
+always `null` or a primitive default value.  A potential problem with some
+primitive classes is that there is no legitimate default value.  Often
+programmers of classes want to perform special processing when every instance of
+a class is created, and the `defaultvalue` bytecode subverts this, to some
+extent.  (The programmer has to get used to these non-constructed default values
+floating around.)  There are several proposals for what to do about this,
+including "nothing", and "map some class default values to `null`".  The latter
+option would make an uninitialized variable (of a primitive class that opts into
+this treatment) look exactly the same as an uninitialized reference variable.
+
+Another option is try to protect users from ever seeing uninitialized primitives
+(of a class that opts for this processing) by issuing some sort of error when a
+heap variable is loaded before it has been stored to.  In this design, the
+`defaultvalue` instruction would become subject to an access check that
+parallels the present access check to the `withfield` instruction.
+
+It is possible that some sort of marker interface like `NonTearable` would
+indicate classes that request such processing.
 
 #### Weakness
 
