@@ -2,7 +2,8 @@ OUT_DIR = web
 IN_DIR = site
 CSS = style.css
 
-WILDCARD = $(patsubst $(IN_DIR)/%, %, $(wildcard $(IN_DIR)/*.$(1) $(IN_DIR)/**/*.$(1) $(IN_DIR)/**/**/*.$(1) ))
+IN_DIR_FILES := $(shell find $(IN_DIR) -type f)
+WILDCARD = $(patsubst $(IN_DIR)/%, %, $(filter %.$(1), $(IN_DIR_FILES)))
 
 ASSET_EXTS = html jpg jpg gif svg png
 
@@ -10,7 +11,7 @@ MD_SOURCES = $(call WILDCARD,md)
 ASSET_SOURCES = $(foreach X, $(ASSET_EXTS), $(call WILDCARD,$(X)))
 
 GENERATED_FILES = $(patsubst %.md, $(OUT_DIR)/%.html, $(MD_SOURCES))
-COPIED_FILES = $(patsubst %,$(OUT_DIR)/%, $(ASSET_SOURCES))
+COPIED_FILES = $(filter-out $(GENERATED_FILES), $(patsubst %,$(OUT_DIR)/%, $(ASSET_SOURCES)))
 AUTO_SITE_MAP = $(OUT_DIR)/README.html
 
 site: $(GENERATED_FILES) $(COPIED_FILES) $(AUTO_SITE_MAP)
