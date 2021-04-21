@@ -221,9 +221,25 @@ superclasses when we have more experience.
 #### Restrictions
 
 Primitive classes come with some restrictions compared to their identity
-counterparts.  Instance fields of a primitive class must be marked `ACC_FINAL`.
-Primitive classes must implement the interface `PrimitiveObject` (and may not
-implement `IdentityObject`, directly or indirectly.)  If they extend a class
+counterparts.  Instance fields of a primitive class must be marked `ACC_FINAL`,
+and must not be marked `ACC_VOLATILE`.
+
+Primitive classes are implicitly adjusted by the JVM, as necessary, to implement
+the interface `PrimitiveObject`.  They or their supers may explicitly declare
+`PrimitiveObject` as a super, in which case the JVM does not insert the extra
+super.  (Inserted supers are visible to reflection.)  They may not directly or
+indirectly implement the interface `IdentityObject`.
+
+Also, abstract classes that fail to be primitive superclass candidates (perhaps
+because they contain fields) are implicitly adjusted by the JVM, as necessary,
+to implement the interface `IdentityObject`.  They may not directly or
+indirectly implement the interface `PrimitiveObject`.
+
+In this way, every concrete object implements exactly one of `IdentityObject` or
+`PrimitiveObject`, and every abstract class implements at most one of the two.
+Most interfaces, and `Object`, will implement neither.
+
+If a primitive class extends a class
 other than `Object`, that class must be a primitive superclass candidate.  The
 instance fields of a primitive class `Foo` may not, either directly or
 indirectly, have a field of type `Foo` using a `Q` descriptor.  (Such an object
