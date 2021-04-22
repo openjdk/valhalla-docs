@@ -227,7 +227,7 @@ and must not be marked `ACC_VOLATILE`.
 Primitive classes are implicitly adjusted by the JVM, as necessary, to implement
 the interface `PrimitiveObject`.  They or their supers may explicitly declare
 `PrimitiveObject` as a super, in which case the JVM does not insert the extra
-super.  (Inserted supers are visible to reflection.)  They may not directly or
+super.  They may not directly or
 indirectly implement the interface `IdentityObject`.
 
 Also, abstract classes that fail to be primitive superclass candidates (perhaps
@@ -238,6 +238,18 @@ indirectly implement the interface `PrimitiveObject`.
 In this way, every concrete object implements exactly one of `IdentityObject` or
 `PrimitiveObject`, and every abstract class implements at most one of the two.
 Most interfaces, and `Object`, will implement neither.
+
+JVM-inserted supers are *not* visible to reflection via `Class::getInterfaces`,
+but they are respected, on a per-instance basis, by `checkcast`, `instanceof`,
+`aastore`, `Class::isInstance`, and `Class::cast`.  They are also respected by
+`Class::isAssignableFrom`.  Thus, to detect if the JVM has inserted the super
+`IdentityObject` into some class `C`, first call `Class::isAssignableFrom` to
+test each super of `C` for `IdentityObject`, and if it is not present, then test
+`Class::isAssignableFrom` on `C` itself; if `C` mysteriously implements the
+interface despite none of its supers doing so, the JVM has secretly made its
+mark on `C`.  Keeping secrets from reflection is a risky business, but in this
+case it seems safer to do so, lest a large fraction of existing Java classes
+suddenly grow new items in their `Class::getInterfaces` arrays.
 
 If a primitive class extends a class
 other than `Object`, that class must be a primitive superclass candidate.  The
