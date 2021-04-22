@@ -13,7 +13,7 @@
   h3            { margin: 1.5em 0 0; }
   ol, ul, pre   { margin: 1em 1ex; }
   ul ul, ol ol  { margin: 0; }
-  blockquote    { margin: 1em 4ex; text-indent: .125in; }
+  blockquote    { margin: 1em 0ex; border-left: 0.2em solid gray; padding-left: .125in; }
   p             { margin: .125in 0; }
   p+p,blockquote+p { text-indent: .125in; }
   h4            { margin: 0; }
@@ -23,8 +23,8 @@
 <meta pandoc-flags="--toc">
 
 #### John Rose and the Project Vahalla team
-#### June 2020 to March 2021 (ver-0.4)
-#### References: [PDF][parametric-vm.pdf] [HTML][parametric-vm.html] [slides][ParametricVM.pdf]
+#### June 2020 to April 2021 (ver-0.41)
+#### References: [source][parametric-vm.md] [HTML][parametric-vm.html] [slides][ParametricVM.pdf]
 
 <!-- log of selected changes
   -- ver-0.4
@@ -35,6 +35,14 @@
   split out TypeRestriction attribute from Parametric attribute, using work from D. Smith & F. Parain
   allow a C_Anchor to be unused (remove a structural constraint)
   the term "inline" is replaced by the term "primitive", following JEP 401
+
+  -- ver-0.41 (EG comments)
+  allow unused non-unique C_Anchor if type ANCHOR_Class
+  "linkage parameter" is replaced by "linkage selector" (more specific)
+  change "PARAM_" to "ANCHOR_"
+  discuss subtractive nature of specialization via type restriction
+  use some of the CSS from valhalla-doc
+  add source link to valhalla-doc, subtract [PDF][parametric-vm.pdf]
   -->
 
 # Introduction: Terms, Goals, Requirements
@@ -104,9 +112,9 @@ a bonus, ad hoc specialization transforms are easy to express using condy.
 
 The shape of these parametric constants may look surprising.  Language
 level type parameters are completely invisible.  A caller may add at
-most one _linkage parameter_ (a static value) to a symbolic reference to given API
+most one _linkage selector_ (a static value) to a symbolic reference to given API
 point, and the corresponding resolved declaration may specify a
-_specialization anchor_, which receives the linkage parameter and
+_specialization anchor_, which receives the linkage selector and
 makes use of it to drive specialization logic.  For any given API
 point, any and all specialization decisions are encapsulated within
 the class file that declares the API point and its specialization
@@ -115,11 +123,11 @@ constant pool as resolved linkage state, but they may only be
 inspected by the class file declaring the API point.
 
 In short, every API point use site can specify an optional linkage
-parameter, and (in aby single class file) any group of API point
+selector, and (in aby single class file) any group of API point
 declaration sites can specify a specialization anchor to receive and
-act on linkage parameters.
+act on linkage selectors.
 
-One such parameter is enough "envelope", of
+One such selector is enough "envelope", of
 course, for a language translation strategy to package up any amount of
 "mail", such as record-like tuples of reflective type variable
 bindings.  The option to parameterize and specialize is applied broadly and evenly:
@@ -130,9 +138,9 @@ points works just the same, but with an extra "piece of mail" added to
 every linkage event, and delivered wherever parametric instances are
 to be found, or parametric methods are called.
 
-When a user of an API point supplies a linkage parameter along with
+When a user of an API point supplies a linkage selector along with
 a symbolic reference to the API point, the
-JVM's linkage resolution logic delivers the parameter value to the
+JVM's linkage resolution logic delivers the selector value to the
 specialization anchor associated with the resolved
 API point declaration, in a particular class file.  That anchor
 then makes a group of specialization decisions that include that API
@@ -142,7 +150,7 @@ file, and the user can see only specialization details that the
 declaring class chooses to reveal.
 
 All this is done with just two new constant pool types and two new
-class file attribute formats (for linkage parameters and specialization anchors),
+class file attribute formats (for linkage selectors and specialization anchors),
 and the `Parametric` and
 `TypeRestriction` attributes, which can be attached to
 classes, fields, or methods.
@@ -165,7 +173,7 @@ which cover less-important corner cases, such as support for raw
 types.  The design does not, however, allow optimization to produce
 shifts in specified behavior.  Specialization can never simply be
 disregarded by the JVM.  Thus, a "dumb" JVM implementation and a
-highly optimizing one will process exactly the same linkage parameters
+highly optimizing one will process exactly the same linkage selectors
 and specialiaziton anchors, and so both will get the same results
 (if the latter waits up for the former to finish).
 
@@ -173,6 +181,8 @@ Our hope is to end up with a design which looks, more than other
 options, almost obvious in hindsight.
 
 We will make further design observations as we go.
+
+> Paragraphs of supplementary comments will look like this one.
 
 ## Terms: Parametric vs. Invariant, Specialized vs. Customized, Layout, etc.
 
@@ -389,7 +399,7 @@ more fully define them later as needed in context.
     prepared once.  Parametric constants are (in general) resolved
     many times, because they are (in general) prepared many times.
 
-  - _Validation_: The process by which a linkage parameter proposed by
+  - _Validation_: The process by which a linkage selector proposed by
     the client of an API point is accepted by the specialization
     anchor of that same API point.  A client cannot force
     specialization into an API point without validation.  Each
@@ -397,13 +407,13 @@ more fully define them later as needed in context.
     internally, to represent the variant semantics intended by the
     programmer and translation strategy.  Validation thus defends
     encapsulation of API points, and supports separate compilation.
-    In general, validation replaces a client-supplied value with an
+    In general, validation replaces a client-supplied selector value with an
     internal token called a _specialization anchor_.  (As we shall see,
     this internal token is reified by a Java object of type
     `SpecializationAnchor`.)  However, clients are allowed and encouraged
     to propose previously validated specialization anchors to API points,
-    and the JVM efficiently accepts them without redundant
-    revalidation.
+    and the JVM efficiently accepts them in lieu of (unvalidated) selectors,
+    and without redundant revalidation.
 
   - _Specialized class_: Generally, a class or interface which has
     been specialized somehow, with some sort of bookkeeping to record
@@ -957,7 +967,7 @@ becomes a new combination of existing primitives, rather than a new
 primitive.
 
 > No other form of multiple specialization is required, as long as a
-single VM-level parameter can represent a whole "pack" of formal type
+single VM-level selector object can represent a whole "pack" of formal type
 variables.  This is because the only way that API elements can nest,
 in today's class file format, is if the outer element is a type and
 the inner one is one of its members.  This requirement supports the
@@ -999,7 +1009,7 @@ points declared in the same class file.  It has this form:
 ```{.code}
 CONSTANT_SpecializationAnchor_info {
     u1 tag;  // CONSTANT_SpecializationAnchor = 21
-    u1 anchor_kind;  // PARAM_{Class,Method{Only,AndClass}} = {1,2,3}
+    u1 anchor_kind;  // ANCHOR_{Class,Method{Only,AndClass}} = {1,2,3}
     u2 bootstrap_method_attr_index;
 }
 ```
@@ -1029,26 +1039,24 @@ The items of the `CONSTANT_SpecializationAnchor_info` structure are as follows:
 
 There are three kinds of parametricity:
 
-  - If the value of the `anchor_kind` item is 1 (`PARAM_Class`),
+  - If the value of the `anchor_kind` item is 1 (`ANCHOR_Class`),
     the specialization anchor declares a degree of freedom which applies to the
-    current class, as a whole.  Any such `PARAM_Class` anchor, if
-    it exists, must be unique in this `class` file, and must also be
-    explicitly mentioned by the `Parametric` attribute of this class.
+    current class, as a whole.
 
   - If the value of the `anchor_kind` item is 2
-    (`PARAM_MethodOnly`), the specialization anchor declares a degree of freedom
+    (`ANCHOR_MethodOnly`), the specialization anchor declares a degree of freedom
     which applies to a set of methods of the current class.  Each
-    `PARAM_MethodOnly` anchor varies independently from all other
+    `ANCHOR_MethodOnly` anchor varies independently from all other
     anchors.
 
   - If the value of the `anchor_kind` item is 3
-    (`PARAM_MethodAndClass`), the specialization anchor declares a degree of
+    (`ANCHOR_MethodAndClass`), the specialization anchor declares a degree of
     freedom which applies to a set of methods of the current class.
-    Each specialization of a `PARAM_MethodAndClass` anchor is defined as
-    dependent on another specialization of the `PARAM_Class` anchor
-    in the same `class` file.  If there are any `PARAM_MethodAndClass`
+    Each specialization of a `ANCHOR_MethodAndClass` anchor is defined as
+    dependent on another specialization of the `ANCHOR_Class` anchor
+    in the same `class` file.  If there are any `ANCHOR_MethodAndClass`
     anchors in a `class` file, there must also be a (single)
-    `PARAM_Class` anchor also.
+    `ANCHOR_Class` anchor also.
 
 A `CONSTANT_SpecializationAnchor` constant is a (new sort of) loadable
 constant (§5.1).  The resolved value of this constant is a mirror to a
@@ -1088,6 +1096,17 @@ call tree could link itself with fewer validation steps, since the
 methods working in concert would be working from a common
 `CONSTANT_SpecializationAnchor` constant.
 
+> It is permitted for a constant pool to contain
+`CONSTANT_SpecializationAnchor` items which are unused.  But typically
+a `ANCHOR_Class` anchor, if it exists, will be unique in its `class`
+file, and be referenced by the `Parametric` attribute of the class,
+and other anchors will be used to assign parametricity to the class's
+methods, either singly or in groups.  It is highly probable that two
+specialization anchors with the same kind and bootstrap method are in
+fact interchangeable: Just as with `CONSTANT_Dynamic`, there is no
+intention to provide "hooks" for structurally identical constants that
+have different meanings.
+
 ### `CONSTANT_SpecializationLinkage`
 
 The new `CONSTANT_SpecializationLinkage_info` structure may be used to add
@@ -1099,7 +1118,7 @@ along with the reference.  It has this form:
 ```{.code}
 CONSTANT_SpecializationLinkage_info {
     u1 tag;  // JVM_CONSTANT_SpecializationLinkage = 22
-    u2 parameter_index;
+    u2 selector_index;
     u2 reference_index;
 }
 ```
@@ -1111,10 +1130,10 @@ The items of the `CONSTANT_SpecializationLinkage_info` structure are as follows:
 
   - The `tag` item has the value `CONSTANT_SpecializationLinkage` (22).
 
-  - The value of the `parameter_index` item must be a valid index into
+  - The value of the `selector_index` item must be a valid index into
     the `constant_pool` table. The `constant_pool` entry at that index
     must be a loadable constant (§5.1).  (It will be proposed as a
-    linkage parameter value for the associated API point, and validated
+    linkage selector value for the associated API point, and validated
     produce a specialization anchor for that API point.)
 
   - The value of the `reference_index` item must be a valid index into
@@ -1139,13 +1158,13 @@ will be bound to a corresponding `CONSTANT_SpecializationAnchor` in the (remote)
 definition of that API point.
 
 > Several `CONSTANT_SpecializationLinkage` constants may propose distinct linkage
-parameter values to the same API point, such as for `List<InlineInt>` vs. `List<InlineDouble>`.
+selector values to the same API point, such as for `List<InlineInt>` vs. `List<InlineDouble>`.
 Bytecodes may select a specific
-linkage parameter value by referring to the appropriate `CONSTANT_SpecializationLinkage`
+linkage selector value by referring to the appropriate `CONSTANT_SpecializationLinkage`
 constant for that value.  Conversely, several `CONSTANT_SpecializationLinkage`
-constants may apply the same linkage parameter value to distinct API points,
+constants may apply the same linkage selector value to distinct API points,
 such as for `List<InlineInt>.get` and `List<InlineInt>.set`.
-Bytecodes using a set of such linkage parameter constants can expect
+Bytecodes using a set of such linkage selector constants can expect
 to use those various API points (presumably co-parametric)
 with a single consistent setting of the anchor.
 
@@ -1234,7 +1253,7 @@ symbolic references to API points declared in the same class file.
 Just as a plain symbolic reference (of any sort) mediates access to an
 API point agreed upon by two `class` files, a `CONSTANT_SpecializationLinkage`
 constant mediates access to an API point (in exactly the same way),
-with the independent addition of a linkage parameter specified by the
+with the independent addition of a linkage selector specified by the
 caller's `class` file, validated by the callee's
 `class` file, and recorded as a specialization anchor for the callee.
 
@@ -1292,9 +1311,9 @@ true:
     method table (§4.7.23) of this `class` file, and one of the static
     arguments of _E_ refers to _B_.
 
-  - _A_ is a `CONSTANT_SpecializationAnchor_info` of kind `PARAM_MethodAndClass`
+  - _A_ is a `CONSTANT_SpecializationAnchor_info` of kind `ANCHOR_MethodAndClass`
     and _B_ is the corresponding `CONSTANT_SpecializationAnchor_info` of kind
-    `PARAM_Class` (which must exist and be unique).
+    `ANCHOR_Class` (which must exist and be unique).
 
 The transitive closure of direct dependency is simply called
 _dependency_, and the condition of dependency without direct
@@ -1327,19 +1346,19 @@ between constants within the constant pool of a `class` file:
     (...Because it must be
     possible to resolve its arguments before it is bootstrapped.)
 
-  - If there is an anchor of kind `PARAM_Class`, it is unique in the
+  - If there is an anchor of kind `ANCHOR_Class`, it is unique in the
     constant pool of the current `class` file.  (...Because there is
     exactly one class per file, at least at present, and because class
     specializations don't nest inside any other specializations.)
 
   - If any constant _A_ depends on some anchor _R_ of kind
-    `PARAM_MethodOnly`, then _A_ depends on no other anchor of any
+    `ANCHOR_MethodOnly`, then _A_ depends on no other anchor of any
     kind.  (...Because method-only specializations do not nest inside
     any other specializations.)
 
   - If a constant depends on some anchor of kind
-    `PARAM_MethodAndClass`, it depends on the anchor of kind
-    `PARAM_Class`, and no other anchor.  (...Because
+    `ANCHOR_MethodAndClass`, it depends on the anchor of kind
+    `ANCHOR_Class`, and no other anchor.  (...Because
     method-and-class specializations nest only in class
     specializations.)
 
@@ -1360,22 +1379,22 @@ is therefore in one of these categories:
     all constants in any class file that lacks specialization anchors.)
 
   - It is parametric over an anchor (the unique one) of kind
-    `PARAM_Class`, but no other anchor.  Such a constant may be
+    `ANCHOR_Class`, but no other anchor.  Such a constant may be
     called "class-variant", relative to the class or interface defined by the
     `class` file.
 
   - It is parametric over a single anchor of kind
-    `PARAM_MethodOnly`.  Such a constant may be called
+    `ANCHOR_MethodOnly`.  Such a constant may be called
     "method-variant", in every method which refers to it
     via its `Parametric` attribute (§4.6).
 
-  - It is parametric over an anchor of kind `PARAM_MethodAndClass`,
-    as well as over the anchor of kind `PARAM_Class`.  Such a
+  - It is parametric over an anchor of kind `ANCHOR_MethodAndClass`,
+    as well as over the anchor of kind `ANCHOR_Class`.  Such a
     constant may be called "doubly-variant" or "bi-variant", in every
     method which refers to it via its `Parametric` attribute (§4.6).
-    For such a constant we say that its `PARAM_MethodAndClass`
+    For such a constant we say that its `ANCHOR_MethodAndClass`
     anchor is the "inner" or "more specific" anchor and the
-    `PARAM_Class` it depends on is the "outer" or "less specific"
+    `ANCHOR_Class` it depends on is the "outer" or "less specific"
     anchor".
 
 If two constants are variant in common over exactly one anchor, we say
@@ -1432,7 +1451,7 @@ constants and the new ones:
 > The meaning of a `CONSTANT_SpecializationLinkage` constant depends on context.
 When used directly by a bytecode instruction to access an API point,
 it will denote the ordered pair of *both* a symbolic reference to an
-API point *and* a linkage parameter to validate for that API point.  But
+API point *and* a linkage selector to validate for that API point.  But
 a `CONSTANT_SpecializationLinkage` constant used as a loadable constant (via `ldc`
 or as a static argument), if it wraps a `CONSTANT_Class`, resolves simply
 to a species mirror for a specialization of that class.  Other linkage
@@ -1465,13 +1484,13 @@ respect to an indicated anchor constant.
 API point.  Any API point which lacks a `Parametric` attribute will be
 invariant and not subject to specialization.  In particular, fields
 and methods do *not* implicitly partake of variance (of kind
-`PARAM_Class`) from their enclosing class or interface.  For a field
+`ANCHOR_Class`) from their enclosing class or interface.  For a field
 or method to be co-parametric with (or bi-variant over) the enclosing
 class, its `field_info` or `method_info` structure must contain a
 separate `Parametric` attribute selecting the anchor of the class
-(or a `PARAM_MethodAndClass` anchor, in the bi-variant case).  A
+(or a `ANCHOR_MethodAndClass` anchor, in the bi-variant case).  A
 method whose `Parametric` attribute selects an anchor of kind
-`PARAM_MethodOnly` is *not* co-parametric with its enclosing class.
+`ANCHOR_MethodOnly` is *not* co-parametric with its enclosing class.
 Because specialization requires extra "bookkeeping" in the JVM, we
 never make fields or methods parametric by default, but rather require
 that parametricity is opted into by each API point.
@@ -1505,17 +1524,17 @@ informally "variant") if and only if the structure which declares it
 has a `Parametric` attribute.  A parametric API point is "directly
 parametric over" the specialization anchor _R_ indicated by the index stored in
 its `Parametric` attribute.  A parametric API point is "indirectly
-parametric over" a `PARAM_Class` anchor _R_ if it is directly
-parametric over a `PARAM_MethodAndClass` anchor _Q_, and it is
+parametric over" a `ANCHOR_Class` anchor _R_ if it is directly
+parametric over a `ANCHOR_MethodAndClass` anchor _Q_, and it is
 simply "parametric over" an anchor _R_ if it is either directly or
 indirectly parametric over _R_.
 
 A class or interface may only be parametric over the (unique)
-specialization anchor of kind `PARAM_Class` in the same `class` file.
+specialization anchor of kind `ANCHOR_Class` in the same `class` file.
 
 A non-static field may only be parametric over the same anchor as
 its enclosing class or interface (which thus must be of kind
-`PARAM_Class`).
+`ANCHOR_Class`).
 
 > Since a non-static field is part of the layout of its enclosing
 class, it cannot vary independently of the class itself (barring
@@ -1552,7 +1571,7 @@ Because specialization anchors are internal to each `class` file,
 and are not named directly from outside, the presentation of an
 anchor from a use to a definition is always in the context of some
 named API point.  Thus, no additional naming mechanism is required to
-negotiate the mapping of linkage parameters to specializations.
+negotiate the mapping of linkage selectors to specializations.
 
 > This is in contrast to other systems, where an explicit parametric
 type system is built into the descriptors used by the managed runtime
@@ -1561,11 +1580,11 @@ perfect, because it is much more difficult to evolve than a system of
 dynamic checks.
 
 > For compatibility and convenience, a caller is always permitted to
-omit a linkage parameter value.  The callee is specified to use an
+omit a linkage selector value.  The callee is specified to use an
 internally generated default specialization anchor, which is set up when
 the API point's class is prepared.  Also, callers can propose
-linkage parameters for callees which (after link resolution) turn out
-to be declared as invariant.  (The treatment of such unused parameters is TBD.
+linkage selectors for callees which (after link resolution) turn out
+to be declared as invariant.  (The treatment of such unused selectors is TBD.
 Perhaps they will be quietly ignored; perhaps there will be a
 diagnostic "hook".)
 
@@ -1677,9 +1696,13 @@ The items of the `TypeRestriction_attribute` structure are as follows:
     method _M_ associated with this attribute.  This constant _K_
     *may* be co-parametric with _F_ or _M_.
 
-> A field or a method which only restricts its return type will only
-need one item in the `restrictions` array.  A method which restricts
-one or more of its parameters will need more than one item XXX
+> A method which restricts one or more of its parameters will need
+more than one item in its `restrictions` array.  A method which only
+restricts its return type will need only one item in its
+`restrictions` array.  Likewise, a field will need only one item in
+the `restrictions` array.  (This last fact is almost enough
+motivatation--but not quite--to split this attribute into two distinct
+versions.)
 
 There is a structural constraint on the length of the `restrictions`
 array.  For a field, the array must not have more than one item.  For
@@ -1764,7 +1787,7 @@ without requiring separate `Parametric` attributes.
 
 Independently of whether a class or interface itself is parametric
 (i.e., has a `Parametric` attribute), any of its super types may be
-accompanied by a proposed linkage parameter, that is, by means of a
+accompanied by a proposed linkage selector, that is, by means of a
 `CONSTANT_SpecializationLinkage` constant which wraps a `CONSTANT_Class` constant.
 
 > As always, an interface may not specify any super class other than the
@@ -1794,7 +1817,7 @@ reference to `S` may take one of three forms:
   Before the class or interface `C` is loaded, the type `S` is loaded
   in its unspecialized form, temporarily ignoring the linkage constant.
   After `C` is loaded, when it is prepared, the species `S` is then
-  resolved, using the linkage parameter resolved from `C`'s constant pool.
+  resolved, using the linkage selector resolved from `C`'s constant pool.
 
   - The super reference `S` is parametric not invariant.  In this case
   `C` must also be parametric, and `S` must be a `CONSTANT_SpecializationLinkage`
@@ -1822,21 +1845,38 @@ Thus, the co-parametric supers of a default species will be "raw all the way up"
 species, especially in their role as "raw" universally compatible
 versions of specializable types.
 
+> Note that a species cannot add or subtract interfaces from the
+parametric class that defines it.  There are use cases for addition of
+interfaces, so called _optional interfaces_.  For example, an abstract
+parametric class might wish to variously define both primitive and
+identity species by sometimes adding the marker interface
+`PrimitiveObject`.  Or, a container class like `List<T>` might wish to
+implement `Summable<T>`, but only if `T` implements `Addable<T>`.  At
+present, the only way for a species to implement an interface is for
+its class to implement it for all species.  In that case, the most
+decisive way to mark an interface as inapplicable to a species is for
+that species to manipulate type restrictions so as to "poison" all the
+methods of the interface.  This does not help with clients that first
+test for the interface (using `instanceof`) and then expect to invoke
+methods.  The root issue here is that species are subtractive in
+nature, not additive: You can only subtract from type domains of
+existing class methods; you cannot add new methods or interfaces.
+
 # Volume II: Linkage of Specializations ([JVMS-5.4])
 
 During execution, any given constant pool entry of type
 `CONSTANT_SpecializationAnchor` is prepared and (eventually) acquires a resolved
 value as a result of cooperation between two class files (containing
 two constant pools), the _caller_ and the _callee_.  The caller
-proposes a _linkage parameter value_ for an API point in the callee.
+proposes a _linkage selector value_ for an API point in the callee.
 If the API point declaration is in fact variant over the anchor
-in the callee, the callee then _validates_ the linkage parameter value,
+in the callee, the callee then _validates_ the linkage selector value,
 and selects or creates a specialization anchor object which embodies
 the specialization decisions resulting from the caller's request.
 
 This cooperation occurs in the context of the resolution of the API
 point, which always includes a symbolic reference (to a class,
-interface, method, or field).  The extra linkage parameter
+interface, method, or field).  The extra linkage selector
 is resolved in the caller's constant pool, and then validated
 relative to the API point's declared anchor, as determined by the
 `Parametric` attribute of that API point in its declaring class file.
@@ -1850,7 +1890,7 @@ During execution of code in the callee, the specialization anchor
 object reappears as a value of the `CONSTANT_SpecializationAnchor`
 constant in the callee.  The callee can make use of the specialization
 decisions embodied in the anchor by feeding the anchor as a proposed
-linkage parameter to its own `CONSTANT_SpecializationLinkage`
+linkage selector to its own `CONSTANT_SpecializationLinkage`
 constants, or by using `CONSTANT_Dynamic` constants to derive types,
 constants, and behaviors from the anchor.
 
@@ -1858,7 +1898,7 @@ constants, and behaviors from the anchor.
 which are described elsewhere.  It is always the case, however, that
 every symbolic resolution operation determines a particular API point
 declared in a particular class file, and *that* declaration controls
-the validation of any linkage parameter proposed by the caller.
+the validation of any linkage selector proposed by the caller.
 
 > Of course a class file can call one of its own API points, in which
 case the caller and callee would be a single class file.  Nevertheless
@@ -1885,10 +1925,10 @@ Validation always occurs relative to a particular anchor in a
 particular class file.  In order to make the process of validation
 efficiently checkable and idempotent, the JVM defines a special type
 `SpecializationAnchor` (in package `java.lang.invoke`) which embodies
-validation of a linkage parameter, and all specialization decisions
-implied by that parameter.  Each instance of this type is "locked" to
+validation of a linkage selector, and all specialization decisions
+implied by that selector.  Each instance of this type is "locked" to
 a specific `CONSTANT_SpecializationAnchor` constant in a specific class file.  As
-such, it is a pre-validated linkage parameter for any API point in that same class file that
+such, it is a pre-validated linkage selector for any API point in that same class file that
 is parametric over the same anchor constant.  It is
 invalid for all API points in other class files, or differently
 parametric API points in the same class file.  However, the same
@@ -1918,7 +1958,7 @@ client of an API point.
 
 > There are many potential language-specific aspects of the
 `SpecializationAnchor` object's API, such as a memoization of the
-originally proposed (yet unvalidated) linkage parameter value, or some sort of
+originally proposed (yet unvalidated) linkage selector value, or some sort of
 assembled metadata for use by reflection, or derived values such as
 species or specialized field and method types.  It is clear that we
 cannot design in such aspects to the core API of `SpecializationAnchor`.
@@ -1960,14 +2000,14 @@ point.
 > In this design, validation is idempotent, not a transform from one
 type to another, from one point in an API scheme to another.  It might
 seem cleaner to rigidly separate the "random junk" that callers
-propose for linkage parameters, from the validated `SpecializationAnchor` values,
+propose for linkage selectors, from the validated `SpecializationAnchor` values,
 with separately typed API points for each.  But such a design would
 satisfy no practical need, because in practice, every anchor
 proposal, at every API point, is tentative.  This is true because
 specialization is an internal aspect of each API point, and can
 change (after recompilation of the API point declaration) at any time.
 Callers can guess at proper specializations, but the "handshake"
-between proposed parameters and validated anchors must be performed as a part of
+between proposed selectors and validated anchors must be performed as a part of
 API point linkage.  This is seemingly unfortunate, but the situation
 can be made much more tenable by ensuring that callers are *likely* to
 guess good (valid) anchors, and that the JVM can *quickly*
@@ -1985,7 +2025,7 @@ value was validated and agreed upon, so that there is a well-defined
 current resolution state for the variant constant.
 
 Thus there are four cases for a caller's constant pool entry
-to propose a linkage parameter:
+to propose a linkage selector:
 
   - validated, invariant: A `SpecializationAnchor` constant, which once
   determined is constant for all invocations of the caller.  Example:
@@ -2001,7 +2041,7 @@ to propose a linkage parameter:
   mirrors for `List` and `Point`.  Or, as another example, a
   `SpecializationAnchor` object for a class `java.util.List`, denoting (as
   before) a species `ArrayList<Point>`, which is being proposed as the
-  linkage parameter for an API point (perhaps a constructor) of a
+  linkage selector for an API point (perhaps a constructor) of a
   subtype `java.util.ArrayList`.
 
   - validated, variant: A constant of type `SpecializationAnchor` which is also
@@ -2011,19 +2051,19 @@ to propose a linkage parameter:
   invoke some private, equivalently-parametric subroutine called (say)
   `Arrays.<E>mergeSortHelper`. Or, as another example, in the context
   of the same method, a call to a method in a helper class,
-  `SortHelpers<T>`, where the linkage parameter is obtained from a
+  `SortHelpers<T>`, where the linkage selector is obtained from a
   constant (in the caller class `Arrays`) that reifies the type
   `SortHelpers<E>`, for each ambient value of `E` in
   `Arrays.<E>sort`.
 
-  - unvalidated, variant: A linkage parameter to be passed to an anchor's
+  - unvalidated, variant: A linkage selector to be passed to an anchor's
   bootstrap method which is somehow dependent on some (previously
   determined) ambient specialization anchor.  For example, in the context
   of a generic method `Arrays.<E>sort`, a `CONSTANT_Dynamic` constant
   whose input is the class mirror corresponding to the contextual
   value of `E`, and which computes the mirror of a derived type such
-  as `E[]` or `List<E>`, to be further proposed as a type parameter
-  value for some other API as part of the execution of `sort`.
+  as `E[]` or `List<E>`, to be further proposed as a linkage selector
+  for some other API as part of the execution of `sort`.
 
 ## Preparation of Constants
 
@@ -2071,7 +2111,7 @@ following items:
   within the run-time constant pool of the particular loaded `class`
   file _F_ that defines it.
 
-  - **Parameters:** One or more arbitrary object references
+  - **Selector:** One or more arbitrary object references
   permanently associated with the anchor when this specialization
   created by the language runtime.  The JVM assigns no particular
   meaning to the runtime value.  It may be a list or tuple of type
@@ -2092,9 +2132,9 @@ following items:
   `SpecializationAnchor` object is created.
 
   - **Outer specialization:** If the anchor _R_ is not of kind
-  `PARAM_MethodAndClass`, a `null` reference.  Otherwise, a second
+  `ANCHOR_MethodAndClass`, a `null` reference.  Otherwise, a second
   `SpecializationAnchor` object which specializes _R_'s outer anchor
-  _Q_, which is of kind `PARAM_Class`.  Note that the constant
+  _Q_, which is of kind `ANCHOR_Class`.  Note that the constant
   pool states for this outer specialization may be shared by many
   specializations of _R_.
 
@@ -2138,7 +2178,7 @@ Next, if the API point _M_ is not parametric, the result is as if the
 `CONSTANT_SpecializationLinkage` constant were not present, but rather the "raw"
 symbolic reference had been used from the start.
 
-If the API point _M_ is parametric over some _R_, then the proposed linkage parameter
+If the API point _M_ is parametric over some _R_, then the proposed linkage selector
 value referred to by the `CONSTANT_SpecializationLinkage` constant is resolved.
 The resulting value is then validated against _M_'s anchor _R_,
 using a bootstrap method (declared on _R_) if necessary.
@@ -2153,7 +2193,7 @@ appropriate `Error` object is recorded for future uses of the
 > For example, if a `CONSTANT_Class` constant for some _C_ is wrapped
 in a `CONSTANT_SpecializationLinkage` constant, and the latter is resolved, then
 first _C_ is resolved, and then if _C_ is parametric (which is
-likely), the linkage parameter value proposed by the `CONSTANT_SpecializationLinkage`
+likely), the linkage selector value proposed by the `CONSTANT_SpecializationLinkage`
 constant is immediately validated against _C_'s
 anchor.  The resulting specialization anchor object is then permanently
 recorded with the `CONSTANT_SpecializationLinkage` constant.  The net result is that
@@ -2190,24 +2230,24 @@ public static API point.  Such decisions, made by
 whatever runtime system implements the bootstrap method, are outside
 of the JVM's purview.
 
-## Validation of Linkage Parameter Values
+## Validation of linkage selector Values
 
 As the latter part of resolving a `CONSTANT_SpecializationLinkage` constant, its
-proposed linkage parameter value is resolved and validated, against the remote
+proposed linkage selector value is resolved and validated, against the remote
 parametric API point resolved from the symbolic reference.
 
-If the remote API point is not parametric, the linkage parameter is
+If the remote API point is not parametric, the linkage selector is
 neither resolved nor validated (because there is no anchor constant to
 validate it); instead it is ignored.  (This is not an
 erroneous state; an API point is always free to ignore proposed
-linkage parameters.)  As a loadable constant, the resolved value of such
+linkage selectors.)  As a loadable constant, the resolved value of such
 a `CONSTANT_SpecializationLinkage` constant is a placeholder value supplied by the
 runtime (TBD, probably `null`) which indicates that the resolved API
 point was, in fact, invariant.
 
 Otherwise, the API point is parametric over an associated
 `CONSTANT_SpecializationAnchor` defined in its class file.  In that case, a
-proposed linkage parameter is defined as valid for that API point if and
+proposed linkage selector is defined as valid for that API point if and
 only if it is a reference to a `SpecializationAnchor` object that was
 created for that anchor, either by the JVM (as the unique default
 specialization for that anchor) or by successful invocation of the
@@ -2236,7 +2276,7 @@ point is parametric over some anchor _R_, then the JVM substitutes
 the (internally known) default `SpecializationAnchor` reference for that
 value, and records the latter reference as the pre-validated value.
 
-In all other cases, the proposed linkage parameter will be something
+In all other cases, the proposed linkage selector will be something
 like a quasi-symbolic package of type mirrors, which the anchor's
 bootstrap must validate and map to a species or other specialization
 information.
@@ -2289,7 +2329,7 @@ The erroneous cases are as follows:
 though it is allowed as a pre-validated sentinel selecting a default specialization.
 Also, a
 bi-variant `SpecializationAnchor` is not allowed as a return from a BSM
-which is acting for a `PARAM_Class` anchor.  The return value must
+which is acting for a `ANCHOR_Class` anchor.  The return value must
 be a `SpecializationAnchor` exactly for the requested anchor constant.
 
 If an API point is parametric but it is used via a "raw" symbolic
@@ -2324,7 +2364,7 @@ or "type polluted" clients to quietly fall back to the raw behavior of
 the desired API point.  This behavior is fully under the control of
 the bootstrap method.  The only behaviors "hardwired" into the VM are
 where a non-parametric API point silently ignores a proposed linkage
-parameter, or where a pre-validated `SpecializationAnchor` (such as the "raw"
+selector, or where a pre-validated `SpecializationAnchor` (such as the "raw"
 default or a previous BSM result) is proposed during the resolution of
 a `CONSTANT_SpecializationLinkage` constant.
 
@@ -2339,10 +2379,10 @@ reference.  Thus, references to fields and methods (but not plain
 types) can inject specializations into their class scopes (by
 wrapping the embedded `CONSTANT_Class`) or directly into the field or
 method (by wrapping the constant as a whole).  In fact, linkage
-parameters can be proposed *at both positions*.
+selectors can be proposed *at both positions*.
 
 > There is a loose relation between code and layout customization and
-constant preparation.  If the validation of a linkage parameter results in a
+constant preparation.  If the validation of a linkage selector results in a
 fresh `SpecializationAnchor` object with freshly prepared resolution
 states for parametric constants, then the VM has the _option_ to
 internally customize code and/or data layouts to those states.  VM
@@ -2388,11 +2428,11 @@ not even if the non-parametric method is declared in a parametric
 class.  In order for a `CONSTANT_SpecializationAnchor` constant to resolve in a
 method, that method must be parametric over that anchor.
 Specifically, in order for a `CONSTANT_SpecializationAnchor` constant of kind
-`PARAM_Class` to resolve in a method, that must be either
+`ANCHOR_Class` to resolve in a method, that must be either
 co-parametric with its enclosing class, or or bi-variant.  In the
 latter case, it can resolve the values of either or both of the
 relevant `CONSTANT_SpecializationAnchor` constants (one for the class, and one of
-kind `PARAM_MethodAndClass`).
+kind `ANCHOR_MethodAndClass`).
 
 The set of loadable constant pool constants (both old and new) is
 summarized in Diagram 4.4-G.  These constants are usable as bootstrap
@@ -2404,9 +2444,9 @@ specializations proposed via `CONSTANT_SpecializationLinkage`.
 ## Bootstrap upcall details
 
 Bootstrap method calls occur when specialization anchors are
-required, but non-valid linkage parameters values are proposed.  This usually
+required, but non-valid linkage selectors values are proposed.  This usually
 occurs in the context of dynamic linkage between a caller and a
-callee, where the proposed linkage parameter is not already valid for the
+callee, where the proposed linkage selector is not already valid for the
 callee.
 
 Bootstrap methods are made in the usual way, as if by
@@ -2421,15 +2461,15 @@ call.
 
 Default specializations are created for each anchor in a class's
 constant pool during preparation of that anchor.
-For a `PARAM_Class` anchor, this occurs before execution of
+For a `ANCHOR_Class` anchor, this occurs before execution of
 any class initializer.
 These default `SpecializationAnchor` instances are created
 automatically by the JVM, and their characteristics are set automatically,
 without any appeal to any bootstrap method.
 
 For any `SpecializationAnchor` object (default or not) for a
-`PARAM_Class` anchor _Q_, and for any anchor _R_ of kind
-`PARAM_MethodAndClass` in the same class-file, the JVM automatically
+`ANCHOR_Class` anchor _Q_, and for any anchor _R_ of kind
+`ANCHOR_MethodAndClass` in the same class-file, the JVM automatically
 creates (as required) a default specialization for _R_, without the
 intervention of a bootstrap method, which represents the "raw" default
 version of _R_ in the context of _Q_'s specialization (default or not)
@@ -2451,7 +2491,7 @@ occur when all of the following conditions are true:
     _C_.
   - Access checking of _M_ succeeds (relative to the caller).
   - The declaration of _M_ is parametric over some _R_.
-  - A proposed linkage parameter value _V_ is present (via a `CONSTANT_SpecializationLinkage`
+  - A proposed linkage selector value _V_ is present (via a `CONSTANT_SpecializationLinkage`
     wrapper on the symbolic reference for _M_.).
   - _V_ is not already a `SpecializationAnchor` validated for _R_.
   - Even if _V_ is already a `SpecializationAnchor` validated for some
@@ -2468,7 +2508,7 @@ for _R_ is invoked on these arguments:
      as previously generated internally by the JVM.
      (If _R_ is bi-variant, its outer link may or may not be default,
      and in any event carries the result of a previous bootstrap.)
-  3. The proposed linkage parameter value _V_, which has failed to validate to _R_.
+  3. The proposed linkage selector value _V_, which has failed to validate to _R_.
   4. ...Any static arguments associated with the bootstrap method.
 
 > Note that the specific identity of _M_ is irrelevant to the
@@ -2489,7 +2529,7 @@ all hold true:
 for this bootstrap method call.  If returned, that specialization _B0_
 selects, on behalf of the requesting client, the default unspecialized
 behavior that the JVM would assign to the API point if the client had
-not proposed any linkage parameter value _V_.
+not proposed any linkage selector value _V_.
 
 Otherwise, the validation will fail with an instance of `Error`.  A
 `BootstrapMethodError` will be created, if no instance of `Error` is
@@ -2497,7 +2537,7 @@ already being thrown.
 
 > The bootstrap when _M_ is a field is provided mainly for symmetry
 with the other cases.  For parametric field references, it is expected
-that the linkage parameter _R_ will be injected into the `CONSTANT_Class`
+that the linkage selector _R_ will be injected into the `CONSTANT_Class`
 component of the `CONSTANT_Fieldref`, and not at "top level" on the
 `CONSTANT_Fieldref` itself.  If this feature proves incrementally
 difficult to implement, it can be omitted.
@@ -2514,7 +2554,7 @@ factory API also allows the bootstrap method to link two
 specializations together sharing a common species.
 
 The bootstrap method is responsible for validating the proposed
-linkage parameter _V_, and for storing appropriate parameter
+linkage selector _V_, and for storing appropriate selector
 information in standard locations on the resulting
 `SpecializationAnchor` object.  In this way, even if the
 specialization anchor is lost, a species all by itself can
@@ -2522,7 +2562,7 @@ serve as a "key" to recover the same specialization state,
 or an equivalent one.
 
 > The JVM may supply a fast path for validating a species when
-presented as a linkage parameter, expanding it into a corresponding
+presented as a linkage selector, expanding it into a corresponding
 specialization anchor.
 
 ### Reflective API of `SpecializationAnchor`
@@ -2535,15 +2575,15 @@ are defined and exposed by the JVM through _B_'s API:
 
   - The class _C_ which declared the anchor for this anchor.
   - An opaque numeric value which uniquely identifies _R_ (within _C_).
-  - Whether _R_ is of kind `PARAM_Class`, `PARAM_MethodAndClass`, or `PARAM_MethodOnly`.
+  - Whether _R_ is of kind `ANCHOR_Class`, `ANCHOR_MethodAndClass`, or `ANCHOR_MethodOnly`.
   - A _parametric super list_ describing all parametric supers of _C_.
-    (This list will be empty unless _R_ is of kind `PARAM_Class`.)
+    (This list will be empty unless _R_ is of kind `ANCHOR_Class`.)
   - A _parametric field list_ describing all fields _F_
     which are co-parametric with _R_.
-    (This list will be empty unless _R_ is of kind `PARAM_Class`.)
+    (This list will be empty unless _R_ is of kind `ANCHOR_Class`.)
   - A _parametric method list_ describing all methods _M_
     which are co-parametric with _R_.
-  - If _R_ is of kind `PARAM_MethodAndClass` parametric over a _Q_ of kind `PARAM_Class`,
+  - If _R_ is of kind `ANCHOR_MethodAndClass` parametric over a _Q_ of kind `ANCHOR_Class`,
     a `SpecializationAnchor` object for _Q_ that supplies the class context for _B_.
   - The corresponding "raw" default specialization _B0_ for _B_.
 
@@ -2579,9 +2619,9 @@ include (privileged) queries about which constant pool structure, in
 which `class` file, it corresponds to.
 
 > As described below, if _M_ is bi-variant, _B0_ may be a regular
-default specialization for _R_ (which is of kind `PARAM_MethodAndClass`),
+default specialization for _R_ (which is of kind `ANCHOR_MethodAndClass`),
 or an "inner default" which is previously specialized to some
-non-default outer specialization (of kind `PARAM_Class`).
+non-default outer specialization (of kind `ANCHOR_Class`).
 Thus, _B0_ can carry "outer" information
 from an enclosing parametric class, allowing the bootstrap
 method to consult the details of the enclosing specialization in case
@@ -2631,9 +2671,13 @@ The factory method takes the following arguments:
 The factory method returns a builder object which holds
 a "larval" `SpecializationAnchor` object of the correct shape.
 
-While the specialization object is larval, the builder object can be
-requested to initialize the specialization object's record of
-parameter bindings and species.  (Other actions are TBD.)
+While the specialization anchor object is larval, the builder object
+can be requested to initialize the anchor's record of its public and
+private selectors and its species.  (Other actions are TBD.)  This
+allows the bootstrap method detailed control over the decoding and
+normalization of selectors, and the division of specialization between
+a public species type and other private reflective or configuration
+information.
 
 This information is stored permanently in a newly created
 `SpecializationAnchor` object and returned to the bootstrap method.
@@ -2642,7 +2686,7 @@ When the builder object is told to finish building, it returns the
 same `SpecializationAnchor` object, now permanently in a state usable
 by the JVM.
 
-If the anchor is of kind `PARAM_Class`, the JVM also creates a
+If the anchor is of kind `ANCHOR_Class`, the JVM also creates a
 species object (of type `Species` or perhaps `Class`, TBD) which
 embodies and reflects the decisions about supers and field types.  The
 `species` method of `SpecializationAnchor` provides access to this
@@ -2853,7 +2897,7 @@ is a list; further details are presented elsewhere in context:
 
   - _Constant derivation:_ A parametric `CONSTANT_Dynamic` constant
     can be used to compute and cache useful values which are dependent
-    on a validated linkage parameter.  The bootstrap method for such a constant
+    on a validated linkage selector.  The bootstrap method for such a constant
     may refer directly to a `SpecializationAnchor` object, or (less
     directly) to a type species, or a specialized field or method
     type, or a derived type or species (such as `List<T>` or `T[]`
@@ -2863,7 +2907,7 @@ is a list; further details are presented elsewhere in context:
 
   - _Virtual dispatch:_ When a virtual call selects a method other
     than its statically resolved method (i.e., an override), *and*
-    that overriding method is parametric, linkage parameter revalidation must
+    that overriding method is parametric, linkage selector revalidation must
     be performed.  In this case, the JVM gives the language runtime
     wide latitude for invoking the overridden method.  It performs an
     upcall to the `SpecializationAnchor` object which is statically
@@ -2927,13 +2971,13 @@ experimentation will guide us.
 
 A bi-variant method _M_ in _C_ is one where _C_ is parametric over some
 _R_, and _M_ is *also* parametric over some other _Q_ of kind
-`PARAM_MethodAndClass`.  A call site for such a method can refer to
+`ANCHOR_MethodAndClass`.  A call site for such a method can refer to
 a constant which is comprised of all of these elements:
 
   - The "raw" reference to _C_, a `CONSTANT_Class` constant.
   - Optionally, a parametric reference to _C_, a `CONSTANT_SpecializationLinkage`
   - wrapping the "raw" reference to _C_, and also proposing some
-  - linkage parameter value _V_.  Call this the "scope wrapper" if it's present.
+  - linkage selector value _V_.  Call this the "scope wrapper" if it's present.
   - The "raw" name and type of _M_, encoded in a
     `CONSTANT_NameAndType` constant.
   - A `CONSTANT_Methodref` (or `CONSTANT_InterfaceMethodref`) which
@@ -2941,11 +2985,11 @@ a constant which is comprised of all of these elements:
     and the name and type of "M".
   - Optionally, a "top level" parametric reference to _M_, a
     `CONSTANT_SpecializationLinkage` wrapping the previous reference to _M_ (whether
-    "raw" or not), and also proposing some linkage parameter value _W_.
+    "raw" or not), and also proposing some linkage selector value _W_.
     Call this the "member wrapper" if it is present.
 
 It is thus possible that a parametric reference can propose *two*
-linkage parameters, one to be validated on the anchor _R_ on the
+linkage selectors, one to be validated on the anchor _R_ on the
 containing type _C_ and the other to be validated on the "inner"
 anchor _Q_ for _M_.
 
@@ -2963,7 +3007,7 @@ default specialization (for _R_) is obtained as _V1_ as part of the
 resolution of the reference to _C_, again without reference to _M_.
 
 If the reference to _M_ has no member wrapper, then the previously
-validated value _V1_ is proposed as the linkage parameter for _M_.
+validated value _V1_ is proposed as the linkage selector for _M_.
 If _M_ were simply parametric (over _R_ again), this would be
 exactly correct.  But since _M_ (in this scenario) is bi-variant,
 the proposed value _V1_ fails to validate for _Q_.
@@ -2977,15 +3021,15 @@ regular default for _Q_, in the case where _V1_ is the default for
 _R_.  But even if _V1_ is not the default specialization, the JVM must
 prepare and record an inner default for _Q_ which is specialized
 within _V1_.  This preparation must occur at most once, lest there
-appear to be multiple "raw" `PARAM_MethodAndClass` method
+appear to be multiple "raw" `ANCHOR_MethodAndClass` method
 specializations within some type specialization.
 
 > An implementation can eagerly prepare all possible inner defaults
-for an anchor of kind `PARAM_Class` when the outer
+for an anchor of kind `ANCHOR_Class` when the outer
 `SpecializationAnchor` is prepared.  Alternatively, it can prepare them
 lazily as needed.  In any case, the metadata for a specialization
-of kind `PARAM_Class` should reserve space to link to each default
-("raw") specialization of kind `PARAM_MethodAndClass` that might be built
+of kind `ANCHOR_Class` should reserve space to link to each default
+("raw") specialization of kind `ANCHOR_MethodAndClass` that might be built
 within it.
 
 Because the JVM can automatically derive an inner default for _V1_,
@@ -2993,7 +3037,7 @@ then there is no need for a second bootstrap method call.  The inner
 default for _Q_ (within any _V1_) is by definition valid for _Q_.
 
 Finally, the reference to _M_ can have a member wrapper which proposes
-a second linkage parameter _W_, to be applied in the presence of _V1_.
+a second linkage selector _W_, to be applied in the presence of _V1_.
 In this case, it may be that _W_ is already a valid `SpecializationAnchor`
 for _Q_, in which case _V1_ can be ignored and the resolution is
 complete.
@@ -3070,7 +3114,7 @@ either parametric or invariant, as determined by its specific dependencies.
 
 In the context of bytecode execution of a method which is parametric
 over some anchor _R_, this anchor is _bound_ to `SpecializationAnchor`
-object indirectly requested by a linkage parameter supplied
+object indirectly requested by a linkage selector supplied
 by the caller.  This contextual specialization is permanent for the duration
 of the stack frame.  If the method is parametric over two anchors
 (bi-variant), both anchors are contextually bound; in fact the
@@ -3079,7 +3123,7 @@ anchor.
 
 > Wherever some _R_ is bound, if _R_ depends on some other anchor
 _Q_, _Q_ is bound also.  That can only happen if _R_ and _Q_ are of
-kinds `PARAM_MethodAndClass` and `PARAM_Class` respectively.  In the
+kinds `ANCHOR_MethodAndClass` and `ANCHOR_Class` respectively.  In the
 future, if additional nesting modes are made available in class files,
 additional dependencies between anchors may become possible, and
 more complex simultaneous specializations may appear, reflecting multiple
@@ -3123,7 +3167,7 @@ depends only on invariant component constants.  A constant with new
 tag `CONSTANT_SpecializationAnchor` is always parametric; indeed such constants
 are the source of parametricity in all other constants.
 Any bytecode that uses a `CONSTANT_SpecializationLinkage` constant validates a
-proposed linkage parameter for the indicated API point,
+proposed linkage selector for the indicated API point,
 and uses the resulting specialization
 anchor as part of its execution, as described below.  This is true
 whether that `CONSTANT_SpecializationLinkage` constant is itself parametric (e.g.,
@@ -3180,9 +3224,9 @@ descriptors and signatures.
 
 If the operand of a nominal invocation bytecode is a
 `CONSTANT_SpecializationLinkage` constant, the symbolic reference and the
-associated linkage parameter are resolved, in that order.
+associated linkage selector are resolved, in that order.
 During resolution, if the method is parametric, the
-linkage parameter is validated and the resulting specialization
+linkage selector is validated and the resulting specialization
 anchor is permanently recorded with
 the resolved symbolic reference.
 This anchor is then passed, along
@@ -3272,7 +3316,7 @@ invariant constant, _C_ is resolved in terms of its own structure and
 the constants it depends on.  Since _C_ is _R_-variant, its resolution
 can query the value of _R_ or other _R_-variant constants, and so _C_'s
 resolution makes use of _R_'s associated resolution states and other
-data (such as a validated linkage parameter value).  When _C_ is
+data (such as a validated linkage selector value).  When _C_ is
 resolved, the result of the resolution (whether normal or erroneous)
 is recorded in the same associated resolution states within _R_.  Further
 resolutions of _C_ relative to _R_ produce the same result.
@@ -3296,7 +3340,7 @@ from the same caller.  This can enable a level of customization for a
 whole static call tree, independent of JIT inlining decisions.
 
 > Note that a method can be parametric over any kind of anchor,
-even the `PARAM_Class` kind.  Although it seems odd to give a class
+even the `ANCHOR_Class` kind.  Although it seems odd to give a class
 anchor to a method, it is the most natural and efficient thing to
 do, in the common case where a class has just one specialization anchor
 (representing one group of type variables) shared
@@ -3314,19 +3358,19 @@ invariant in its `class` file, even if the
 source-level type parameters were in scope.  If
 the method is overridden by another method which uses another anchor
 (as declared in a subtype),
-the linkage parameter may be loaded from the instance, if only
+the linkage selector may be loaded from the instance, if only
 reflective use is needed.
 
-> The anchor kinds besides `PARAM_Class` are expected to be useful
+> The anchor kinds besides `ANCHOR_Class` are expected to be useful
 for driving type information in complex parametric algorithms such as
 `Arrays.sort`, where there is no object instance to act as a direct
 "witness" to types or other contextual information.  Even if there
-were only `PARAM_Class` anchors, the JVM would be required to treat
-them (for some API points) identically to non-`PARAM_Class`
+were only `ANCHOR_Class` anchors, the JVM would be required to treat
+them (for some API points) identically to non-`ANCHOR_Class`
 anchors, starting with parametric constructors and factory methods.
 Given the need to plumb such pathways, supporting algorithms like
 `Arrays.sort` is simply a matter of decoupling the JVM's legitimate
-need to associate specialization with instances (`PARAM_Class`) from its
+need to associate specialization with instances (`ANCHOR_Class`) from its
 equally legitimate need to associate specialization with methods,
 including situations where there is no class specialization in sight.
 
@@ -3366,7 +3410,7 @@ instance creation instruction, it first computes a class specialization
 and then applies it to the creation of the instance of the
 resolved class.
 
-The kind of the specialization anchor must be `PARAM_Class`, and it determines the
+The kind of the specialization anchor must be `ANCHOR_Class`, and it determines the
 size and layout of the instance created, if the instances class (or
 any super class) contains any parametric fields.
 
@@ -3378,7 +3422,7 @@ used.
 > Due to layout customization, a highly optimized JVM might assign
 different sizes to different species of the same class.  The sizing
 information in such a JVM is presumably stored on the validated
-`SpecializationAnchor` object of the `PARAM_Class`-kinded anchor.
+`SpecializationAnchor` object of the `ANCHOR_Class`-kinded anchor.
 
 > If a supertype _S_ (class or interface) of a class _C_ is
 parametric, then the reference to _S_ in the class file for _C_ could
@@ -3390,11 +3434,11 @@ specialized, and may in fact participate in layout customization.
 This can happen even if _C_ is *not* parametric.
 
 > The JVM ensures, as a global invariant, that every validated
-`PARAM_Class` anchor, for a concrete class, contains all required
+`ANCHOR_Class` anchor, for a concrete class, contains all required
 information about the size and layout of parametric fields declared in
 that class and all its super classes.  This information is recorded
 by the JVM in association with every `SpecializationAnchor` object for
-an anchor of kind `PARAM_Class`, and specifically for each
+an anchor of kind `ANCHOR_Class`, and specifically for each
 parametric non-static field in the class and in each of its
 parametric supers.  See discussion about "f-tables" below.
 
@@ -3608,7 +3652,7 @@ the constant is resolved *even if the stacked operand is null*.
 > This allows the enhanced `checkcast` logic for primitive objects to
 reject null references.  Recall that even if a primitive class is
 invariant, it is legitimate to refer to it via a `CONSTANT_SpecializationLinkage`
-constant; the proposed linkage parameter is simply ignored.
+constant; the proposed linkage selector is simply ignored.
 
 > Somewhat uncomfortably, the constant pool does not distinguish
 between a parametric type `Foo<?>` and the "raw" instance of that type
@@ -3855,7 +3899,7 @@ automatically by the JVM in most cases, perhaps all.
 
 If it is necessary for the runtime to give advice and consent on
 parametric field layouts, the natural place to do this is inside the
-bootstrap method upcall for a `PARAM_Class` anchor, *before* the
+bootstrap method upcall for a `ANCHOR_Class` anchor, *before* the
 call returns a fresh `SpecializationAnchor` object.  Any special rules not
 encoded in `anchor_index` items can be injected into the creation of
 that object.  In any case, this can be done reflectively, and so does
@@ -3935,7 +3979,7 @@ in the constant pool of the caller always includes a metadata
 reference to the resolved class, interface, field, or method.
 
 In addition, the resolved API point is parametric, and if the API
-point reference specifies a linkage parameter that requests something
+point reference specifies a linkage selector that requests something
 other than a "raw" default specialization, then additional state
 information must be recorded in the caller to allow correct use of
 that API point.
@@ -4381,12 +4425,12 @@ interface Species
 
   /** An object which the language
    *  runtime deems to be the validated representation
-   *  of a linkage parameter that could produce this species.
+   *  of a linkage selector that could produce this species.
    *  Typically a list or tuple of reflected type arguments.
    *  Always returns {@code null} for default specializations.
    *  Specialized fields should depend only on this value.
    */
-  Object parameters();
+  Object selector();
 
   /** Whether this object is a default "raw" specialization,
    *  automatically created by the JVM.
@@ -4421,17 +4465,17 @@ interface SpecializationAnchor
    *  Always returns {@code null} for default specializations.
    *  Specialized fields should depend only on this value.
    */
-  Object parameters();
+  Object selector();
 
   /** An object which the language
    *  runtime deems to be internal data to track, and
-   *  not a component of the species or type parameters.
+   *  not a component of the species or its selector.
    *  It might be reflective annotations or private behaviors.
    *  Specialized fields should not depend on this value,
    *  because their type restrictions are resolved when
    *  a species is created.
    */
-  Object privateParameter();
+  Object privateSelector();
 
   /** The corresponding default specialization anchor
    *  for this anchor, which is a very special "raw"
@@ -4458,18 +4502,18 @@ interface SpecializationAnchor
 
   /** The enclosing specialization anchor, if any,
    *  else {@code null}.  Only anchors of
-   *  kind {@code PARAM_MethodAndClass} can have
+   *  kind {@code ANCHOR_MethodAndClass} can have
    *  enclosing specialization anchors.
    *  An enclosing specialization is always of kind
-   *  {@code PARAM_Class} and is sub-parametric
-   *  to the {@code PARAM_MethodAndClass} anchor.
+   *  {@code ANCHOR_Class} and is sub-parametric
+   *  to the {@code ANCHOR_MethodAndClass} anchor.
    */
   SpecializationAnchor enclosingSpecialization();
 
   /** The class specialization which this anchor exports
    *  else {@code null} if it specializes methods only.
-   *  Only anchors of kinds {@code PARAM_Class}
-   *  and {@code PARAM_MethodAndClass} can return
+   *  Only anchors of kinds {@code ANCHOR_Class}
+   *  and {@code ANCHOR_MethodAndClass} can return
    *  non-null.
    */
   Species species();
@@ -4494,23 +4538,23 @@ interface SpecializationAnchorBuilder
    */
   SpecializationAnchor larva();
 
-  /** Initialize the validated parameter bundle of the
+  /** Initialize the validated selector of the
    *  anchor.  This must be done exactly once,
    *  and before the larva is promoted to adult.
    *  The value must not be null.
    *  The value is immediately observable in the
    *  larval anchor object.
    */
-  void setupParameters(Object obj);
+  void setupSelector(Object obj);
 
-  /** Initialize the private parameter of the
+  /** Initialize the private selector of the
    *  anchor.  This may be done at most once,
    *  and before the larva is promoted to adult.
    *  The value must not be null.
    *  The value is immediately observable in the
    *  larval anchor object.
    */
-  void setupPrivateParameter(Object obj);
+  void setupPrivateSelector(Object obj);
 
   /** Associate this new specialization with a pre-existing
    *  species from a previous specialization.
@@ -4518,7 +4562,7 @@ interface SpecializationAnchorBuilder
    *  this specialization anchor (both class and anchor ID).
    *  This creates a one-to-many relation between a single
    *  species and multiple specializations.
-   *  The anchor must be of kind {@code PARAM_Class},
+   *  The anchor must be of kind {@code ANCHOR_Class},
    *  and must not already have a species set.
    *  The set species is immediately observable in the
    *  larval anchor object.
@@ -4535,8 +4579,8 @@ interface SpecializationAnchorBuilder
   /** Build the adult form of the anchor.
    *  At this point any required species
    *  is built unless it has already been set.
-   *  A validated parameter bundle must already be set.
-   *  A private parameter may or may not be set,
+   *  A validated selector must already be set.
+   *  A private selector may or may not be set,
    *  and if not set will be reported as null.
    */
   SpecializationAnchor build();
@@ -4654,7 +4698,7 @@ would follow rules yet to be finalized, but perhaps the class as a
 whole is merely an interface, endowed with static factory methods.)
 Second, the class is made parametric, with a bootstrap method that
 selects a "type kind" (primitive, identity, or abstract) based on the
-proposed linkage parameter value.  Third, the JVM supplies a species
+proposed linkage selector value.  Third, the JVM supplies a species
 construction factory that allows the "type kind" to be determined in a
 way that is decoupled from the "type kind" of the variant class.
 
@@ -4747,7 +4791,7 @@ callee, even by speculative or heroic optimizations.
 
 The new parametric constants proposed here overcome that root
 difficulty exactly when inlining fails: A static decision about a
-linkage parameter is bound into a caller, and becomes available in the callee,
+linkage selector is bound into a caller, and becomes available in the callee,
 *even when the callee fails to be inlined*.  The specialization
 decision is recorded in the caller, and is perhaps shared among
 multiple callers, as with class layouts.  The JVM is then given the
@@ -4897,9 +4941,10 @@ to engineer in the JVM.
 In some very narrow cases, enhanced type descriptors might possibly
 assist in organizing method overloads, such as `m(List<InlineDouble>)`
 versus `m(List<InlineInt>)`.  The JVM could possibly assist with this by
-allowing the parameter tokens (`<InlineDouble>` and `<InlineInt>`) be stored in a
+adding extra linkage selector tokens (`InlineDouble` and `InlineInt`) be stored in a
 side-channel associated with the symbolic reference, perhaps a name
-mangling or some other place.  For this to work, the JVM would not be
+mangling (`Ljava/util/List[LInlineDouble;];`) or some other place.
+For this to work, the JVM would not necessarily be
 required to interpret those extra descriptor tokens.  Alternatively,
 those extra tokens could be used to derive implicit type restrictions
 to apply to the affected methods.  All of this is doable, but none of
@@ -4997,6 +5042,7 @@ future, such as species statics.)
 [parametric-vm-diag-svg/jvms-4.7-D(b).svg]: parametric-vm-diag-svg/jvms-4.7-D(b).svg {width=100%}
 [parametric-vm-diag-svg/Legend.svg]: parametric-vm-diag-svg/Legend.svg {width=100%}
 [class-terminology-jls.html]: https://download.java.net/java/early_access/jdk16/docs/specs/class-terminology-jls.html
+[parametric-vm.md]: https://github.com/openjdk/valhalla-docs/blob/main/site/design-notes/parametric-vm/parametric-vm.md
 [parametric-vm.pdf]: http://cr.openjdk.java.net/~jrose/values/parametric-vm.pdf
 [parametric-vm.html]: http://cr.openjdk.java.net/~jrose/values/parametric-vm.html
 [ParametricVM.pdf]: http://cr.openjdk.java.net/~jrose/pres/202103-ParametricVM.pdf
