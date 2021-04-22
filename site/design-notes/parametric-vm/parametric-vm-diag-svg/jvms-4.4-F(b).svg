@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="163 93 411 344" width="411" height="344">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#333">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="DejaVu Sans Mono" font-size="11" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-weight="300">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="DejaVu Sans Mono" font-size="9" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-weight="300">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.18.4\n2021-03-23 16:33:01 +0000</metadata>
+  <g id="jvms-4_4-F(b)" stroke-dasharray="none" stroke="none" fill-opacity="1" stroke-opacity="1" fill="none">
+    <title>jvms-4.4-F(b)</title>
+    <g id="jvms-4_4-F(b)_Layer_1">
+      <title>Layer 1</title>
+      <g id="Line_30">
+        <line x1="225" y1="328.5929" x2="225" y2="399.07986" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_65">
+        <text transform="translate(163.5548 93.375)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-weight="300" fill="#333" x="0" y="10">Diagram 4.4-F(b). “API Point References”, all configurations</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-weight="300" fill="#333" x="0" y="24">(These are also “API Point Names”, except Linkage constants.)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_120">
+        <rect x="211.45386" y="349.85895" width="27.092285" height="12" fill="white" fill-opacity=".5"/>
+        <text transform="translate(211.45386 349.85895)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">class</tspan>
+        </text>
+      </g>
+      <g id="Line_189">
+        <line x1="328.875" y1="174.375" x2="328.875" y2="191.475" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_188">
+        <rect x="304.49194" y="177.70598" width="48.766113" height="10" fill="white" fill-opacity=".5"/>
+        <text transform="translate(304.49194 177.70598)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">reference</tspan>
+        </text>
+      </g>
+      <g id="Group_239">
+        <g id="Group_196">
+          <g id="Graphic_184">
+            <rect x="189" y="203.21837" width="72" height="27.031633" fill="#ececff"/>
+            <rect x="189" y="203.21837" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(211.45386 211.73418)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Class</tspan>
+            </text>
+          </g>
+          <g id="Graphic_194">
+            <text transform="translate(195.62036 188.40803)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">plain class</tspan>
+            </text>
+          </g>
+        </g>
+        <g id="Group_200">
+          <g id="Graphic_69">
+            <rect x="189" y="292.61422" width="72" height="35.97869" fill="#ececff"/>
+            <rect x="189" y="292.61422" width="72" height="35.97869" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(197.90771 300.10356)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="2.7092285" y="8">Fieldref,</tspan>
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">XMethodref</tspan>
+            </text>
+          </g>
+          <g id="Graphic_82">
+            <rect x="189" y="408.97986" width="72" height="27.031633" fill="#ececff"/>
+            <rect x="189" y="408.97986" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(211.45386 417.49567)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Class</tspan>
+            </text>
+          </g>
+          <g id="Graphic_199">
+            <text transform="translate(192.91113 278.51152)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">plain member</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Line_206">
+        <line x1="328.875" y1="328.5929" x2="328.875" y2="345.10794" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_205">
+        <rect x="315.32886" y="331.5525" width="27.092285" height="12" fill="white" fill-opacity=".5"/>
+        <text transform="translate(315.32886 331.5525)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">class</tspan>
+        </text>
+      </g>
+      <g id="Group_238">
+        <g id="Group_198">
+          <g id="Graphic_191">
+            <rect x="292.875" y="147.375" width="72" height="27" fill="#ececff"/>
+            <rect x="292.875" y="147.375" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(307.20117 155.875)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Linkage*</tspan>
+            </text>
+          </g>
+          <g id="Graphic_190">
+            <rect x="292.875" y="201.375" width="72" height="27.031633" fill="#ececff"/>
+            <rect x="292.875" y="201.375" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(315.32886 209.89082)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Class</tspan>
+            </text>
+          </g>
+          <g id="Graphic_197">
+            <text transform="translate(309.9104 133.49175)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">species</tspan>
+            </text>
+          </g>
+        </g>
+        <g id="Group_214">
+          <g id="Graphic_204">
+            <rect x="292.875" y="292.61422" width="72" height="35.97869" fill="#ececff"/>
+            <rect x="292.875" y="292.61422" width="72" height="35.97869" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(301.7827 300.10356)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="2.7092285" y="8">Fieldref,</tspan>
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">XMethodref</tspan>
+            </text>
+          </g>
+          <g id="Graphic_210">
+            <rect x="292.875" y="355.00794" width="72" height="27" fill="#ececff"/>
+            <rect x="292.875" y="355.00794" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(307.20117 363.50794)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Linkage*</tspan>
+            </text>
+          </g>
+          <g id="Graphic_209">
+            <rect x="292.875" y="409.00794" width="72" height="27.031633" fill="#ececff"/>
+            <rect x="292.875" y="409.00794" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(315.32886 417.52376)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Class</tspan>
+            </text>
+          </g>
+          <g id="Graphic_208">
+            <text transform="translate(290.9458 277.71628)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">species member</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Line_211">
+        <line x1="328.875" y1="382.00794" x2="328.875" y2="399.10794" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_212">
+        <rect x="304.49194" y="385.3389" width="48.766113" height="10" fill="white" fill-opacity=".5"/>
+        <text transform="translate(304.49194 385.3389)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">reference</tspan>
+        </text>
+      </g>
+      <g id="Group_247">
+        <g id="Line_220">
+          <line x1="432.75" y1="328.19124" x2="432.75" y2="399.07986" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+        </g>
+        <g id="Graphic_221">
+          <rect x="419.20386" y="349.59353" width="27.092285" height="12" fill="white" fill-opacity=".5"/>
+          <text transform="translate(419.20386 349.59353)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">class</tspan>
+          </text>
+        </g>
+        <g id="Graphic_226">
+          <rect x="396.75" y="292.21256" width="72" height="35.97869" fill="#ececff"/>
+          <rect x="396.75" y="292.21256" width="72" height="35.97869" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(405.6577 305.2019)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">XMethodref</tspan>
+          </text>
+        </g>
+        <g id="Graphic_224">
+          <rect x="396.75" y="408.97986" width="72" height="27.031633" fill="#ececff"/>
+          <rect x="396.75" y="408.97986" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(419.20386 417.49567)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Class</tspan>
+          </text>
+        </g>
+        <g id="Group_240">
+          <g id="Graphic_225">
+            <rect x="396.75" y="222.70787" width="72" height="27" fill="#ececff"/>
+            <rect x="396.75" y="222.70787" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(411.07617 231.20787)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Linkage*</tspan>
+            </text>
+          </g>
+          <g id="Graphic_223">
+            <text transform="translate(402.9485 182.60376)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">specialized</tspan>
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="13.546143" y="19">method</tspan>
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="2.7092285" y="30">(in class)</tspan>
+            </text>
+          </g>
+        </g>
+        <g id="Line_227">
+          <line x1="432.75" y1="249.70787" x2="432.75" y2="282.31256" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+        </g>
+        <g id="Graphic_228">
+          <rect x="408.36694" y="257.8229" width="48.766113" height="10" fill="white" fill-opacity=".5"/>
+          <text transform="translate(408.36694 257.8229)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">reference</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Group_248">
+        <g id="Graphic_245">
+          <rect x="512.24194" y="258.32963" width="48.766113" height="10" fill="white" fill-opacity=".5"/>
+          <text transform="translate(512.24194 258.32963)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">reference</tspan>
+          </text>
+        </g>
+        <g id="Line_246">
+          <line x1="536.625" y1="249.70787" x2="536.625" y2="283.95486" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+        </g>
+        <g id="Line_229">
+          <line x1="536.625" y1="329.83355" x2="536.625" y2="345.07986" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+        </g>
+        <g id="Graphic_230">
+          <rect x="523.07886" y="332.3628" width="27.092285" height="12" fill="white" fill-opacity=".5"/>
+          <text transform="translate(523.07886 332.3628)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">class</tspan>
+          </text>
+        </g>
+        <g id="Group_231">
+          <g id="Graphic_235">
+            <rect x="500.625" y="293.85486" width="72" height="35.97869" fill="#ececff"/>
+            <rect x="500.625" y="293.85486" width="72" height="35.97869" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(509.5327 306.8442)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">XMethodref</tspan>
+            </text>
+          </g>
+          <g id="Graphic_234">
+            <rect x="500.625" y="354.97986" width="72" height="27" fill="#ececff"/>
+            <rect x="500.625" y="354.97986" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(514.9512 363.47986)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Linkage*</tspan>
+            </text>
+          </g>
+          <g id="Graphic_233">
+            <rect x="500.625" y="408.97986" width="72" height="27.031633" fill="#ececff"/>
+            <rect x="500.625" y="408.97986" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(523.07886 417.49567)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Class</tspan>
+            </text>
+          </g>
+        </g>
+        <g id="Line_236">
+          <line x1="536.625" y1="381.97986" x2="536.625" y2="399.07986" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+        </g>
+        <g id="Graphic_237">
+          <rect x="512.24194" y="385.31083" width="48.766113" height="10" fill="white" fill-opacity=".5"/>
+          <text transform="translate(512.24194 385.31083)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">reference</tspan>
+          </text>
+        </g>
+        <g id="Group_241">
+          <g id="Graphic_243">
+            <rect x="500.625" y="222.70787" width="72" height="27" fill="#ececff"/>
+            <rect x="500.625" y="222.70787" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(514.9512 231.20787)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Linkage*</tspan>
+            </text>
+          </g>
+          <g id="Graphic_242">
+            <text transform="translate(504.11426 182.60376)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="2.7092285" y="8">specialized</tspan>
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="16.255371" y="19">method</tspan>
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="30">(in species)</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

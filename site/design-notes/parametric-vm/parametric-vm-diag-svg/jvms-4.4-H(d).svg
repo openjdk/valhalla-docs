@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="163 84 361 370" width="361" height="370">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 8 8" markerWidth="8" markerHeight="8" color="#333">
+      <g>
+        <path d="M 6 0 L 0 -2.25 L 0 2.25 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="DejaVu Sans Mono" font-size="11" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-weight="300">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="DejaVu Sans Mono" font-size="9" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-weight="300">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -3 6 6" markerWidth="6" markerHeight="6" color="#333">
+      <g>
+        <path d="M 4 0 L 0 -1.5 L 0 1.5 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Cambria" font-size="9" panose-1="2 4 5 3 5 4 6 3 2 4" units-per-em="1000" underline-position="-61.035156" underline-thickness="56.640625" slope="0" x-height="466.7969" cap-height="666.5039" ascent="950.1953" descent="-222.16797" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Cambria"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.18.4\n2021-03-23 16:33:01 +0000</metadata>
+  <g id="jvms-4_4-H(d)" stroke-dasharray="none" stroke="none" fill-opacity="1" stroke-opacity="1" fill="none">
+    <title>jvms-4.4-H(d)</title>
+    <g id="jvms-4_4-H(d)_Layer_1">
+      <title>Layer 1</title>
+      <g id="Line_258">
+        <path d="M 255.25606 405 L 282.9251 405 L 282.9251 249.97797 L 263.275 249.97797" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_248">
+        <line x1="343.125" y1="169.2233" x2="263.27497" y2="169.00006" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_65">
+        <text transform="translate(163.5548 84.375)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-weight="300" fill="#333" x="0" y="10">Diagram 4.4-H(d). Example parametric subclass</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-weight="300" fill="#333" x="0" y="24">  class MyVector&lt;T&gt; extends ju.Vector&lt;T&gt; { …get… }</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-weight="300" fill="#333" x="0" y="38">  class Vector&lt;T&gt; { … protected T[] elementData; … }</tspan>
+        </text>
+      </g>
+      <g id="Group_184">
+        <g id="Graphic_82">
+          <rect x="183.375" y="290.64524" width="72" height="27.031633" fill="#ececff"/>
+          <rect x="183.375" y="290.64524" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(192.28271 293.66105)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="16.255371" y="8">Utf8</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">j/u/Vector</tspan>
+          </text>
+        </g>
+        <g id="Graphic_85">
+          <rect x="183.375" y="236.64524" width="72" height="27" fill="#ececff"/>
+          <rect x="183.375" y="236.64524" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(189.57349 239.64524)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="10.836914" y="8">Linkage</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">Vector[R.T]</tspan>
+          </text>
+        </g>
+        <g id="Graphic_78">
+          <rect x="183.375" y="263.64524" width="72" height="27" fill="#ececff"/>
+          <rect x="183.375" y="263.64524" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(203.11963 266.64524)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="2.7092285" y="8">Class</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">Vector</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_188">
+        <path d="M 348.125 151.2233 L 518.125 151.2233 C 520.8864 151.2233 523.125 153.46187 523.125 156.2233 L 523.125 218.2233 C 523.125 220.98472 520.8864 223.2233 518.125 223.2233 L 348.125 223.2233 C 345.36358 223.2233 343.125 220.98472 343.125 218.2233 L 343.125 156.2233 C 343.125 153.46187 345.36358 151.2233 348.125 151.2233 Z" fill="white"/>
+        <path d="M 348.125 151.2233 L 518.125 151.2233 C 520.8864 151.2233 523.125 153.46187 523.125 156.2233 L 523.125 218.2233 C 523.125 220.98472 520.8864 223.2233 518.125 223.2233 L 348.125 223.2233 C 345.36358 223.2233 343.125 220.98472 343.125 218.2233 L 343.125 156.2233 C 343.125 153.46187 345.36358 151.2233 348.125 151.2233 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(347.125 155.2233)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">ClassFile</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">this = MyVector</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="30">super = j/u/Vector[R.T]</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="41">Parametric = Anchor R</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="63">(self species reference, if any)</tspan>
+        </text>
+      </g>
+      <g id="Group_170">
+        <g id="Graphic_194">
+          <rect x="183.375" y="425.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_179">
+          <rect x="183.375" y="317.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_177">
+          <rect x="183.375" y="263.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_181">
+          <rect x="183.375" y="371.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_176">
+          <rect x="183.375" y="236.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_182">
+          <rect x="183.375" y="398.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_174">
+          <rect x="183.375" y="182.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_175">
+          <rect x="183.375" y="209.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_173">
+          <rect x="183.375" y="155.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_180">
+          <rect x="183.375" y="344.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_172">
+          <rect x="183.375" y="128.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_178">
+          <rect x="183.375" y="290.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+      </g>
+      <g id="Line_222">
+        <path d="M 343.125 182.0245 L 282.29075 182.0245 L 282.29075 244.22907 L 263.15606 244.22907" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_223">
+        <path d="M 348.125 264.86936 L 518.125 264.86936 C 520.8864 264.86936 523.125 267.10793 523.125 269.86936 L 523.125 445.5154 C 523.125 448.27684 520.8864 450.5154 518.125 450.5154 L 348.125 450.5154 C 345.36358 450.5154 343.125 448.27684 343.125 445.5154 L 343.125 269.86936 C 343.125 267.10793 345.36358 264.86936 348.125 264.86936 Z" fill="white"/>
+        <path d="M 348.125 264.86936 L 518.125 264.86936 C 520.8864 264.86936 523.125 267.10793 523.125 269.86936 L 523.125 445.5154 C 523.125 448.27684 520.8864 450.5154 518.125 450.5154 L 348.125 450.5154 C 345.36358 450.5154 343.125 448.27684 343.125 445.5154 L 343.125 269.86936 C 343.125 267.10793 345.36358 264.86936 348.125 264.86936 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(347.125 268.86936)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">method_info</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">name = get</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="30">type = (int)Object</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="41">TypeRestriction = {R.T}</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="52">Parametric = Anchor R</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="63">Code = (invariants, parametrics)</tspan>
+        </text>
+      </g>
+      <g id="Group_225">
+        <g id="Graphic_228">
+          <rect x="183.375" y="182.47797" width="72" height="27.031633" fill="#ececff"/>
+          <rect x="183.375" y="182.47797" width="72" height="27.031633" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(197.70117 185.4938)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="10.836914" y="8">Utf8</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">MyVector</tspan>
+          </text>
+        </g>
+        <g id="Graphic_226">
+          <rect x="183.375" y="155.47797" width="72" height="27" fill="#ececff"/>
+          <rect x="183.375" y="155.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(197.70117 158.47797)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="8.127686" y="8">Class</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">MyVector</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_150">
+        <rect x="183.375" y="370.80644" width="72" height="27" fill="#ececff"/>
+        <rect x="183.375" y="370.80644" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(197.70117 373.80644)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">Anchor R</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="8.127686" y="19">BSM=…</tspan>
+        </text>
+      </g>
+      <g id="Line_236">
+        <path d="M 255.375 364.61894 L 273.72687 364.61894 L 273.72687 376.20644 L 261.275 376.20644" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_239">
+        <rect x="183.375" y="344.36894" width="72" height="27" fill="#ececff"/>
+        <rect x="183.375" y="344.36894" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(205.82886 347.36894)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">ConDy</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="5.418457" y="19">R.T</tspan>
+        </text>
+      </g>
+      <g id="Line_242">
+        <path d="M 255.375 283.5 L 273.72687 283.5 L 273.72687 297 L 261.275 297" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_244">
+        <path d="M 255.375 256.72797 L 273.72687 256.72797 L 273.72687 270.22797 L 261.275 270.22797" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_245">
+        <path d="M 255.375 177.30149 L 273.72687 177.30149 L 273.72687 190.80149 L 261.275 190.80149" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_246">
+        <path d="M 255.375 145.55617 L 273.72687 145.55617 L 273.72687 159.05617 L 261.275 159.05617" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_229">
+        <path d="M 343.125 195.03882 L 333.125 195.03882 L 322.66905 194.80094 L 319.8951 194.80094 L 319.8951 381.60644 L 288.4251 381.60644 C 288.4251 376.10644 277.4251 376.10644 277.4251 381.60644 L 263.275 381.60644" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_251">
+        <rect x="183.25606" y="398.25" width="72" height="27" fill="#ececff"/>
+        <rect x="183.25606" y="398.25" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(186.74532 401.75)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="10.836914" y="8">Fieldref</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="18">V[T].el-Data</tspan>
+        </text>
+      </g>
+      <g id="Line_254">
+        <path d="M 255.25606 418.5 L 274.22605 418.5 L 274.22605 439.19356 L 261.15606 439.19356" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_255">
+        <path d="M 183.375 141.97797 L 170.37665 141.97797 L 170.37665 357.86894 L 177.475 357.86894" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_256">
+        <path d="M 183.375 249.93833 L 176.98678 249.93833 L 176.98678 353.69356 L 176.98678 351.11894 L 177.475 351.11894" marker-end="url(#FilledArrow_Marker_2)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_232">
+        <rect x="183.375" y="128.47797" width="72" height="27" fill="#ececff"/>
+        <rect x="183.375" y="128.47797" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189.57349 131.47797)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="10.836914" y="8">Linkage</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">MyVector[T]</tspan>
+        </text>
+      </g>
+      <g id="Line_193">
+        <path d="M 343.125 214.6272 L 325.3951 214.6272 C 325.3951 209.1272 314.3951 209.1272 314.3951 214.6272 L 296.02327 214.6272 L 296.02327 187.5245 C 290.52327 187.5245 290.52327 176.5245 296.02327 176.5245 L 296.02327 174.59161 C 290.52327 174.59161 290.52327 163.59161 296.02327 163.59161 L 296.02327 135.22797 L 271.175 135.22797" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_253">
+        <path d="M 349.10156 394.6941 L 302.1788 394.6941 L 302.1788 411.75 L 263.15606 411.75" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_260">
+        <rect x="183.25606" y="425.69356" width="72" height="27" fill="#ececff"/>
+        <rect x="183.25606" y="425.69356" width="72" height="27" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(184.03609 429.19356)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="5.418457" y="8">NameAndType</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="18">elmData:Obj[]</tspan>
+        </text>
+      </g>
+      <g id="Group_266">
+        <g id="Graphic_249">
+          <path d="M 354.10156 353.8125 L 512.14844 353.8125 C 514.90986 353.8125 517.14844 356.05108 517.14844 358.8125 L 517.14844 420.8125 C 517.14844 423.5739 514.90986 425.8125 512.14844 425.8125 L 354.10156 425.8125 C 351.34014 425.8125 349.10156 423.5739 349.10156 420.8125 L 349.10156 358.8125 C 349.10156 356.05108 351.34014 353.8125 354.10156 353.8125 Z" fill="white"/>
+          <path d="M 354.10156 353.8125 L 512.14844 353.8125 C 514.90986 353.8125 517.14844 356.05108 517.14844 358.8125 L 517.14844 420.8125 C 517.14844 423.5739 514.90986 425.8125 512.14844 425.8125 L 354.10156 425.8125 C 351.34014 425.8125 349.10156 423.5739 349.10156 420.8125 L 349.10156 358.8125 C 349.10156 356.05108 351.34014 353.8125 354.10156 353.8125 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(353.10156 357.8125)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">getfield</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">name = elementData</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="30">type = Object[]</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="41">class = Vector[R.T]</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="64">possible type restriction</tspan>
+            <tspan font-family="Cambria" font-size="9" font-weight="400" fill="#333" y="64">⟿</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" y="64">T[]</tspan>
+          </text>
+        </g>
+        <g id="Group_265">
+          <g id="Graphic_261">
+            <path d="M 354.10156 425.6564 L 389.875 425.6564 C 392.63642 425.6564 394.875 427.89496 394.875 430.6564 L 394.875 438.33177 C 394.875 441.0932 392.63642 443.33177 389.875 443.33177 L 354.10156 443.33177 C 351.34014 443.33177 349.10156 441.0932 349.10156 438.33177 L 349.10156 430.6564 C 349.10156 427.89496 351.34014 425.6564 354.10156 425.6564 Z" fill="white"/>
+            <path d="M 354.10156 425.6564 L 389.875 425.6564 C 392.63642 425.6564 394.875 427.89496 394.875 430.6564 L 394.875 438.33177 C 394.875 441.0932 392.63642 443.33177 389.875 443.33177 L 354.10156 443.33177 C 351.34014 443.33177 349.10156 441.0932 349.10156 438.33177 L 349.10156 430.6564 C 349.10156 427.89496 351.34014 425.6564 354.10156 425.6564 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(353.10156 429.6564)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">iload_1</tspan>
+            </text>
+          </g>
+          <g id="Graphic_263">
+            <path d="M 399.875 425.6564 L 435.64844 425.6564 C 438.40986 425.6564 440.64844 427.89496 440.64844 430.6564 L 440.64844 438.33177 C 440.64844 441.0932 438.40986 443.33177 435.64844 443.33177 L 399.875 443.33177 C 397.11358 443.33177 394.875 441.0932 394.875 438.33177 L 394.875 430.6564 C 394.875 427.89496 397.11358 425.6564 399.875 425.6564 Z" fill="white"/>
+            <path d="M 399.875 425.6564 L 435.64844 425.6564 C 438.40986 425.6564 440.64844 427.89496 440.64844 430.6564 L 440.64844 438.33177 C 440.64844 441.0932 438.40986 443.33177 435.64844 443.33177 L 399.875 443.33177 C 397.11358 443.33177 394.875 441.0932 394.875 438.33177 L 394.875 430.6564 C 394.875 427.89496 397.11358 425.6564 399.875 425.6564 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(398.875 429.6564)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">aaload</tspan>
+            </text>
+          </g>
+          <g id="Graphic_264">
+            <path d="M 445.64844 425.6564 L 512.14844 425.6564 C 514.90986 425.6564 517.14844 427.89496 517.14844 430.6564 L 517.14844 438.33177 C 517.14844 441.0932 514.90986 443.33177 512.14844 443.33177 L 445.64844 443.33177 C 442.887 443.33177 440.64844 441.0932 440.64844 438.33177 L 440.64844 430.6564 C 440.64844 427.89496 442.887 425.6564 445.64844 425.6564 Z" fill="white"/>
+            <path d="M 445.64844 425.6564 L 512.14844 425.6564 C 514.90986 425.6564 517.14844 427.89496 517.14844 430.6564 L 517.14844 438.33177 C 517.14844 441.0932 514.90986 443.33177 512.14844 443.33177 L 445.64844 443.33177 C 442.887 443.33177 440.64844 441.0932 440.64844 438.33177 L 440.64844 430.6564 C 440.64844 427.89496 442.887 425.6564 445.64844 425.6564 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(476.1892 429.6564)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">…</tspan>
+            </text>
+          </g>
+          <g id="Graphic_267">
+            <path d="M 354.10156 336.375 L 512.14844 336.375 C 514.90986 336.375 517.14844 338.61358 517.14844 341.375 L 517.14844 349.0504 C 517.14844 351.8118 514.90986 354.0504 512.14844 354.0504 L 354.10156 354.0504 C 351.34014 354.0504 349.10156 351.8118 349.10156 349.0504 L 349.10156 341.375 C 349.10156 338.61358 351.34014 336.375 354.10156 336.375 Z" fill="white"/>
+            <path d="M 354.10156 336.375 L 512.14844 336.375 C 514.90986 336.375 517.14844 338.61358 517.14844 341.375 L 517.14844 349.0504 C 517.14844 351.8118 514.90986 354.0504 512.14844 354.0504 L 354.10156 354.0504 C 351.34014 354.0504 349.10156 351.8118 349.10156 349.0504 L 349.10156 341.375 C 349.10156 338.61358 351.34014 336.375 354.10156 336.375 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(400.61426 340.375)" fill="#333">
+              <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">(bytecodes…)</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Line_268">
+        <path d="M 343.125 316.2967 L 334.60435 316.2967 L 334.60435 387.00644 L 288.4251 387.00644 C 288.4251 381.50644 277.4251 381.50644 277.4251 387.00644 L 263.275 387.00644" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Line_247">
+        <path d="M 343.125 304.84774 L 325.3951 304.84774 C 325.3951 299.34774 314.3951 299.34774 314.3951 304.84774 L 304.4934 304.84774 L 304.4934 357.86894 L 288.4251 357.86894 C 288.4251 352.36894 277.4251 352.36894 277.4251 357.86894 L 263.275 357.86894" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

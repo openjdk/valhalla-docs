@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="163 93 361 272" width="361" height="272">
+  <defs>
+    <font-face font-family="DejaVu Sans Mono" font-size="11" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-weight="300">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="DejaVu Sans Mono" font-size="9" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-weight="300">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="DejaVu Sans Mono" font-size="7" panose-1="2 11 7 9 3 3 4 11 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="-1571.4286" x-height="553.71094" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-style="italic" font-weight="700">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono-BoldOblique"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#333">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="CrowsFeet_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-11 -5 12 10" markerWidth="12" markerHeight="10" color="#333">
+      <g>
+        <path d="M 0 0 L -10 0 M 0 4 L -10 0 L 0 -4" fill="none" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="DejaVu Sans Mono" font-size="11" panose-1="2 11 6 9 3 3 4 11 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="-1e3" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-style="italic" font-weight="400">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono-Oblique"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="DejaVu Sans Mono" font-size="7" panose-1="2 11 6 9 3 3 4 11 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="-1571.4286" x-height="553.22266" cap-height="735.3516" ascent="928.2227" descent="-235.83984" font-style="italic" font-weight="400">
+      <font-face-src>
+        <font-face-name name="DejaVuSansMono-Oblique"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="Arrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#333">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.18.4\n2021-03-23 16:33:01 +0000</metadata>
+  <g id="jvms-4_7-D(b)" stroke-dasharray="none" stroke="none" fill-opacity="1" stroke-opacity="1" fill="none">
+    <title>jvms-4.7-D(b)</title>
+    <g id="jvms-4_7-D(b)_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_65">
+        <text transform="translate(163.5548 93.375)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-weight="300" fill="#333" x="0" y="10">Diagram 4.7-D(b). TypeRestriction attribute relations</tspan>
+        </text>
+      </g>
+      <g id="Group_159">
+        <g id="Graphic_78">
+          <path d="M 276 201 L 338 201 C 340.76142 201 343 203.23858 343 206 L 343 232 C 343 234.76142 340.76142 237 338 237 L 276 237 C 273.23858 237 271 234.76142 271 232 L 271 206 C 271 203.23858 273.23858 201 276 201 Z" fill="#ececff"/>
+          <path d="M 276 201 L 338 201 C 340.76142 201 343 203.23858 343 206 L 343 232 C 343 234.76142 340.76142 237 338 237 L 276 237 C 273.23858 237 271 234.76142 271 232 L 271 206 C 271 203.23858 273.23858 201 276 201 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(277.1985 203)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="18.9646" y="8">Type</tspan>
+            <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">Restriction</tspan>
+          </text>
+        </g>
+        <g id="Graphic_149">
+          <text transform="translate(283.49415 227.75196)" fill="#333">
+            <tspan font-family="DejaVu Sans Mono" font-size="7" font-style="italic" font-weight="700" fill="#333" x="0" y="6">*new attribute</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_150">
+        <path d="M 276 129 L 338 129 C 340.76142 129 343 131.23858 343 134 L 343 160 C 343 162.76142 340.76142 165 338 165 L 276 165 C 273.23858 165 271 162.76142 271 160 L 271 134 C 271 131.23858 273.23858 129 276 129 Z" fill="#ececff"/>
+        <path d="M 276 129 L 338 129 C 340.76142 129 343 131.23858 343 134 L 343 160 C 343 162.76142 340.76142 165 338 165 L 276 165 C 273.23858 165 271 162.76142 271 160 L 271 134 C 271 131.23858 273.23858 129 276 129 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(277.1985 136.5)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="2.7092285" y="8">field_info</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="19">method_info</tspan>
+        </text>
+      </g>
+      <g id="Line_151">
+        <line x1="307" y1="165" x2="307" y2="191.1" marker-end="url(#FilledArrow_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_152">
+        <rect x="266.36157" y="174.71408" width="81.27686" height="10" fill="white" fill-opacity=".5"/>
+        <text transform="translate(266.36157 174.71408)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">TypeRestriction</tspan>
+        </text>
+      </g>
+      <g id="Line_164">
+        <line x1="307" y1="237" x2="307" y2="263.49998" marker-end="url(#CrowsFeet_Marker)" stroke="#333" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_165">
+        <rect x="269.0708" y="241.48635" width="75.8584" height="10" fill="white" fill-opacity=".5"/>
+        <text transform="translate(269.0708 241.48635)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">restriction(s)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_168">
+        <circle cx="307" cy="299.99994" r="36.000029028982" fill="white"/>
+        <circle cx="307" cy="299.99994" r="36.000029028982" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(280.50976 285.59994)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-style="italic" font-weight="400" fill="#333" x="0" y="10">Loadable</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="11" font-style="italic" font-weight="400" fill="#333" x="0" y="24">Constant</tspan>
+          <tspan font-family="DejaVu Sans Mono" font-size="7" font-style="italic" font-weight="400" fill="#333" x="3.3112793" y="34">(recursive)</tspan>
+        </text>
+      </g>
+      <g id="Line_170">
+        <line x1="307" y1="335.9999" x2="307" y2="344.50297" marker-end="url(#Arrow_Marker)" stroke="#333" stroke-linecap="square" stroke-linejoin="miter" stroke-width="1"/>
+      </g>
+      <g id="Graphic_169">
+        <text transform="translate(255.99966 354.40297)" fill="#333">
+          <tspan font-family="DejaVu Sans Mono" font-size="9" font-weight="300" fill="#333" x="0" y="8">(see Diagram 4.4-G)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
