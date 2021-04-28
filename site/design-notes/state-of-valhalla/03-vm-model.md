@@ -664,3 +664,112 @@ and also odd reflection artifacts.
 The latest iteration of L-World discards the split classfiles, and simply allows
 both kinds of descriptors to apply (with either descriptor contract, as
 appropriate) to a primitive class, and similarly for both kinds of mirrors.  
+Members of the primitive class can be accessed via a receiver which uses either
+the `Q` or `L` carrier.
+
+## Static translation
+
+The translation of Java classes which declare and use primitive classes requires
+minor adjustments to the current translation strategy.
+
+Primitive classes have their `ACC_PRIMITIVE` bit set, the `ACC_FINAL` bit on all
+fields, and their constructors are translated to static `<new>` methods, but
+otherwise are translated exactly as identity classes are.  Whether a primitive
+class is reference-favoring or value-favoring does not affect the translation of
+the class, only of the type uses of the unadorned class name.
+
+Type uses of `P.ref` in method descriptors, field descriptors, and signature
+attributes are translated as `LP;`; type uses of `P.val` are translated as
+`QP;`.  (Uses of the unadorned `P` are aliases for one of these two
+projections.)
+
+Primitive widening conversion requires no explicit translation, since the JVM
+treats `LP;` as a supertype of `QP;`.  Primitive narrowing conversion is
+translated as a `checkcast` to the corresponding `Q` descriptor.
+
+Instantiation of primitive classes (`new P(...)`) is translated as invocation of
+the corresponding factory method with `invokestatic`.  In the body of the
+factory method, rather than accepting an uninitialized `this` as a parameter,
+`this` is initialized inside the body of the factory with `defaultvalue`,
+assignments to fields of `this` are translated as modifying that value with
+`withfield`, and the factory returns the completed `this`.
+
+#### Differences between language and VM models
+
+The relationship between the value and reference projections differs between the
+language and VM models.  In the language, the value projection is not a subtype
+of the reference projection; instead, the two are related by _primitive
+narrowing and widening conversions_.  In the VM, the two are related by actual
+subtyping.
+
+It may seem strange to have deliberately picked a different model in the
+language as in the VM, but as we'll see, this choice leaves language constraints
+in the language (where they belong), and lets the VM focus primarily on being an
+efficient translation target.
+
+The primitive narrowing and widening conversions are semantically similar to the
+more familiar unboxing and boxing conversions, but do not share many of the
+negative performance costs associated with boxing (indirection, allocation,
+accidental identity.)  When we convert a `P.val` to a `P.ref`, while this is
+considered a conversion at the language level, no actual bytecode need be
+emitted for this conversion, since in the VM `QP;` is a subtype of `LP;`.  In
+the other direction, the static compiler emits a `checkcast` when narrowing a
+`P.ref` to a `P.val`, but because the VM understands the relationship between
+these types, this can be lowered to a null check (or completely optimized away.)
+So what look like boxing and unboxing at the language level turn into no-ops and
+near-no-ops in the bytecode.
+
+Still, why did we not choose to simply expose the subtyping between `P.val` and
+`P.ref` at the language level?  Because we wanted to preserve a path to unifying
+legacy primitives and primitive classes at the language level.  Currently, in
+the language, we have `int` and `Integer` related through ad-hoc boxing and
+unboxing conversions.  We would like to migrate the legacy primitives to be
+ordinary primitive classes, with the legacy box types being the reference
+projection for those classes.  Having two different kinds of "boxes" (a legacy
+heavy box and a new lighter box, where the former is related via boxing and the
+latter via subtyping) for primitives would be a permanent wart, and having a
+new, overlapping set of conversions (subtyping) might incompatibly change
+existing overload selection decisions.  To remove this wart, we preserve the
+semantics of the conversion between `int` and `Integer`, and extend it to all
+primitive widening/narrowing conversions, so that the legacy boxing conversion
+becomes the simpler primitive widening and narrowing.
+
+Further, the boxing relationship plays a role in numerous language features,
+such as type inference and overload selection.  By choosing primitive widening
+and narrowing semantics to match boxing, these complex and pervasive language
+features can continue to work as users expect them to when extended to primitive
+classes, with little in the way of special treatment for primitives.
+
+It may appear that we have pulled a rhetorical trick, just renaming "boxing" to
+"primitive widening".  But the difference is: we now have a new translation
+target, one which can routinely optimize layout, instantiation, and calling
+conventions for primitive classes and their reference projections.  We've just
+grafted familiar language semantics onto that efficient translation target,
+preserving the illusion that nothing has changed (except performance.)
+
+#### Legacy primitives
+
+As discussed in [Language Model](02-object-model.html), a key goal of this story
+is to migrate primitives so that they are "mostly just" primitive classes, while
+retaining the performance characteristics of primitives.  
+
+The existing wrapper classes (e.g., `Integer`) are redefined as primitive
+classes.  We treat `int.ref` as an alias for `Integer`, and `Integer.val` as an
+alias for `int`.  This means that the rules for type inference, overload
+selection, type bound conformance, autoboxing, etc, can apply uniformly to the
+legacy primitives as well as newly declared primitive classes.  
+
+The JVM will, of course, continue to have direct support for primitives (e.g.,
+the `I` carrier, and the `i*` instructions).  The language compiler will have
+substantial latitude to translate uses of `int` to use the `I` carrier and
+instructions in generated code where beneficial (and where required for
+migration compatibility, such as in field and method descriptors).  The
+descriptor `Qjava/lang/Integer;` will be used later when describing
+specializations over primitives.  Conversions between `I` and
+`Qjava/lang/Integer;` where needed in the translation will be inserted by the
+compiler.
+
+This scheme involves one behaviorally incompatible change: synchronization on an
+instance of one of the primitive wrapper classes will throw `IMSE`.  While we do
+not take this lightly, it is almost universally an error to do this, and in the
+very few cases where this is not an outright error, simple workarounds exist.
