@@ -189,7 +189,8 @@ constructor.  It would seem to follow that even `Object` must have a empty
 (`ACC_ABSTRACT`) constructor, but `Object` is special, because it alone (of all
 classes) is allowed to have a truly empty concrete constructor method.  Thus,
 `Object` is exempt from the "contagion" of the requirement of empty
-constructors.
+constructors. Note, even if `Object` is contrived to have a non-empty constructor
+it will not be called by primitive classes.
 
 In its role as a sort of "honorary interface", `Object` commits to neither kind
 of class; it implements neither of the marker interfaces `IdentityObject` nor
@@ -201,7 +202,9 @@ a secret substitute class which has no fields (like `Object`) and implements
 `IdentityObject`.  The verifier does not have to know about this, and the
 subsequent `invokespecial` of `Object::<init>` will be the only initialization
 the object ever experiences.  This secret class will be designed to allow this
-treatment.
+treatment. [Does this mean we will hide the class from JVMTI pre-load events
+like the ClassFileLoadHook? The class can be made non-modifiable to prevent
+post-load `<init>` changes]
 
 If an identity class declares a primitive superclass candidate as its super, it
 must (as usual) call the superclass `<init>` method, but the JVM links this call
@@ -250,6 +253,12 @@ interface despite none of its supers doing so, the JVM has secretly made its
 mark on `C`.  Keeping secrets from reflection is a risky business, but in this
 case it seems safer to do so, lest a large fraction of existing Java classes
 suddenly grow new items in their `Class::getInterfaces` arrays.
+[ Hiding the injected interface from `Class::getInterfaces` seems to be one of
+those "solves today's problems while creating tomorrow's" and wouldn't pass
+muster if we were designing the feature without the weight of existing test
+suites. Are there other concerns than the existing test suites?  Given the
+other more significant changes in the ecosystem, I'm unclear why this one
+is worth avoiding.] 
 
 If a primitive class extends a class
 other than `Object`, that class must be a primitive superclass candidate.  The
@@ -302,7 +311,7 @@ not be used with identity classes.
 
 (In a future version of a VM, a class may be able to grant access to `withfield`
 instructions to other clients, on an opt-in basis, if this seems useful.  In
-fact, in a future JVM a class may also ber able to revoke access to
+fact, in a future JVM a class may also be able to revoke access to
 `defaultvalue` instructions in other clients, on an opt-out basis, again if this
 seems useful.)
 
@@ -613,11 +622,27 @@ and that `I` is really (somehow) an exotic (`Q`-like) descriptor for
 `int.val`.  The `L` descriptor returns `int.ref.class`, while the
 exotic descriptor returns `int.val.class`.
 
+[ Which mirror defines the fields for apis like `getFields()`?]
+
 In particular, `Class::forName` and `Object::getClass` will always return a
 `ref` projection.  If you want the mirror that "works like `int.class`", you
 have to look somewhere special, as with `int` today, or ask the primary mirror
 for its corresponding secondary mirror.  There will be an API point on `Class`
 for obtaining the `val` mirror from the `ref` mirror, and vice versa.
+
+### JVMTI & redefinition of mirrors
+JVMTI, and the `java.lang.instrument` package provide powerful tools for
+modifying classes.  The native `ClassFileLoadHook` allows modifying classes
+before they are loaded and may be used to transform classes in surprising ways
+such as adding methods or fields, and can be used in ways that javac would not,
+violating invariants such as empty constructors.  Both tools can be used to
+modify the bodies of methods after they have been loaded (assuming the classes
+are not marked as `unmodifiable`).
+
+* How do we treat the two mirrors generated from a single primitive classfile?
+* Is the `ref` version marked as non-modifable (treating the `val` one as the `true`
+class)?
+* Does the CFLH get called once (for the classfile) or twice (for `val` & `ref`)?
 
 ## From Q-World to L-World
 
@@ -661,6 +686,9 @@ and `LFoo$ref;`.  But the split classfile design has obvious problems, such as
 redundancy of representation (which can get out of sync. and must be verified),
 and also odd reflection artifacts.
 
+[Not sure we're entirely clear of the odd reflection artifacts.  We may have just
+moved them around a bit]
+
 The latest iteration of L-World discards the split classfiles, and simply allows
 both kinds of descriptors to apply (with either descriptor contract, as
 appropriate) to a primitive class, and similarly for both kinds of mirrors.  
@@ -677,6 +705,11 @@ fields, and their constructors are translated to static `<new>` methods, but
 otherwise are translated exactly as identity classes are.  Whether a primitive
 class is reference-favoring or value-favoring does not affect the translation of
 the class, only of the type uses of the unadorned class name.
+
+[ I would still like to have the `PrimitiveObject` interface included by javac in
+the primitive clases, especially if reflection hides injected interfaces.  Better
+to be explicit to start so `getInterfaces` matches what people will expect from
+something defined to have the `PrimitiveObject` interface]
 
 Type uses of `P.ref` in method descriptors, field descriptors, and signature
 attributes are translated as `LP;`; type uses of `P.val` are translated as
