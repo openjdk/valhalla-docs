@@ -22,8 +22,8 @@
 ;
 
 [general]
-project=amber
-repository=amber-docs
+project=valhalla
+repository=valhalla-docs
 jbs=jdk
 
 [checks]
