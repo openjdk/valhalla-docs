@@ -75,7 +75,7 @@ abstract classes, interfaces, and `Object` (which, though concrete, acts more
 like an interface than a concrete class.)  The built-in primitives have wrappers
 or boxes, which are reference types.
 
-[![Current universe of Java field types](field-type-zoo-old.png){ width=25% }](field-type-zoo.pdf "click for PDF")
+[![Current universe of Java field types](field-type-zoo-old.png)](field-type-zoo.pdf "click for PDF")
 
 Valhalla aims to unify primitives and objects in that that they can both be
 declared with classes, but maintains the special runtime characteristics
@@ -193,7 +193,7 @@ may be _behaviorally_ incompatible for code that synchronizes on the primitive
 wrappers.  [JEP 390][jep390] has supported both compile-time and runtime
 warnings for synchronizing on primitive wrappers since Java 16.)  
 
-[![Java field types adding value classes](field-type-zoo-mid.png){ width=25% }](field-type-zoo.pdf "click for PDF")
+[![Java field types adding value classes](field-type-zoo-mid.png)](field-type-zoo.pdf "click for PDF")
 
 #### Equality
 
@@ -287,7 +287,7 @@ In our diagram, these new types show up as another entity that straddles the
 line between primitives and identity-free references, alongside the legacy
 primitives: 
 
-[![Java field types with extended primitives](field-type-zoo-new.png){ width=25% }](field-type-zoo.pdf "click for PDF")
+[![Java field types with extended primitives](field-type-zoo-new.png)](field-type-zoo.pdf "click for PDF")
 
 #### Member access
 
