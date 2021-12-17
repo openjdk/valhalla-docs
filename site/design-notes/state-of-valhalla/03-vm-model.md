@@ -1,22 +1,20 @@
 # State of Valhalla
+## Part 3: The JVM Model {.subtitle}
 
-#### Section 3: JVM Model
-#### John Rose and Brian Goetz, Apr 2021
+#### John Rose and Brian Goetz {.author}
+#### December 2021 {.date}
 
-::: sidebar
-Contents:
+> _This is the third of three documents describing the current State of
+  Valhalla.  The first is [The Road to Valhalla](01-background); the
+  second is [The Language Model](02-object-model)._
 
-1. [The Road to Valhalla](01-background.html)
-2. [Language Model](02-object-model.html)
-3. [JVM Model](03-vm-model.html)
-:::
 
 This document describes the _Java Virtual Machine_ view of primitive classes.  Note
 that this is not necessarily the same as the Java Language view; readers are
 advised to exercise care in drawing conclusions about the Java Language from
 this document.
 
-#### Primitive classes
+### Primitive classes
 
 Prior to Valhalla, all objects -- instances of classes and arrays -- had a
 unique _object identity_.  Valhalla allows classes to choose, by marking a class
@@ -29,7 +27,7 @@ However, because the JVM knows that primitive objects do not have identity, it c
 routinely optimize layout (flattening), instantiation, member access, and
 calling conventions (scalarization) for primitive objects.
 
-#### Carriers and basic types
+### Carriers and basic types
 
 JVM type descriptors (JVMS 4.3.2) use a leading letter to denote their _basic
 type_.  There are currently eight basic types corresponding to the eight
@@ -49,7 +47,7 @@ stack or local variable slot (long and double values use two adjacent slots),
 and the object reference (`L`) carrier stores an _object reference_ in the
 corresponding slot.
 
-#### Q descriptors
+### Q descriptors
 
 To describe primitive types, we add a new basic type, `Q`, which denotes a
 reference to a so-called _exotic class_.  (Presently, the only kind of exotic
@@ -81,41 +79,56 @@ is as follows:
 
  - The `null` reference is the initial value of an `L`-carried field or array
    element.
+
  - Thus, `null` is always permitted in a `L`-carried value.
+
  - Nearly all uses of `L` descriptors are non-resolving.  (Thus, the JVM _may
    not_ load the class of an `L` descriptor except in response to specified
    resolution requests.  This is why `null` is required as an initial value.)
+
  - Data structures can be circular if linked via `L` descriptors.  (This is
    another corollary of non-resolution of `L` descriptors.)
+
  - Applications do not suffer from bootstrap circularities because of `L`
    descriptors.  (Yet another corollary of non-resolution of `L` descriptors.)
+
  - The normal execution of a `checkcast` is designed to treat its type operand
    as if it were an `L` descriptor if the reference operand is `null`.  (There
    is no resolving in this case.)
+
  - `L` fields and array elements must not be flattened; they are pointers.
+
  - `L` fields and array elements have strong atomicity, even during races.
+
  - `L` descriptor names participate in class loader constraints.
 
 The contract for `Q` descriptors is, in essence, a matching "anti-contract" to
 the `L` descriptor contract:
 
  - The `null` reference is excluded from (most or all) `Q`-carried values.
+
  - Nearly all uses of `Q` descriptors are resolved eagerly, before the moment
    when a field of that type is first created, or a method using that type (as
    argument or return value) is first prepared.  (Thus, the JVM _must_ load the
    class of an `Q` descriptor in many cases.  This is how `null` can be excluded
    as a value, and how flat fields and scalarized method calling sequences can
    be arranged.)
+
  - Data structures _may not_ be circular if linked via `Q` descriptors.
    (Instead, the JVM may nest `Q`-carried values in a single block of memory.)
+
  - Applications _may suffer from bootstrap circularities_ because of `Q`
    descriptors.  (Over-use of `Q` descriptors carries risks of an infinite
    regress in class loading.)
+
  - The execution of a `checkcast`, when applied to a `Q` descriptor (instead of
    a class name) performs eager resolution.
+
  - `Q` fields and array elements _may be_ (and are routinely) flattened.
+
  - Multi-word `Q` fields and array elements may exhibit "struct tearing" during
    races, unless other measures are taken to prevent this.
+
  - `Q` descriptor names are not required to store class loader constraints.
    (Because of eager loading, the constraints can be checked using resolved
    classes when methods are prepared.  This is a variation of class loader
@@ -152,7 +165,7 @@ of value types.  The `Q` also stands for "quid", Latin for "what?"  so
 it has also been noted that the eager resolution of a `Q` descriptor
 seeks the "quiddity" of the type by quickly loading its class file.)
 
-#### Supertypes
+### Supertypes
 
 Primitive classes may implement interfaces, and may extend certain restricted
 abstract classes as well as the special class `Object`.  This means that a
@@ -218,7 +231,7 @@ it would be possible to create primitive subclasses of `java.lang.Enum` and
 other important classes.  We may revisit and relax the restrictions on primitive
 superclasses when we have more experience.
 
-#### Restrictions
+### Restrictions
 
 Primitive classes come with some restrictions compared to their identity
 counterparts.  Instance fields of a primitive class must be marked `ACC_FINAL`,
@@ -503,7 +516,7 @@ scalar (non-object) primitives like `int` and `long`.
 In other words, a flattened value in the heap is "scalarized", decomposed into a
 set of machine words.
 
-#### Struct-tearing
+### Struct-tearing
 
 It follows that a multi-threaded program can contain races on changes to these
 individual pointers and scalars.  Thus, a thread can witness an "impossible"
@@ -535,7 +548,7 @@ a cost, so this "non-tearable" marking is not going to be the default.
 The likely syntax in the class file is a marker interface implemented by
 the class itself, `java.lang.NonTearable`.
 
-#### Uninitialized variables
+### Uninitialized variables
 
 Heap variables also must be initialized to default values, even before they are
 initialized by user code.  This is most visible with array elements, which are
@@ -558,7 +571,7 @@ parallels the present access check to the `withfield` instruction.
 It is possible that some sort of marker interface like `NonTearable` would
 indicate classes that request such processing.
 
-#### Weakness
+### Weakness
 
 Like one of today's `Integer` objects, a buffered primitive object may be used
 as a key to a weak hash map.  (There are many such in the Java ecosystem.)  The
@@ -694,7 +707,7 @@ factory method, rather than accepting an uninitialized `this` as a parameter,
 assignments to fields of `this` are translated as modifying that value with
 `withfield`, and the factory returns the completed `this`.
 
-#### Differences between language and VM models
+### Differences between language and VM models
 
 The relationship between the value and reference projections differs between the
 language and VM models.  In the language, the value projection is not a subtype
@@ -710,12 +723,12 @@ efficient translation target.
 The primitive narrowing and widening conversions are semantically similar to the
 more familiar unboxing and boxing conversions, but do not share many of the
 negative performance costs associated with boxing (indirection, allocation,
-accidental identity.)  When we convert a `P.val` to a `P.ref`, while this is
+accidental identity).  When we convert a `P.val` to a `P.ref`, while this is
 considered a conversion at the language level, no actual bytecode need be
 emitted for this conversion, since in the VM `QP;` is a subtype of `LP;`.  In
 the other direction, the static compiler emits a `checkcast` when narrowing a
 `P.ref` to a `P.val`, but because the VM understands the relationship between
-these types, this can be lowered to a null check (or completely optimized away.)
+these types, this can be lowered to a null check (or completely optimized away).
 So what look like boxing and unboxing at the language level turn into no-ops and
 near-no-ops in the bytecode.
 
@@ -745,9 +758,9 @@ It may appear that we have pulled a rhetorical trick, just renaming "boxing" to
 target, one which can routinely optimize layout, instantiation, and calling
 conventions for primitive classes and their reference projections.  We've just
 grafted familiar language semantics onto that efficient translation target,
-preserving the illusion that nothing has changed (except performance.)
+preserving the illusion that nothing has changed (except performance).
 
-#### Legacy primitives
+### Legacy primitives
 
 As discussed in [Language Model](02-object-model.html), a key goal of this story
 is to migrate primitives so that they are "mostly just" primitive classes, while
