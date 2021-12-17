@@ -1,16 +1,13 @@
 # State of Valhalla
+## Part 1: The Road to Valhalla {.subtitle}
 
-#### Section 1: The Road to Valhalla
-#### Brian Goetz, Dec 2021
+#### Brian Goetz {.author}
+#### December 2021 {.date}
 
-::: sidebar
-Contents:
+> _This is the first of three documents describing the current State of
+  Valhalla.  The second is [The Language Model](02-object-model); the
+  third is [The JVM Model](03-vm-model)._
 
-1. [The Road to Valhalla](01-background.html)
-2. [Language model](02-object-model.html)
-3. [JVM Model](03-vm-model.html)
-
-:::
 
 ## Background
 
@@ -41,7 +38,7 @@ However, Project Valhalla is not just about the features it will deliver, or
 about improving performance; it has the more ambitious agenda to _heal the rift_
 between primitives and objects.  
 
-#### The costs of indirection
+### The costs of indirection
 
 The JVM type system includes eight primitive types (`int`, `long`, etc.),
 objects (heterogeneous aggregates with identity), and arrays (homogeneous
@@ -87,7 +84,7 @@ calling convention, where a `Point` can be passed by passing the `x` and `y`
 components by value.  In some cases, calling convention flattening can yield
 even more significant performance improvements than heap flattening.
 
-#### The costs of a split type system
+### The costs of a split type system
 
 As an object-oriented language, the separation between primitives and objects
 embodies a significant compromise: an OO language would like to start from the
@@ -123,7 +120,7 @@ combinatorial explosion of hand-specialized versions (`IntPredicate`,
 over representational differences, but the primitive-reference divide was
 getting harder to bridge.
 
-#### The costs of boxing
+### The costs of boxing
 
 Primitives are not objects, but they have _reference companions_, often called
 wrappers or boxes.  When primitives want to interact in the world of objects, 
@@ -151,7 +148,7 @@ heroic optimizations, boxing conversion entails heap allocation, and using
 reference companion types as fields entails indirection.  Boxes have the same
 problems as we saw with points above, just with smaller payloads.  
 
-#### And the costs roll on 
+### And the costs roll on 
 
 At the library level, developers face further difficult choices.  The most
 fundamental libraries -- collections and streams -- are prime examples of the
@@ -168,8 +165,8 @@ introduces asymmetries.  Finally, the mere existence of hand-specialized stream
 types was a significant constraint on the design and implementation of the
 library.
 
-> Library designers are too often faced with the bad choice between good memory
-behavior and good abstraction.
+> _Library designers are too often faced with the bad choice between good memory
+behavior and good abstraction._
 
 Users are not immune from having to reason about the gap between primitives and
 objects either.  Nearly every Java developer has written an ad-hoc, hand-rolled
@@ -210,7 +207,7 @@ rewarded with a flatter and denser memory layout and optimized calling
 conventions.  These so-called _value classes_ combine the expressive power of
 classes with the runtime behavior of primitives.  The slogan for Valhalla is:
 
-> Codes like a class, works like an int.
+> _Codes like a class, works like an int._
 
 Despite the restrictions on mutability and subclassing, value classes can use
 most mechanisms available to classes: methods, constructors, fields,
@@ -229,7 +226,7 @@ features like built-in numeric types, tuples, or multiple return.
 One of the early compromises of Java Generics is that generic type variables can
 only be instantiated with reference types, not primitive types.  This is both
 inconvenient (we have to say `List<Integer>` when we mean `List<int>`) and
-expensive (boxing has performance overhead.)  With eight primitive types,
+expensive (boxing has performance overhead).  With eight primitive types,
 this restriction is something we learned to live with, but if we can write our
 own flattenable data types like our `Point` above, having an `ArrayList<Point>`
 not be backed by a flattened array of `Point` seems to defeat, well, the point.
@@ -291,7 +288,7 @@ generics][ugen], and finally specialized generics.
 [adventures]: https://www.youtube.com/watch?v=TkpcuL1t1lY
 [adventures-slides]: http://cr.openjdk.java.net/~briangoetz/valhalla/Adventures%20in%20Parametric%20Polymorphism.pdf
 [model3]: http://cr.openjdk.java.net/~briangoetz/valhalla/eg-attachments/model3-01.html
-[jepnnn]: https://bugs.openjdk.java.net/browse/JDK-8277163
+[jepnnn]: https://openjdk.java.net/jeps/8277163
 [jep401]: https://openjdk.java.net/jeps/401
 [jep402]: https://openjdk.java.net/jeps/402
 [ugen]: http://openjdk.java.net/jeps/8261529
