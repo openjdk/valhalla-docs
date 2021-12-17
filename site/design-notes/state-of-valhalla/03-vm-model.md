@@ -2,7 +2,7 @@
 ## Part 3: The JVM Model {.subtitle}
 
 #### John Rose and Brian Goetz {.author}
-#### December 2021 {.date}
+#### April 2021 {.date}
 
 > _This is the third of three documents describing the current State of
   Valhalla.  The first is [The Road to Valhalla](01-background); the
