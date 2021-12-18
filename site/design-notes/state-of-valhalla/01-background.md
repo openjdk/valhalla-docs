@@ -189,7 +189,7 @@ concrete classes), identity can still be observed by various identity-sensitive
 operations, including object equality (`==`), synchronization,
 `System::identityHashCode`, weak references, etc.  
 
-Identity effectively requires that an object live in exactly one place, and if
+Identity effectively requires that an object lives in exactly one place, and if
 we want to access it, we go to the source.  This is why the `Point[]` layout is
 full of pointers; the array elements are merely references to the actual object.
 And identity requires that the VM pessimistically preserve identity just in case
@@ -202,7 +202,7 @@ The basic feature of Valhalla is that some classes may disavow their identity.
 Instances of these classes are just their state, and therefore can be routinely
 flattened into enclosing objects or arrays, and passed by value between methods.
 These classes give up some flexibility -- they must be immutable and cannot be
-layout-polymorphic -- but in return for giving up these characteristics, are be
+layout-polymorphic -- but in return for giving up these characteristics, are 
 rewarded with a flatter and denser memory layout and optimized calling
 conventions.  These so-called _value classes_ combine the expressive power of
 classes with the runtime behavior of primitives.  The slogan for Valhalla is:

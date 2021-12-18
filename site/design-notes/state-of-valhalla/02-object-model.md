@@ -23,7 +23,7 @@ is as libraries, not as language features.
 
 Java currently has eight built-in primitive types.  Primitives represent pure
 _values_; any `int` value of "3" is equivalent to (and indistinguishable from)
-any other `int` value of "3".  Values are atomic (its parts cannot be updated
+any other `int` value of "3".  Values are atomic (their parts cannot be updated
 individually) and have no canonical location, and so are _freely copyable_. With
 the exception of the unusual treatment of `NaN` values for `float` and `double`,
 the `==` operator performs a _substitutibility test_ -- it asks "are these two
@@ -55,7 +55,7 @@ Primitives and objects differ in almost every conceivable way:
 | Tearable under race                        | Initialization safety guarantees   |
 | Have reference companions (boxes)          | Don't need reference companions    |
 
-The design of primitives represents various tradeoffs aimed at maximing
+The design of primitives represents various tradeoffs aimed at maximizing
 performance and usability of the primtive types.  Reference types default to
 `null`, meaning "referring to no object"; primitives default to a usable zero
 value (which for most primitives is the additive identity).  Reference types
@@ -77,7 +77,7 @@ or boxes, which are reference types.
   </a>
 </figure>
 
-Valhalla aims to unify primitives and objects in that that they can both be
+Valhalla aims to unify primitives and objects in that they can both be
 declared with classes, but maintains the special runtime characteristics
 primitives have.  But while everyone likes the flatness and density that
 user-definable value types promise, in some cases we want them to be more like
@@ -337,7 +337,7 @@ if (us instanceof Number) { ... }
 ```
 
 Since subtyping is defined only on reference types, the `instanceof` operator
-will behave as if both sides were lifted to the approrpriate reference
+will behave as if both sides were lifted to the appropriate reference
 companion, and then the question can be answered in the affirmative.  (This may
 trigger fears of expensive boxing conversions, but in reality no actual boxing
 is required.)
@@ -361,7 +361,7 @@ all arrays.
 ### Equality
 
 Just was with `instanceof`, we define `==` on primitives by appealing to the
-reference companion (though no actual boxing need occur).  Evaluating `a == b`,
+reference companion (though no actual boxing needs to occur.)  Evaluating `a == b`,
 where either or both operands are primitives, can be defined as if the primitive
 operands are first converted to their reference companions, and then the
 comparison is performed.  This means that:
