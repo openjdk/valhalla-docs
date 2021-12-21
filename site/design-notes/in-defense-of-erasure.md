@@ -1,6 +1,9 @@
-# Background: how we got the generics we have
-#### (Or, how I learned to stop worrying and love erasure)
-#### Brian Goetz, June 2020
+# Background: How We Got the Generics We Have
+## (Or, how I learned to stop worrying and love erasure) {.subtitle}
+
+#### Brian Goetz {.author}
+#### June 2020 {.date}
+
 
 Before we can talk about where generics are going, we first have to talk about
 where they are, and how they got there.  This document will focus primarily on
@@ -48,11 +51,11 @@ they are checked in the Java compiler but erased away in the translation to
 classfiles.
 
 Similarly, when compiling C to native code, both signed and unsigned ints are
-erased into general-purpose registers (there are no separate signed vs unsigned
+erased into general-purpose registers (there are no separate signed vs. unsigned
 registers), and `const` variables are stored in mutable registers and memory
 locations.  We don't find this sort of erasure weird at all.
 
-#### Homogeneous vs heterogeneous translations
+### Homogeneous vs. heterogeneous translations
 
 There are two common approaches for translating generic types in languages  with
 parameteric polymorphism -- _homogeneous_ and _heterogeneous_ translation.  In a
@@ -84,10 +87,10 @@ implications.  Homogeneous translations are more amenable to abstracting over
 parametric families of types, such as Java's wildcards, or C#'s declaration-site
 variance (both of which `C++` lacks, where there is nothing in common between
 `vector<int>` and `vector<float>`.)  For more information on translation
-strategies,  see [_this influential
-paper_](http://pizzacompiler.sourceforge.net/doc/pizza-translation.pdf).
+strategies,  see [this influential
+paper](http://pizzacompiler.sourceforge.net/doc/pizza-translation.pdf).
 
-#### Erased generics in Java
+### Erased generics in Java
 
 Java translates generics using a homogeneous translation.  Generics are
 type-checked at compile time, but then a generic type like `List<String>` is
@@ -134,7 +137,7 @@ at the classfile level, both the _layout_ and _API_ of `Box<T>` is erased.  At
 the _use site_, the same thing happens: references to `Box<String>` are erased
 to `Box`, with a synthetic cast to `String` inserted at the use site.
 
-#### Why?  What were the alternatives?
+### Why?  What were the alternatives?
 
 It is at this point where it is tempting to huff and declare that these were
 obviously foolish or lazy choices, or that erasure is a dirty hack.  After all,
@@ -149,9 +152,11 @@ reified type parameter information:
     a `List` what it is a list of, whether using language tools like
     `instanceof` or pattern matching on type variables, or using reflective
     libraries to inquire about the type parameters.
+
   - **Layout or API specialization.**  In a language with primitive types or
     inline classes, it might be nice to flatten the layout of a `Pair<int, int>`
     to hold two ints, rather than two references to boxed objects.
+
   - **Runtime type checking.**  When a client attempts to put an `Integer` in a
     `List<String>` (through, say, a raw `List` reference),  which would cause
     heap pollution, it would be nice to catch this and fail at the point where
@@ -169,7 +174,7 @@ To understand how erasure was the sensible and pragmatic choice here, we also
 have to understand what the goals, priorities and constraints, and alternatives
 were at the time.
 
-#### Goal: Gradual migration compatibility
+### Goal: Gradual migration compatibility
 
 Java generics adopted an ambitious requirement:
 
@@ -241,7 +246,7 @@ non-generic clients or subclasses.  This is a boon to the software development
 process, but it has potential consequences for type safety under such mixed
 usage.
 
-#### Heap pollution
+### Heap pollution
 
 Erasing in this manner, and supporting interoperability between generic and
 non-generic clients, creates the possibility of _heap pollution_ -- that what is
@@ -285,7 +290,7 @@ non-generic code_ or when we _lie to the compiler_.  At the point where the heap
 pollution is discovered, we get a clean exception telling us what type was
 expected and what type was actually found.
 
-#### Context: Ecosystem of JVM implementations and languages
+### Context: Ecosystem of JVM implementations and languages
 
 The design choices surrounding generics were also influenced by the structure of
 the ecosystem of JVM implementations and of languages running on the JVM.  While
@@ -318,7 +323,7 @@ reified generics.  If, for example, the interpretation of reification included
 type checking at runtime, would Scala (with its declaration-site variance) be
 happy to have the JVM enforce Java's (invariant) generic subtyping rules?
 
-#### Erasure was the pragmatic compromise
+### Erasure was the pragmatic compromise
 
 Taken together, these constraints (both technical and ecosystem) acted as a
 powerful force to push us towards a homogeneous translation strategy where
@@ -330,10 +335,12 @@ pushed us towards this decision include:
     greater JIT costs and code cache pressure, etc.  This might have put
     developers in a position where they had to choose between type-safety and
     performance.
+
   - **Migration compatibility.**  There was no known translation scheme at the
     time that would have allowed a migration to reified generics to be source-
     and binary-compatible, creating flag days and invalidating developer's
     considerable investment in their existing code.
+
   - **Runtime costs, bonus edition.**  If reification is interpreted as
     _checking_ types at runtime (just as stores into Java's covariant arrays are
     dynamically checked), this would have a significant runtime impact, as the
@@ -344,24 +351,29 @@ pushed us towards this decision include:
     `Map<? extends List<?  super Foo>>, ? super Set<? extends Bar>>`.  (In fact,
     later research cast doubt on the [decidability of generic
     subtyping](https://www.cis.upenn.edu/~bcpierce/papers/variance.pdf)).
+
   - **JVM ecosystem.**  Getting a dozen JVM vendors to agree on if, and how,
     type information would be reified at runtime was a highly questionable
     proposition.
+
   - **Delivery pragmatics.**  Even if it were possible to get a dozen  JVM
     vendors to agree on a scheme that could actually work, it would have greatly
     increased the complexity, timeline, and risk of an already substantial and
     risky effort.
+
   - **Language ecosystem.**  Languages like Scala might not have been happy to
     have Java's invariant generics burned into the semantics of the JVM.
     Agreeing on a set of acceptable cross-language semantics for generics in the
     JVM would again have increased the complexity, timetable, and risk of an
     already substantial and risky effort.
+
   - **Users would have to deal with erasure (and therefore heap pollution)
     anyway.**  Even if type information could be preserved at runtime, there
     would always be dusty classfiles that were compiled before the class was
     generified, so there would still be the possibility that any given
     `ArrayList` in the heap had no type information attached, with the attendant
     risk of heap pollution.
+
   - **Certain useful idioms would have been inexpressible.**  Existing generic
     code will occasionally resort to unchecked casts when it knows something
     about runtime types that the compiler does not, and there is no easy way to

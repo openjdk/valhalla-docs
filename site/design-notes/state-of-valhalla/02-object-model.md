@@ -1,16 +1,12 @@
 # State of Valhalla
+## Part 2: The Language Model {.subtitle}
 
-#### Section 2: Language model
-#### Brian Goetz, Dec 2021
+#### Brian Goetz {.author}
+#### December 2021 {.date}
 
-::: sidebar
-Contents:
-
-1. [The Road to Valhalla](01-background.html)
-2. [Language model](02-object-model.html)
-3. [JVM Model](03-vm-model.html)
-
-:::
+> _This is the second of three documents describing the current State of
+  Valhalla.  The first is [The Road to Valhalla](01-background); the
+  third is [The JVM Model](03-vm-model)._
 
 This document describes the directions for the Java _language_ charted by
 Project Valhalla.  (In this document, we use "currently" to describe the
@@ -62,7 +58,7 @@ Primitives and objects differ in almost every conceivable way:
 The design of primitives represents various tradeoffs aimed at maximing
 performance and usability of the primtive types.  Reference types default to
 `null`, meaning "referring to no object"; primitives default to a usable zero
-value (which for most primitives is the additive identity.)  Reference types
+value (which for most primitives is the additive identity).  Reference types
 provide initialization safety guarantees against a certain category of data
 races; primitives allow tearing under race for larger-than-64-bit values.  
 We could characterize the design principles behind these tradeoffs are "make
@@ -72,10 +68,14 @@ The following figure illustrates the current universe of Java's types.  The
 upper left quadrant is the built-in primitives; the rest of the space is
 reference types.  In the upper-right, we have the abstract reference types --
 abstract classes, interfaces, and `Object` (which, though concrete, acts more
-like an interface than a concrete class.)  The built-in primitives have wrappers
+like an interface than a concrete class).  The built-in primitives have wrappers
 or boxes, which are reference types.
 
-FIGURE 1 HERE
+<figure>
+  <a href="field-type-zoo.pdf" title="Click for PDF">
+    <img src="field-type-zoo-old.png" alt="Current universe of Java field types"/>
+  </a>
+</figure>
 
 Valhalla aims to unify primitives and objects in that that they can both be
 declared with classes, but maintains the special runtime characteristics
@@ -177,7 +177,7 @@ Because an `ArrayCursor` is just its two fields, these fields will get hoisted
 into registers, and the constructor call in `advance` will typically compile
 down to incrementing one of these registers.
 
-#### Migration
+### Migration
 
 The JDK (as well as other libraries) has many [value-based classes][valuebased],
 such as `Optional` and `LocalDateTime`.  Value-based classes adhere to the
@@ -193,9 +193,13 @@ may be _behaviorally_ incompatible for code that synchronizes on the primitive
 wrappers.  [JEP 390][jep390] has supported both compile-time and runtime
 warnings for synchronizing on primitive wrappers since Java 16.)  
 
-FIGURE 2: ADD NEW QUADRANT FOR VC (with Integer as VC)
+<figure>
+  <a href="field-type-zoo.pdf" title="Click for PDF">
+    <img src="field-type-zoo-mid.png" alt="Java field types adding value classes"/>
+  </a>
+</figure>
 
-#### Equality
+### Equality
 
 Earlier we said that `==` compares value objects by state rather than by
 identity.  More precisely, two value objects are `==` if they are of the same
@@ -205,7 +209,7 @@ type, and each of their fields are pairwise equal, where equality is given by
 references to identity objects, and recursively with `==` for references to
 value objects.  In no case is a value object ever `==` to an identity object.
 
-#### Value records
+### Value records
 
 While records have a lot in common with value classes -- they are final and
 their fields are final -- they are still identity classes.  Records embody a
@@ -224,7 +228,7 @@ scalarization and flattening benefits of value classes.
 In theory, it would be possible to apply `value` to certain enums as well, but
 this is not currently possible because the `java.lang.Enum` base class that
 enums extend do not meet the requirements for superclasses of value classes (it
-has fields and non-empty constructors.)
+has fields and non-empty constructors).
 
 ## Extended primitives
 
@@ -245,7 +249,7 @@ something else to gain the maximum flatness and density that we get -- and that
 something else is reference-ness.
 
 The built-in primitives are best understood as pairs of types: the primitive
-type and its reference companion (its wrapper or box.)  If we need the
+type and its reference companion (its wrapper or box).  If we need the
 affordances of reference-ness (subtyping with `Object` or interfaces, dynamic
 type tests with `instanceof` or pattern matching, use as type parameters, etc),
 we use the reference companion to access these affordances; the rest of the time
@@ -287,9 +291,13 @@ In our diagram, these new types show up as another entity that straddles the
 line between primitives and identity-free references, alongside the legacy
 primitives: 
 
-FIGURE 3: ADD EXTENDED PRIMITIVES
+<figure>
+  <a href="field-type-zoo.pdf" title="Click for PDF">
+    <img src="field-type-zoo-new.png" alt="Java field types with extended primitives"/>
+  </a>
+</figure>
 
-#### Member access
+### Member access
 
 When we declare a primitive, we are simultaneously declaring both the primitive
 and its reference companion, and both have the same members.  Unlike today,
@@ -304,11 +312,11 @@ p = p.scale(2);
 assert p.x == 2;
 ```
 
-#### Polymorphism
+### Polymorphism
 
 When we declare a class today, we set up a subtyping (is-a) relationship between
 the declared class and its supertypes (we write `A <: B` to indicate A is a
-subtype of B.)  When we declare a primitive, we set up a subtyping relationship
+subtype of B).  When we declare a primitive, we set up a subtyping relationship
 between the _reference companion_ and the declared supertypes.  This means that 
 if we declare:
 
@@ -340,7 +348,7 @@ reference type, and meaning `A.ref <: B` when A is a primitive type.  The
 `instanceof` relation, reflection, and pattern matching are updated to use
 "extends".
 
-#### Arrays
+### Arrays
 
 Arrays of reference types are _covariant_; this means that if `A <: B`, then
 `A[] <: B[]`.  This allows `Object[]` to be the "top array type", at least for
@@ -350,10 +358,10 @@ We can unify the treatment of arrays by defining array covariance over the new
 a primitive P, `P[] <: P.ref[] <: Object[]`, making `Object[]` the top type for
 all arrays.
 
-#### Equality
+### Equality
 
 Just was with `instanceof`, we define `==` on primitives by appealing to the
-reference companion (though no actual boxing need occur.)  Evaluating `a == b`,
+reference companion (though no actual boxing need occur).  Evaluating `a == b`,
 where either or both operands are primitives, can be defined as if the primitive
 operands are first converted to their reference companions, and then the
 comparison is performed.  This means that:
@@ -369,7 +377,7 @@ primitive class that does not explicitly override `Object::equals`, this is the
 default we want.  
 
 
-#### Serialization
+### Serialization
 
 If a `primitive` implements `Serializable`, this is also really a statement
 about the reference companion.  Just as with other aspects described here,
@@ -383,7 +391,7 @@ object graph.  This generalizes cleanly to objects without identity, because
 So any observations we make about topology prior to serialization, are
 consistent with those after deserialization.
 
-#### Default values
+### Default values
 
 For a value class `C`, the default value of variables of type `C` is the same as
 any other reference type: `null`, and the same is true for the reference
@@ -410,12 +418,12 @@ tradeoffs in the design of the built-in primitives.  It gives us a usable
 initial value (most of the time), and requires less storage footprint than a
 representation that supports null (`int` uses all 2^32 of its bit patterns, so a
 nullable `int` would have to either make some 32 bit signed integers
-unrepresentable, or use a 33rd bit.)  This was a reasonble tradeoff for the
+unrepresentable, or use a 33rd bit).  This was a reasonble tradeoff for the
 built-in primitives, and is also a reasonable tradeoff for many (but not all)
 other potential primitive types (such as complex numbers, 2D points,
-half-floats, etc.)
+half-floats, etc).
 
-#### Tearing
+### Tearing
 
 For the primitive types longer than 32 bits (long and double), it is not
 guaranteed that reads and writes from different threads (without suitable
@@ -447,7 +455,7 @@ nontrivial representational invariants, these may be better off choosing value
 classes, which offer tear-free access because loads and stores of references are
 atomic.
 
-#### Legacy primitives
+### Legacy primitives
 
 As part of generalizing primitives, we want to adjust the built-in primitives to
 behave as consistently with extended primitives as possible.  While we can't
@@ -494,9 +502,9 @@ Reasons we might have to appeal to the reference companion include:
    value.  We can capture the "`V` or null" requirement by changing the
    descriptor of `Map::get` to:
 
-```
-public V.ref get(K key);
-```
+   ```
+   public V.ref get(K key);
+   ```
 
    where, whatever type `V` is instantiated as, `Map::get` returns the reference
    companion. (For a type `V` that already is a reference type, this is just `V`
@@ -509,12 +517,12 @@ public V.ref get(K key);
    refer to themselves, such as the "next" field in the node type of a linked
    list:
 
-```
-class Node<T> {
-    T theValue;
-    Node<T> nextNode;
-}
-```
+   ```
+   class Node<T> {
+       T theValue;
+       Node<T> nextNode;
+   }
+   ```
 
    We might want to represent this as a primitive class, but then the layout of
    `Node` would be self-referential, and since we want to flatten primitives
@@ -522,12 +530,12 @@ class Node<T> {
    regress.  The solution is to explicitly opt for a reference, where we can use
    `null` to indicate that there is no next node:
 
-```
-primitive Node<T> {
-    T theValue;
-    Node.ref<T> nextNode;
-}
-```
+   ```
+   primitive Node<T> {
+       T theValue;
+       Node.ref<T> nextNode;
+   }
+   ```
 
  - **Protection from tearing.**  We may want to use the reference companion when
    we are concerned about tearing; we can use `P.ref` as a field or array
@@ -543,7 +551,7 @@ primitive Node<T> {
    a primitive and reference type for every primitive class means that these
    rules can be cleanly and intuitively extended to cover extended primitives.
 
-#### Identity-sensitive operations
+### Identity-sensitive operations
 
 Certain operations are currently defined in terms of object identity.  As we've
 already seen, some of these, like equality, can be sensibly extended to cover
@@ -553,10 +561,12 @@ Identity-sensitive operations include:
   - **Equality.**  We extend `==` on references to include references to value
     objects.  Where it currently has a meaning, the new definition coincides
     with that meaning.
+
   - **System::identityHashCode.**  The main use of `identityHashCode` is in the
     implementation of data structures such as `IdentityHashMap`.  We can extend
     `identityHashCode` in the same way we extend equality -- deriving a hash on
     primitive objects from the hash of all the fields.
+
   - **Synchronization.**  This becomes a partial operation.  If we can
     statically detect that a synchronization will fail at runtime (including
     declaring a `synchronized` method in a value or primitive class), we can
@@ -565,6 +575,7 @@ Identity-sensitive operations include:
     because it is intrinsically imprudent to lock on an object for which you do
     not have a clear understanding of its locking protocol; locking on an
     arbitrary `Object` or interface instance is doing exactly that.
+
   - **Weak references.**  If we made creating weak references a partial
     operation on `Object`, weak references become almost useless, as every class
     that wants to maintain some sort of weak data structure would have to
@@ -576,7 +587,7 @@ Identity-sensitive operations include:
     reachable.
 
 
-#### Identifying identity
+### Identifying identity
 
 To distinguish between primitive and identity classes at compile and run time,
 we introduce two restricted interfaces `IdentityObject` and `ValueObject`.
@@ -606,7 +617,7 @@ If an interface or abstract class implements `IdentityObject` or `ValueObject`,
 this serves as a constraint that it may only be extended by the appropriate sort
 of class.
 
-#### What about Object?
+### What about Object?
 
 The root class `Object` poses an unusual problem, in that every class must
 extend it directly or indirectly, but itself is (currently) an identity class,
@@ -619,7 +630,7 @@ classes -- they can be extended by both identity and primitive classes -- but
 redefine the idiom `new Object()` to evaluate to a fresh instance of an
 _anonymous identity subclass_ of `Object`.
 
-#### Bringing primitives and objects closer together
+### Bringing primitives and objects closer together
 
 While primitives and objects still have some differences, we can dramatically
 reduce the size of the table of differences we started with.  Rather than
@@ -635,7 +646,7 @@ set of differences:
 | Tearable under race                 | Initialization safety guarantees |
 | Have reference companions           | Don't need reference companions  |
 
-#### Value types vs primitives
+### Value types vs primitives
 
 It is reasonable to ask, why would we introduce _two_ new forms of declaration,
 value classes and primitives?  Couldn't one or the other be good enough?  
@@ -670,14 +681,15 @@ following table summarizes the transition from the current world to Valhalla.
 
 | Current World                               | Valhalla                                                  |
 | ------------------------------------------- | --------------------------------------------------------- |
-| all objects have identity                   | some objects have identity                                |
-| fixed, built-in set of primitives           | open-ended set of primitives, declared with classes       |
-| primitives don't have methods or supertypes | primitives are classes, with methods and supertypes       |
-| primitives have ad-hoc boxes                | primitives have regularized reference companions          |
-| boxes have accidental identity              | reference companions have no identity                     |
-| boxing and unboxing conversions             | primitive reference and value conversions, but same rules |
-| primitive arrays are monomorphic            | all arrays are covariant                                  |
+| All objects have identity                   | Some objects have identity                                |
+| Fixed, built-in set of primitives           | Open-ended set of primitives, declared with classes       |
+| Primitives don't have methods or supertypes | Primitives are classes, with methods and supertypes       |
+| Primitives have ad-hoc boxes                | Primitives have regularized reference companions          |
+| Boxes have accidental identity              | Reference companions have no identity                     |
+| Boxing and unboxing conversions             | Primitive reference and value conversions, but same rules |
+| Primitive arrays are monomorphic            | All arrays are covariant                                  |
 
 
 [valuebased]: https://docs.oracle.com/javase/8/docs/api/java/lang/doc-files/ValueBased.html
 [growing]: https://dl.acm.org/doi/abs/10.1145/1176617.1176621
+[jep390]: https://openjdk.java.net/jeps/390

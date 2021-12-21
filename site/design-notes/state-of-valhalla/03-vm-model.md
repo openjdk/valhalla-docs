@@ -1,15 +1,13 @@
 # State of Valhalla
+## Part 3: The JVM Model {.subtitle}
 
-#### Section 3: JVM Model
-#### John Rose and Brian Goetz, December 2021
+#### John Rose and Brian Goetz {.author}
+#### April 2021 {.date}
 
-::: sidebar
-Contents:
+> _This is the third of three documents describing the current State of
+  Valhalla.  The first is [The Road to Valhalla](01-background); the
+  second is [The Language Model](02-object-model)._
 
-1. [The Road to Valhalla](01-background.html)
-2. [Language Model](02-object-model.html)
-3. [JVM Model](03-vm-model.html)
-:::
 
 This document describes the _Java Virtual Machine_ view of value classes.  Note
 that this is not necessarily the same as the Java Language view; readers are
@@ -37,7 +35,7 @@ effectively optimize layout, instantiation, member access, and calling
 convention for value objects, whether represented via reference or as bare
 values.
 
-#### Carriers and descriptors
+### Carriers and descriptors
 
 JVM type descriptors (JVMS 4.3.2) use a leading letter to denote their _basic
 type_.  There are currently eight basic types corresponding to the eight
@@ -112,7 +110,7 @@ surprisingly, _references to_ value objects can also be flattened under some
 conditions as well, though their stronger semantic guarantees (nullity,
 non-tearability) will have some cost.
 
-#### Eager loading
+### Eager loading
 
 In most cases, the JVM is lazy about loading classes referred to by other
 classes, such as classes named in method and field descriptors or in
@@ -139,7 +137,7 @@ make layout decisions for references to value objects, or for bare values, we
 have complete information about these classes.  (As a result, applications are
 at greater risk of _bootstrap circularities_ because of increased preloading.)
 
-#### Nullity and default values
+### Nullity and default values
 
 Object references may be null, which means `L`-described variables must be able
 to represent null.  The JVM has complete latitude over how to represent null
@@ -156,7 +154,7 @@ types, the default value is `null`; the built-in primitives each have their own
 form of "zero" which acts as a default value.  for bare values, the default
 value is the one for which each field is initialized to its default value.  
 
-#### Supertypes
+### Supertypes
 
 Value classes may implement interfaces, and may extend certain restricted
 abstract classes as well as the special class `Object`.  This means that a
@@ -202,7 +200,7 @@ If an identity class declares a value-superclass candidate as its super, it must
 straight up to the no-arg constructor of `Object`, skipping the intervening
 abstract (empty) `<init>` methods.
 
-#### Restrictions
+### Restrictions
 
 Value classes come with some restrictions compared to their identity
 counterparts.  Instance fields of a value class must be marked `ACC_FINAL`, and
@@ -243,7 +241,7 @@ prepare such static fields before the default value is materialized, which may
 possibly require lazy or indirect access to the field.  If so, this internal
 logic can be hidden within the `getstatic` bytecode.
 
-#### Static translation
+### Static translation
 
 The translation of Java classes which declare and use value classes requires
 minor adjustments to the current translation strategy.  
@@ -338,7 +336,7 @@ In particular, `CONSTANT_Fieldref`, `CONSTANT_Methodref`, and
 `CONSTANT_InterfaceMethodref` items and `instanceof` instructions must not refer
 to `CONSTANT_Class` items with `Q` descriptors.
 
-#### Arrays
+### Arrays
 
 An array type is a reference type (using the `L` contract) generated from a
 descriptor beginning with `[`.  The addition of `Q` descriptors simply implies
@@ -359,7 +357,7 @@ arrays are covariant, `[QX;` is a transitively subtype of `[LObject;`.)  The
 same consideration is given to the eight primitive types and their wrappers;
 `[I` is a subtype of `[LInteger;`.  
 
-#### Structure tearing
+### Structure tearing
 
 With the exception of `long` and `double`, loads and stores of references and
 built-in primitives to and from the heap are atomic with respect to each other.
@@ -401,7 +399,7 @@ must choose the latter.)  The JVM then excludes tearing by any means it chooses:
 Software transactions, hardware locking, hidden synchronization, extra
 buffering, or some combination of the above.  
 
-#### Legacy primitives
+### Legacy primitives
 
 As discussed in [Language Model](02-object-model.html), a key goal is to migrate
 the built-in primitives so that they are "mostly just" primitive classes, while
@@ -424,7 +422,7 @@ instance of one of the primitive wrapper classes will throw `IMSE`.  While we do
 not take this lightly, it is almost universally an error to do this, and in the
 very few cases where this is not an outright error, simple workarounds exist.
 
-#### Verification
+### Verification
 
 The verifier keeps track of the "flavor" of each reference value (`L` vs `Q`) as
 derived from the descriptor at its source.  `L` and `Q` references may be
@@ -471,7 +469,7 @@ sequences.)
 
 In the verifier, a type `QFoo;` has no subtypes or supertypes at all.  
 
-#### Reflection
+### Reflection
 
 When a class is reflected, its field and method types directly represent the
 corresponding descriptors by using a distinct mirror (of type `Class`) for each
@@ -495,7 +493,7 @@ have to look somewhere special, as with `int` today, or ask the primary mirror
 for its corresponding secondary mirror.  There will be an API point on `Class`
 for obtaining the `val` mirror from the `ref` mirror, and vice versa.
 
-#### Reachability
+### Reachability
 
 Like one of today's `Integer` objects, a value object may be used as a key to a
 weak hash map.  (There are many such in the Java ecosystem.)  The implementation
@@ -576,7 +574,7 @@ pattern to represent null.  (In some cases we can find an empty bit pattern in
 the representation, in which case we can do so without additional footprint
 cost; otherwise we'll need to adjoin additional bits to the representation.)
 
-#### Flattennable contexts
+### Flattennable contexts
 
 References may appear in fields, method parameter and returns, and local
 variables.  Each of these contexts has different constraints on the timing of
