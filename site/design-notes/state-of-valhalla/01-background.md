@@ -122,25 +122,26 @@ getting harder to bridge.
 
 ### The costs of boxing
 
-Primitives are not objects, but they have _boxes_. When primitives want to
-interact in the world of objects,  we transparently convert them to and from
-their corresponding box.   Primitives don't implement interfaces like
-`Comparable` -- their boxes do.  `Object` is the top type -- but only for
-classes.  So primitives cannot directly participate in generics or dynamically
-typed libraries such as reflection (where everything is expressed as `Object` or
-`Object[]`) -- they can only do so through their boxes.
+Java's eight built-in primitive types are not objects, but they have _boxes_.
+When primitives want to interact in the world of objects,  we transparently
+convert them to and from their corresponding box.   Primitives don't implement
+interfaces like `Comparable` -- their boxes do.  `Object` is the top type -- but
+only for classes.  So primitives cannot directly participate in generics or
+dynamically typed libraries such as reflection (where everything is expressed as
+`Object` or `Object[]`) -- they can only do so through their boxes.
 
 Going through boxes is not necessarily bad; the meaning of
 `ArrayList<Integer>` is clear enough, and autoboxing lets us deal with such
-types in a syntactically convenient way.  But there are sharp edges.  Boxes
-have identity, whereas primitives do not; boxing is not able to fully paper over
-this gap.  Each time we convert from `Integer` to `int` the identity is lost,
-and each time we convert from `int` to an `Integer`, a fresh (but accidental)
-identity is created (which can inhibit valuable runtime optimizations).  While
-`int` boxes to `Integer`, `int[]` does not box to `Integer[]`.  And the
-relationships between primitive types and their corresponding box types are
-entirely ad-hoc (they're even sometimes, but not always, spelled the same way!);
-you just have to keep this in your head (and in your code).
+types in a syntactically convenient way.  But there are sharp edges.  Boxed
+`int`s have identity, whereas primitives do not; boxing is not able to fully
+paper over this gap.  Each time we convert from `Integer` to `int` the identity
+is lost, and each time we convert from `int` to an `Integer`, a fresh (but
+accidental) identity is created (which can inhibit valuable runtime
+optimizations).  While `int` boxes to `Integer`, `int[]` does not box to
+`Integer[]`.  And the relationships between primitive types and their
+corresponding box types are entirely ad-hoc (they're even sometimes, but not
+always, spelled the same way!); you just have to keep this in your head (and in
+your code).
 
 Developers know that boxing is not only irregular, but also expensive; absent
 heroic optimizations, boxing conversion entails heap allocation, and using box
