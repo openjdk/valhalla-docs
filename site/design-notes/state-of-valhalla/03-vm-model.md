@@ -3,7 +3,7 @@
 ## Part 3: The JVM Model {.subtitle}
 
 #### John Rose and Brian Goetz {.author}
-#### April 2021 {.date}
+#### December 2021 {.date}
 
 > _This is the third of three documents describing the current State of
   Valhalla.  The first is [The Road to Valhalla](01-background); the
@@ -12,8 +12,8 @@
 
 This document describes the _Java Virtual Machine_ view of value classes.  Note
 that this is not necessarily the same as the Java Language view; readers are
-advised to exercise care in drawing conclusions about the Java Language, from
-this document.
+advised to exercise care in drawing conclusions, from this document, about the
+Java Language.
 
 ## Value classes and objects
 
@@ -72,7 +72,7 @@ values, even of the same class, are kept distinct.
 specifying a field descriptor for a `Q` descriptor as its `CONSTANT_Utf8`
 string, rather than an internal binary name.  (As with array descriptors in the
 same place, there is no ambiguity, since a class name cannot have the same
-spelling as an array or field descriptor.  This is because class names cannot
+spelling as an array or class descriptor.  This is because class names cannot
 contain left bracket `[` or semicolon `;` characters.)
 
 It is an error to refer to a class using a `Q` descriptor which does not have
@@ -94,11 +94,11 @@ Bare values have several major differences from references to value objects:
 
  - References to value objects, like all object references, can be null, whereas
    bare values cannot.  This allows a `Q` type to "work like an `int`",
-   without troubling the JVM to represent a `null` value in a 32-bit integer.  
+   without troubling the JVM to represent a `null` value in a 32-bit integer.
 
  - Loads and stores of references are atomic with respect to each other, whereas
    loads and stores of sufficiently large bare values may tear under race, as
-   is the case for `long` and `double`.  
+   is the case for `long` and `double`.
 
  - The JVM is required to load classes named in `Q` descriptors much earlier
    than those named by `L` descriptors.
@@ -113,7 +113,7 @@ Bare values have several major differences from references to value objects:
    of error processing and also applies the eager processing of `Q` types more
    consistently.)
 
- - `L` descriptor names participate in class loader constraints; `Q` descriptors
+ - `L` descriptor names participate in class loader constraints; `Q` descriptor
    names need not, if they are resolved during preparation.  (Because of eager
    loading, the constraints can be checked using resolved classes when methods
    are prepared.  JVM implementations which resolve `Q` descriptors more lazily
@@ -124,8 +124,8 @@ array layouts, and in calling conventions between methods.  Perhaps
 surprisingly, _references to_ value objects can also be flattened under some
 conditions as well, though their stronger semantic guarantees (nullity,
 non-tearability) will have some costs.  In particular, a flattened reference may
-need to allocate an extra bit somewhere to differentiate `null` from a value
-reference.
+need to allocate an extra bit somewhere to differentiate between `null` and
+non-null references.
 
 ### Eager loading
 
@@ -197,7 +197,8 @@ containing class is initialized.)  There are no corresponding requirements for
 Object references may be null, which means `L`-described variables must be able
 to represent null.  The JVM has complete latitude over how to represent null
 references.  For identity classes, where pointers are effectively a forced move
-for representing references, the null pointer is the obvious representation.  
+for representing references, the null pointer is the obvious representation.
+
 For value classes that are going to be flattened, an alternate representation
 must be chosen.  Where the JVM can identify an unused bit or bit pattern (such
 as slack bits in pointers or booleans), it can use these to encode null; in the
@@ -373,7 +374,7 @@ counterparts.
     type, it ensures that the class file properly declares a primitive type.)
 
 A `Q` descriptor requires a check on the corresponding class file; its contract
-is strict in that way.  There is no corresponding check for `L` descriptors,
+is strict in that way.  There is no corresponding check for an `L` descriptor,
 because its contract is lax.
 
 If an object were to contain a `Q`-typed instance field of its own class, it
@@ -396,13 +397,13 @@ hidden within the `getstatic` bytecode.
 ### Static translation
 
 The translation of Java classes which declare and use value classes requires
-minor adjustments to the current translation strategy.  
+minor adjustments to the current translation strategy.
 
 Value classes that are not primitive classes require no change in translation;
 these are translated with `L` descriptors.  Similarly, the reference companion
 type of a primitive class is translated with `L` descriptors, and primitive
 value types are translated with `Q` descriptors.  Widening and narrowing
-conversions between `Q` and `L` types are performed with `checkcast`.  
+conversions between `Q` and `L` types are performed with `checkcast`.
 
 Instantiation of value classes (`new V(...)`) is translated as invocation of the
 corresponding unnamed factory method with `invokestatic`.  In the body of the
@@ -431,12 +432,13 @@ bytecodes.  Some are new, and others gain additional behavior or restrictions
 when applied to primitive types.  The existing `a*` bytecodes are extended to
 uniformly support references to both identity and value classes.
 
-(Note about the term "reference": To the JVM, and specifically the bytecode
+(A note about the term "reference": To the JVM, and specifically the bytecode
 verifier, "reference" is a catch-all type; it is anything other than an int,
 long, float, or double, the kind of thing you hand to an `a*` bytecode.  Thus it
-can be either a `Q` type or `L` type.  But what the language translates to `L`
-types are properly called reference, but what translates to `Q` types are not
-references but primitives.  This cognitive dissonance can perhaps be assuaged by
+can be either a `Q` type or `L` type.  What the language translates to `L`
+types are properly called references in the Java language.  But what translates
+to `Q` types are not Java language references but bare primitive values.
+This cognitive dissonance can perhaps be assuaged by
 substituting the term "address" or "anything" for "reference" in the JVM
 specification, or at least by remembering that the JVMS and JLS have separate
 bodies of terminology.)
@@ -537,14 +539,15 @@ is a subtype of `[LD;`.  For primitive classes, we extend this covariance such
 that an array of bare values is seen as a subtype of an array of references of
 the corresponding type: `[QX;` is a subtype of `LX;` (and, since reference
 arrays are covariant, `[QX;` is transitively a subtype of `[LObject;`.)  In
-short, at the language level, `A[] <: B[]` if and only if `A extends B` (not
-just `A <: B`), recalling that `A extends B` means either `A <: B` or `A.ref <:
-B`.
+short, the JVM replicates the language level rule, that `A[] <: B[]` if and only
+if `A extends B` (not just `A <: B`), recalling that `A extends B` means either
+`A <: B` or `A.ref <: B`.
 
 The same consideration will be given to the eight primitive types and their
 wrappers; `[I` is a subtype of `[LInteger;`, and `int` extends `Integer` and
 `Object`.  It seems likely that we will contrive somehow that `int extends
-Integer`.
+Integer` and `int[] <: int.ref[] <: Object[]`, with JVM support for these
+subtype relations among array references.
 
 ### Structure tearing
 
@@ -557,7 +560,7 @@ written to that variable.  (This, in turn, provides the underpinnings of
 _initialization safety_ (JCiP 16.3), which allows property constructed immutable
 objects to be shared published across threads, even via a data races.  (Without
 this guarantee, it would be possible to observe the value of a `String` change
-unexpectedly.)  
+unexpectedly.)
 
 The larger-than-64-bit built-in primitives (`long` and `double`) are permitted
 to _tear_ in a controlled way under race; absent proper coordination, a reader
@@ -586,7 +589,7 @@ ensuring tear-freedom; declare the field `volatile`, or use a reference rather
 than a bare value.  (The former is only available for fields; array elements
 must choose the latter.)  The JVM then excludes tearing by any means it chooses:
 Software transactions, hardware locking, hidden synchronization, extra
-buffering, or some combination of the above.  
+buffering, or some combination of the above.
 
 ### Legacy primitives
 
@@ -594,7 +597,7 @@ As discussed in [Language Model](02-object-model.html), a key goal is to migrate
 the built-in primitives so that they are "mostly just" primitive classes, while
 retaining the performance characteristics of the built-in primitives.  The
 existing wrapper classes (e.g., `Integer`) are redefined as value classes. We
-treat `int.ref` as an alias for `Integer`.  
+treat `int.ref` as an alias for `Integer`.
 
 The JVM will, of course, continue to have direct support for primitives (e.g.,
 the `I` carrier, and the `i*` instructions).  The language compiler will have
@@ -616,10 +619,11 @@ seems more likely that a dynamical mirror value like `int.class` will fufill
 that role.  Conversions between `int` and `Integer` probably do not need to
 change from their present form in bytecode, even around specialized generic
 code.  Our current thinking is that the complicating effects of specialization
-on generic code are not likely to change the form of the bytecode, but rather by
+on generic code are not likely to change the form of the bytecode.
+Instead, the effects of specialization will probably be
 carried by a new side channel which accompanies the bytecode, of dynamically
 specified and resolved "type restrictions", which are distinct from JVM type
-descriptors.
+descriptors as bytecode operands, visible to the verifier.
 
 ### Verification
 
@@ -697,7 +701,7 @@ yield class mirrors, the JVM will continue to return `ref` mirrors.  This is
 more compatible than returning the "more accurate" value.  The situation is
 similar, in some ways, to that of `Integer.class` and `int.class`, if one can
 imagine that `Integer` works like `int.ref`, and that `I` is really (somehow) a
-`Q`-like descriptor.  
+`Q`-like descriptor.
 
 In particular, `Class::forName` and `Object::getClass` will always return a
 `ref` projection.  If you want the mirror that "works like `int.class`", you
@@ -774,13 +778,13 @@ authors to recode) or just holding on to value objects forever.
 
 ## Flattening and representation
 
-It was clearly a goal of Valhalla to enable the flattening of bare values.  
+It was clearly a goal of Valhalla to enable the flattening of bare values.
 Given the constraints on primitive classes, flattening bare values in the heap,
 and in calling conventions, is straightforward; we can replace a bare value with
 its component fields whenever it is convenient to do so, and reassemble them
-into a value object where needed.  
+into a value object where needed.
 
-Perhaps surprisingly, it is also possible to flatten some object references.  
+Perhaps surprisingly, it is also possible to flatten some object references.
 Historically, object references were always represented as pointers.  Because
 all objects had identity, there was really no other practical option; objects
 with identity live in exactly one place, and a pointer is the ideal way to
@@ -792,13 +796,13 @@ When the type of the referent is more constrained, and the referent is known to
 have no identity, alternate representations become possible. An object without
 identity is just its (immutable) state (including its typestate), and two
 objects with the same type and state are indistinguishable.  This means that it
-becomes possible to flatten references into their referred-to state.  
+becomes possible to flatten references into their referred-to state.
 
 There are a number of accidental reasons why we might not be able to flatten a
 reference.  We might not have complete information about the range of types of
 the referent (it could be a reference to an unsealed interface type).  And even
 if it is a reference to a type that turns out to be monomorphic, we may not know
-this at the time we are called upon to choose a representation.  
+this at the time we are called upon to choose a representation.
 
 Because the layout of references must frequently be chosen early (such as when
 choosing the layout for a class containing the reference, which is done at class
@@ -848,13 +852,13 @@ flattened value in the heap is "scalarized", decomposed into a set of machine
 words.)
 
 Value objects as method parameters and returns, under both `L` and `Q`
-descriptors, can use flattened calling conventions for out-of-line calls.  
+descriptors, can use flattened calling conventions for out-of-line calls.
 For inlined calls, JITs have virtually unlimited latitude to flatten (scalarize)
-value objects under both `L` and `Q` descriptors.  
+value objects under both `L` and `Q` descriptors.
 
 In all cases, the JVM has the latitude to not flatten at its discretion.  For
 value objects with many fields, the JVM may decide to fall back to buffering its
 value in the heap, which is the traditional indirected representation.  Outside
-of statically typed and optimized code--in the interpreter or around
-unspecialized polymorphic or reflected code--heap buffering is not certain but
+of statically typed and optimized code -- in the interpreter or around
+unspecialized polymorphic or reflected code -- heap buffering is not certain but
 seems a likely prospect.
