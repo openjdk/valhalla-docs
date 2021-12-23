@@ -25,7 +25,7 @@ Java currently has eight built-in primitive types.  Primitives represent pure
 _values_; any `int` value of "3" is equivalent to (and indistinguishable from)
 any other `int` value of "3".  Values have no canonical location, and so are
 _freely copyable_. With the exception of the unusual treatment of `NaN` values
-for `float` and `double`, the `==` operator performs a _substitutibility test_
+for `float` and `double`, the `==` operator performs a _substitutability test_
 -- it asks "are these two values the same value?"
 
 Java also has _objects_, and each object has a unique _object identity_. Because
@@ -76,13 +76,13 @@ or boxes, which are reference types.
   </a>
 </figure>
 
-Valhalla aims to unify primitives and objects in that they can both be
-declared with classes, but maintains the special runtime characteristics
-primitives have.  But while everyone likes the flatness and density that
+Valhalla aims to unify primitives and objects so that primitive-like types can be
+declared with classes, while maintaining the special runtime characteristics
+primitives have.  Moreover, while everyone likes the flatness and density that
 user-definable value types promise, in some cases we want them to be more like
 classical objects (nullable, non-tearable), and in other cases we want them to
 be more like classical primitives (trading some safety for performance).  Over
-time, it became clear that there was not a one-size-fits-all answer.  
+time, it has become clear that there is no one-size-fits-all answer.  
 
 ## Value classes: separating references from identity
 
@@ -228,8 +228,9 @@ operations include:
 
   - **Equality.**  Two value objects are `==` if they are of the same type, and
     each of their fields are pairwise equal, where equality is given by `==` for
-    primitives (except `float` and `double`, which are compared with
-    `Float::equals` and `Double::equals` to avoid the `NaN` anomalies), `==` for
+    primitives (except `float` and `double`, which are compared "bitwise" with
+    `Float::equals` and `Double::equals` to avoid anomalies with `NaN`
+    and `-0.0`), `==` for
     references to identity objects, and recursively with `==` for references to
     value objects.  In no case is a value object ever `==` to an identity
     object.
@@ -237,7 +238,8 @@ operations include:
   - **System::identityHashCode.**  The main use of `identityHashCode` is in the
     implementation of data structures such as `IdentityHashMap`.  We can extend
     `identityHashCode` in the same way we extend equality -- deriving a hash on
-    primitive objects from the hash of all the fields.
+    primitive objects from an implementation-defined mixing function on all the
+    fields, or perhaps on a partial subset.
 
   - **Object methods.** The default implementations of `toString`, `equals`, and
     `hashCode`, as defined by the class `Object`, are based on object identity.
@@ -324,9 +326,10 @@ different set of tradeoffs.
 
 Specifically, value classes still use _reference types_.  This means they are
 nullable, and therefore must account for `null` somehow in their representation,
-which may have a footprint cost.  Similarly, they still offer the initialization
+which may have a footprint cost.  Similarly, value classes offer the initialization
 safety guarantees that we've come to expect from classes, which also has a cost
-to preserve.  For certain use cases, it may be desirable to additionally give up
+to preserve, compared to primitives.  For certain use cases, we may desire to
+additionally give up
 something else to gain the maximum flatness and density possible -- and that
 something else is reference-ness.
 
@@ -446,6 +449,7 @@ While primitive types are not _subtypes_ of reference types, we can introduce a
 new relationship based on `extends` / `implements` clauses, which we'll call
 _extends_.  We'll say `A` extends `B` means `A <: B` when A is a reference
 type, and `A.ref <: B` when A is a primitive type.
+The relation is also reflexive: `A extends A` for all types.
 
 ### Arrays
 
@@ -616,18 +620,28 @@ Reasons we might have to appeal to the reference type include:
    }
    ```
 
+ - **Compact arrays.** Some algorithms have a sequential access pattern that
+   works best on flat arrays of bare values while others, with a random access
+   pattern, work better on arrays of true references to separately buffered
+   values.  In the latter case, a compact array of type `P.ref[]` might perform
+   better.  (This is a subtle choice that typically needs validation from
+   benchmarks!)  Depending on the relative sizes of bare `P` values and managed
+   references, and depending on the algorithm, one array type or the other might
+   use less memory bandwidth.
+
  - **Protection from tearing.**  We may want to use the reference type when
    we are concerned about tearing.  We can use `P.ref` as a field or array
    component type to request reference semantics; because loads and stores of
    references are atomic, `P.ref` is immune to the tearing under race that `P`
    might be subject to.  (The `volatile` modifier offers an alternative solution
    for fields, but comes with some additional, possibly unwanted performance
-   implications.)
+   implications.  Some race-accepting multithread algorithms might work better
+   with safely buffered `P.ref` values than with bare `P`.)
 
  - **Consistency with existing boxing.**  Autoboxing is convenient, in that it
    lets us pass a primitive where a reference is required.  But boxing affects
    far more than assignment conversion; it also affects method overload
-   selection.  The rules are design to prefer overloads that require no
+   selection.  The rules are designed to prefer overloads that require no
    conversions over those requiring boxing (or varargs) conversions.  Having both
    a primitive and reference type for every primitive class means that these
    rules can be cleanly and intuitively extended to cover new primitives.
@@ -677,6 +691,17 @@ primitive?  Here are some quick rules of thumb:
  - Consider primitives when we don't need identity, nullity, or cross-field
    invariants, and can tolerate the zero default and tearability that comes with
    primitives.
+ - The `P.ref` reference type for a primitive recovers the benefits of
+   a value class.
+
+Regarding performance we can observe some complementary rules of thumb:
+
+ - Identity objects usually live in the heap, except on a very good
+   day with JIT inlining and escape analysis.
+ - Value objects should tend to stay above the heap as arguments and returns,
+   but buffer in the heap when their references are stored there.
+ - Bare primitive values should appear in the heap less as separately
+   buffered objects and more as flattened values in their containers.
 
 ### Summary
 
