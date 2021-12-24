@@ -273,7 +273,8 @@ operations include:
 
 ### Identifying identity
 
-To distinguish between primitive and identity classes at compile and run time,
+To distinguish between value and identity types at compile time, and
+between value and identity objects at run time,
 we introduce two restricted interfaces `IdentityObject` and `ValueObject`.
 `IdentityObject` is implicitly implemented by identity classes; `ValueObject` is
 implicitly implemented by value classes; no class can implement both. This
