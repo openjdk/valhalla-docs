@@ -305,4 +305,4 @@ generics][jep-generics]; and finally specialized generics.
 [jep401]: https://openjdk.java.net/jeps/401
 [jep402]: https://openjdk.java.net/jeps/402
 [jep-generics]: http://openjdk.java.net/jeps/8261529
-[erasure]: ../in-defense-of-erasure.md
+[erasure]: ../in-defense-of-erasure.html
