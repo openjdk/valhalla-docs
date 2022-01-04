@@ -72,7 +72,7 @@ What we would like is to have the option to get a layout more like this:
 This layout is both flatter (no indirections) and denser (no headers) than the
 previous version.  Project Valhalla offers us a natural way to get to this
 layout, without having to obsessively focus on low-level details, by separating
-out, and giving users control over, the semantic concerns than necessitate the
+out, and giving users control over, the semantic concerns that necessitate the
 first layout.
 
 Flattening is not only about layout in the heap; we can also flatten the _calling
@@ -111,7 +111,7 @@ Again, this was a pragmatic compromise -- and the only way known at the time to
 add generics to Java without massive compatibility pain -- but the ongoing tax
 only grew larger.
 
-It got worse again when lambdas came along in in 2014.  Lambdas build heavily on
+It got worse again when lambdas came along in 2014.  Lambdas build heavily on
 generics, so many of the consequences faced by generics were inherited by
 lambdas.  This rippled into the libraries: `java.util.function` suffers a
 combinatorial explosion of hand-specialized versions (`IntPredicate`,
