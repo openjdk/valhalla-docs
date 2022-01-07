@@ -229,7 +229,7 @@ A `<new>` method must return the type of its declaring class, or a supertype.
 If the declaring class supports `Q` types (is marked `ACC_PRIMITIVE`) the return
 type may be the `Q` type of that class, or (as with regular value classes) an
 appropriate `L` type.  An unnamed factory method for a primitive _usually_
-returns the `Q` type type of its class, and for a non-primitive value class it
+returns the `Q` type of its class, and for a non-primitive value class it
 _usually_ returns the `L` type.  (Returning other types is a necessary option
 for hidden value classes, and may be useful in other specialized translation
 strategies.)
@@ -562,7 +562,7 @@ objects to be shared published across threads, even via a data races.  (Without
 this guarantee, it would be possible to observe the value of a `String` change
 unexpectedly.)
 
-The larger-than-64-bit built-in primitives (`long` and `double`) are permitted
+The larger-than-32-bit built-in primitives (`long` and `double`) are permitted
 to _tear_ in a controlled way under race; absent proper coordination, a reader
 may see the high-order 32 bits of one write, and the low-order 32 bits of
 another write.  Any _happens-before_ ordering between writes and reads, such as
