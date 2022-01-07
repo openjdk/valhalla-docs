@@ -615,7 +615,7 @@ Reasons we might have to appeal to the reference type include:
    `null` to indicate that there is no next node:
 
    ```
-   primitive Node<T> {
+   primitive class Node<T> {
        T theValue;
        Node.ref<T> nextNode;
    }
