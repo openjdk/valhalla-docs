@@ -60,7 +60,7 @@ performance and usability of the primitive types.  Reference types default to
 value (which for most primitives is the additive identity).  Reference types
 provide initialization safety guarantees against a certain category of data
 races; primitives allow tearing under race for larger-than-32-bit values.  
-We could characterize the design principles behind these tradeoffs are "make
+We could characterize the design principles behind these tradeoffs as "make
 objects safer, make primitives faster."
 
 The following figure illustrates the current universe of Java's types.  The
