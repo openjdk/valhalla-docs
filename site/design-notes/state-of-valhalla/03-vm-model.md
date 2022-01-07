@@ -556,9 +556,9 @@ built-in primitives to and from the heap are atomic with respect to each other.
 This provides protection against _out of thin air_ reads; even in the presence
 of data races, a load of a variable will yield a value that _some_ thread has
 put there (perhaps the default value), even if it is not the _most recent_ value
-written to that variable.  (This, in turn, provides the underpinnings of
-_initialization safety_ (JCiP 16.3), which allows property constructed immutable
-objects to be shared published across threads, even via a data races.  (Without
+written to that variable.  This, in turn, provides the underpinnings of
+initialization safety (JCiP 16.3), which allows properly constructed immutable
+objects to be shared across threads, even in the presence of data races.  (Without
 this guarantee, it would be possible to observe the value of a `String` change
 unexpectedly.)
 
