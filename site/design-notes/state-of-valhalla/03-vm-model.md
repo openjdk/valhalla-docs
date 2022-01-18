@@ -1,5 +1,4 @@
 # State of Valhalla
-# State of Valhalla
 ## Part 3: The JVM Model {.subtitle}
 
 #### John Rose and Brian Goetz {.author}
