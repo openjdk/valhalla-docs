@@ -183,7 +183,7 @@ of a `Q` type in a declared field or method is required, and may produce errors.
 The timing of class initialization (execution of `<clinit>` methods) is also
 affected by the presence of `Q` descriptors.  A default instance of a primitive
 class `Foo` is created whenever a variable of type `QFoo;` is created.  This
-means that when before array of type `[QFoo;` is created, and before an object
+means that before an array of type `[QFoo;` is created, and before an object
 containing a non-static field of type `QFoo;` is created, the class `Foo` must
 be initialized.  Also, before a static field of type `QFoo;` is first
 referenced, again `Foo` must be initialized.  (This might be when the class
@@ -472,7 +472,7 @@ grant access to these restricted instructions to other clients, on an opt-in
 basis, if this seems useful.)
 
 The `anewarray` instruction is similarly extended to apply to a `Q` descriptor;
-this determines whether the resulting array is flattened (`Q`), in which case it
+this determines whether the resulting array may be flattened (`Q`), in which case it
 is an array of bare values, or not (`L`).  The `anewarray` instruction
 returns a plain (`L`) reference to an array regardless of its component type.
 
@@ -536,7 +536,7 @@ incoming value can actually be stored as a bare value.
 Arrays of reference types are covariant; if `C` is a subtype of `D`, then `[LC;`
 is a subtype of `[LD;`.  For primitive classes, we extend this covariance such
 that an array of bare values is seen as a subtype of an array of references of
-the corresponding type: `[QX;` is a subtype of `LX;` (and, since reference
+the corresponding type: `[QX;` is a subtype of `[LX;` (and, since reference
 arrays are covariant, `[QX;` is transitively a subtype of `[LObject;`.)  In
 short, the JVM replicates the language level rule, that `A[] <: B[]` if and only
 if `A extends B` (not just `A <: B`), recalling that `A extends B` means either
