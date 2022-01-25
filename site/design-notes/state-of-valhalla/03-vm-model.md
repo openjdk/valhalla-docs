@@ -536,7 +536,7 @@ incoming value can actually be stored as a bare value.
 Arrays of reference types are covariant; if `C` is a subtype of `D`, then `[LC;`
 is a subtype of `[LD;`.  For primitive classes, we extend this covariance such
 that an array of bare values is seen as a subtype of an array of references of
-the corresponding type: `[QX;` is a subtype of `LX;` (and, since reference
+the corresponding type: `[QX;` is a subtype of `[LX;` (and, since reference
 arrays are covariant, `[QX;` is transitively a subtype of `[LObject;`.)  In
 short, the JVM replicates the language level rule, that `A[] <: B[]` if and only
 if `A extends B` (not just `A <: B`), recalling that `A extends B` means either
