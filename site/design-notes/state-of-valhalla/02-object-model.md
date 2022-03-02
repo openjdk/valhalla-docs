@@ -35,7 +35,7 @@ But we mostly don't notice this because objects are not manipulated or accessed
 directly, but instead through _object references_.  Object references are also a
 kind of value -- they encode the identity of the object to which they refer, and
 the `==` operator on object references asks "do these two references refer to
-the same object."  Accordingly, object _references_ (like other values) can be
+the same object?"  Accordingly, object _references_ (like other values) can be
 freely copied, but the objects they refer to cannot.  
 
 Primitives and objects differ in almost every conceivable way:
@@ -49,7 +49,7 @@ Primitives and objects differ in almost every conceivable way:
 | No members (fields, methods, constructors) | Members (including mutable fields) |
 | No supertypes or subtypes                  | Class and interface inheritance    |
 | Accessed directly                          | Accessed via object references     |
-| Default value is zero                      | Default value is null              |
+| Default value is zero                      | Default value is `null`            |
 | Arrays of primitives are monomorphic       | Arrays are covariant               |
 | Tearable under race                        | Initialization safety guarantees   |
 | Convertible to polymorphic objects         | Polymorphic                        |
@@ -59,7 +59,7 @@ performance and usability of the primitive types.  Reference types default to
 `null`, meaning "referring to no object"; primitives default to a usable zero
 value (which for most primitives is the additive identity).  Reference types
 provide initialization safety guarantees against a certain category of data
-races; primitives allow tearing under race for larger-than-32-bit values.  
+races; primitives allow tearing under race for larger-than-32-bit values.
 We could characterize the design principles behind these tradeoffs as "make
 objects safer, make primitives faster."
 
@@ -143,7 +143,7 @@ effectively forced to represent object references with pointers; for references
 to value objects, JVMs now have more flexibility.)
 
 Because they are reference types, value class types are nullable, their default
-value is null, and loads and stores of references are atomic even in the
+value is `null`, and loads and stores of references are atomic even in the
 presence of data races, providing the initialization safety we are used to with
 classical objects.
 
@@ -256,8 +256,8 @@ operations include:
     `Object` or interface instance is doing exactly that.
 
   - **Weak references.**  If we made creating weak references a partial
-    operation on `Object`, weak references become almost useless, as every class
-    that wants to maintain some sort of weak data structure would have to
+    operation on `Object`, weak references would become almost useless, as every
+    class that wants to maintain some sort of weak data structure would have to
     bifurcate into separate paths for identity and value objects.  (This would
     be similar to partializing `identityHashCode`.)  Weak references to value
     objects that contain no references to identity objects should never be
@@ -269,13 +269,13 @@ operations include:
     the topology of an object graph.  This generalizes cleanly to value objects,
     because `==` on value objects treats two identical copies of a value object
     as equal.   So any observations we make about topology prior to
-    serialization, are consistent with those after deserialization.
+    serialization are consistent with those after deserialization.
 
 ### Identifying identity
 
 To distinguish between value and identity types at compile time, and
 between value and identity objects at run time,
-we introduce two restricted interfaces `IdentityObject` and `ValueObject`.
+we introduce two restricted interfaces, `IdentityObject` and `ValueObject`.
 `IdentityObject` is implicitly implemented by identity classes; `ValueObject` is
 implicitly implemented by value classes; no class can implement both. This
 enables us to write code that dynamically tests for object identity before
@@ -287,7 +287,7 @@ if (x instanceof IdentityObject) {
 }
 ```
 
-as well as statically reflecting the requirement for identity in variable types
+It also statically reflects the requirement for identity in variable types
 (and generic type bounds):
 
 ```
@@ -305,7 +305,7 @@ of class.
 ### What about Object?
 
 The root class `Object` poses an unusual problem, in that every class must
-extend it directly or indirectly, but itself is (currently) an identity class,
+extend it directly or indirectly, but it itself is (currently) an identity class,
 and it is common to use `new Object()` as a way to obtain a new object identity
 for purposes of locking.  If `Object` were to implement `IdentityObject`, then
 primitive classes could not extend `Object` (and therefore could not
@@ -335,7 +335,7 @@ something else to gain the maximum flatness and density possible -- and that
 something else is reference-ness.
 
 _Primitive classes_ allow us to define new primitive types, with essentially the
-same runtime behavior as the basic primitives (`int`, `double`, etc.)
+same runtime behavior as the basic primitives (`int`, `double`, etc.).
 
 ```
 primitive class Point implements Serializable {
@@ -358,8 +358,8 @@ values of a primitive type.  The name of the class (`Point`) is also the name of
 the primitive type.  Users of the primitive type can expect familiar primitive
 semantics and performance -- for example, the primitive type cannot be `null`.
 
-A primitive class declaration is subject to the same constraints as for value
-classes (e.g., the instance fields are implicitly `final`). Additionally,
+A primitive class declaration is subject to the same constraints as value
+class declarations (e.g., the instance fields are implicitly `final`). Additionally,
 primitive type circularities in instance field types are not allowed --
 flattened instances must not contain other instances of the same type.
 
@@ -501,7 +501,7 @@ representation that supports `null` (`int` uses all 2^32 of its bit patterns, so
 a nullable `int` would have to either make some 32 bit signed integers
 unrepresentable, or use a 33rd bit).  This was a reasonable tradeoff for the
 basic primitives, and is also a reasonable tradeoff for many other potential
-primitive types (such as complex numbers, 2D points, half-floats, etc.)
+primitive types (such as complex numbers, 2D points, half-floats, etc.).
 
 ### Tearing
 
@@ -584,7 +584,7 @@ Reasons we might have to appeal to the reference type include:
    This need comes up when migrating existing classes.  The method `Map::get`
    uses `null` to signal that the requested key was not present in the map --
    but if the `V` parameter to `Map` is a primitive class, `null` is not a valid
-   value.  We can capture the "`V` or null" requirement by changing the
+   value.  We can capture the "`V` or `null`" requirement by changing the
    descriptor of `Map::get` to:
 
    ```
@@ -659,7 +659,7 @@ set of differences:
 
 | Primitives                          | Objects                            |
 | ----------------------------------- | ---------------------------------- |
-| Not nullable; default value is zero | Nullable; default value is null    |
+| Not nullable; default value is zero | Nullable; default value is `null`  |
 | Tearable under race                 | Initialization safety guarantees   |
 | Convertible to polymorphic objects  | Polymorphic                        |
 
@@ -684,23 +684,26 @@ not.
 How would we choose between declaring an identity class, value class, or
 primitive?  Here are some quick rules of thumb: 
 
- - Use identity classes when we need mutability, layout extension, or locking;
+ - Use identity classes when we need mutability, layout extension, or locking.
  
  - Consider value classes when we don't need identity, but need nullity or have
-   cross-field invariants; 
+   cross-field invariants.
    
  - Consider primitives when we don't need identity, nullity, or cross-field
    invariants, and can tolerate the zero default and tearability that comes with
    primitives.
- - The `P.ref` reference type for a primitive recovers the benefits of
-   a value class.
+
+ - Remember that the `P.ref` reference type for a primitive recovers the
+   benefits of a value class.
 
 Regarding performance we can observe some complementary rules of thumb:
 
  - Identity objects usually live in the heap, except on a very good
    day with JIT inlining and escape analysis.
+
  - Value objects should tend to stay above the heap as arguments and returns,
    but buffer in the heap when their references are stored there.
+
  - Bare primitive values should appear in the heap less as separately
    buffered objects and more as flattened values in their containers.
 
