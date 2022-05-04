@@ -73,14 +73,12 @@ occasional early-access builds being published.
 Interested developers are encouraged to experiment with these prototypes.
 
 -   [Early Access Builds](https://jdk.java.net/valhalla/)
+-   [GitHub repository](https://github.com/openjdk/valhalla)
 
--   [GitHub repository](https://github.com/openjdk/valhalla), including the
-    following branches:
-    
-    - `lworld`, the main line of Valhalla development
-    - `master`, tracking mainline OpenJDK
-    - `jep*`, staging area for the production-ready implementation of a JEP
-    - various other prototypes of proposed features
+Branches in the repository include `lworld` (the main line of Valhalla
+development), `master` (tracking mainline OpenJDK), `jep*` (staging areas for
+the production-ready implementations of JEPs), and various others prototyping
+proposed features.
 
 ## Community
 
