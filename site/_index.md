@@ -104,6 +104,9 @@ proposed features.
         feedback to the expert group
         ([archives](http://mail.openjdk.java.net/pipermail/valhalla-spec-comments/))
 
+-   [Documentation repository](https://github.com/openjdk/valhalla-docs)
+    (allows updating this page!)
+
 We welcome input from interested Java developers. Keep in mind that most
 theoretical ideas have been well explored over the last few years! The greatest
 help can be provided by those who try out concrete prototypes and can share
