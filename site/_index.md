@@ -35,7 +35,7 @@ integration into the JDK of a cohesive set of changes.
 -   Value objects
 
     -   [Value Objects (Preview)](https://openjdk.java.net/jeps/8277163)
-        (draft)
+        (submitted draft)
 
     -   [JEP 401: Primitive Classes (Preview)](https://openjdk.java.net/jeps/401)
         (candidate)
@@ -46,7 +46,7 @@ integration into the JDK of a cohesive set of changes.
 -   Enhanced generics
 
     -   [Universal Generics (Preview)](https://openjdk.java.net/jeps/8261529)
-        (draft)
+        (submitted draft)
 
     -   Parametric JVM
         (no draft yet)
