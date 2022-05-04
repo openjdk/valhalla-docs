@@ -1,9 +1,9 @@
 # Legacy Valhalla Links
 
+This page preserves the history of earlier work in the Valhalla project, much of
+which has been superseded.
 See the [main project page](https://openjdk.java.net/projects/valhalla/)
-for an overview of active work in the Valhalla project.
-This page preserves the history of earlier work, much of which has been
-superseded.
+for an overview of active work.
 
 ## JEPs
 
