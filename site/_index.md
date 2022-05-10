@@ -12,8 +12,9 @@ This Project is sponsored by the
 ## JEPs
 
 Valhalla project features will be added to Java over multiple releases.
-This process is managed with JEPs, each of which facilitates the development and
-integration into the JDK of a cohesive set of changes.
+This process is [managed with JEPs](https://openjdk.java.net/jeps/1),
+each of which facilitates the development and integration into the JDK of a
+cohesive set of changes.
 
 -   Preparatory changes
 
