@@ -2976,8 +2976,8 @@ a constant which is comprised of all of these elements:
 
   - The "raw" reference to _C_, a `CONSTANT_Class` constant.
   - Optionally, a parametric reference to _C_, a `CONSTANT_SpecializationLinkage`
-  - wrapping the "raw" reference to _C_, and also proposing some
-  - linkage selector value _V_.  Call this the "scope wrapper" if it's present.
+    wrapping the "raw" reference to _C_, and also proposing some
+    linkage selector value _V_.  Call this the "scope wrapper" if it's present.
   - The "raw" name and type of _M_, encoded in a
     `CONSTANT_NameAndType` constant.
   - A `CONSTANT_Methodref` (or `CONSTANT_InterfaceMethodref`) which
