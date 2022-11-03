@@ -15,6 +15,10 @@ for an overview of active work.
     considered different strategies for achieving runtime specialization of
     generic bytecode
 
+-   [JEP 303: Intrinsics for the LDC and INVOKEDYNAMIC Instructions](https://openjdk.java.net/jeps/303)
+    explored Java language changes to directly work with the `CONSTANT_Dynamic`
+    and `CONSTANT_InvokeDynamic` constant pool forms
+
 ## Documents
 
 -   [State of the Values](http://cr.openjdk.java.net/~jrose/values/values.html)

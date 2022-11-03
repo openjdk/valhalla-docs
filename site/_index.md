@@ -16,41 +16,39 @@ This process is [managed with JEPs](https://openjdk.java.net/jeps/1),
 each of which facilitates the development and integration into the JDK of a
 cohesive set of changes.
 
--   Preparatory changes
+There are four distinct feature sets under development:
 
-    -   [JEP 181: Nest-Based Access Control](https://openjdk.java.net/jeps/181)
-        (delivered in 11)
+1.  [Value Objects](https://openjdk.org/jeps/8277163), introducing class
+    instances that lack identity
 
-    -   [JEP 309: Dynamic Class-File Constants](https://openjdk.java.net/jeps/309)
-        (delivered in 11)
+2.  [User-defined Primitives](https://openjdk.org/jeps/401), supporting
+    null-free flattened storage
 
-    -   [JEP 371: Hidden Classes](https://openjdk.java.net/jeps/371)
-        (delivered in 15)
+3.  [Classes for the Basic Primitives](https://openjdk.org/jeps/402), bringing
+    value class features to the existing primitives
 
-    -   [JEP 390: Warnings for Value-Based Classes](https://openjdk.java.net/jeps/390)
-        (delivered in 16)
+4.  [Enhanced Generics](https://openjdk.org/jeps/8261529), providing optimal
+    performance for value classes used with generic APIs
 
-    -   [Better-defined JVM class file validation](https://openjdk.java.net/jeps/8267650)
-        (draft)
+We've also worked on some supplementary tasks and features, including:
 
--   Value objects
+-   [JEP 181: Nest-Based Access Control](https://openjdk.java.net/jeps/181)
+    (delivered in 11)
 
-    -   [Value Objects (Preview)](https://openjdk.java.net/jeps/8277163)
-        (submitted draft)
+-   [JEP 309: Dynamic Class-File Constants](https://openjdk.java.net/jeps/309)
+    (delivered in 11)
 
-    -   [JEP 401: Primitive Classes (Preview)](https://openjdk.java.net/jeps/401)
-        (candidate)
+-   [JEP 334: JVM Constants API](https://openjdk.org/jeps/334)
+    (delivered in 12)
 
-    -   [JEP 402: Classes for the Basic Primitives (Preview)](https://openjdk.java.net/jeps/402)
-        (candidate)
+-   [JEP 371: Hidden Classes](https://openjdk.java.net/jeps/371)
+    (delivered in 15)
 
--   Enhanced generics
+-   [JEP 390: Warnings for Value-Based Classes](https://openjdk.java.net/jeps/390)
+    (delivered in 16)
 
-    -   [Universal Generics (Preview)](https://openjdk.java.net/jeps/8261529)
-        (submitted draft)
-
-    -   Parametric JVM
-        (no draft yet)
+-   [Better-defined JVM class file validation](https://openjdk.java.net/jeps/8267650)
+    (draft)
 
 ## Background Documents
 
@@ -68,10 +66,10 @@ design considerations.
 
 ## Implementation
 
-Prototyping for the project takes place in a public OpenJDK repository, with
-occasional early-access builds being published.
+Development takes place in a public OpenJDK repository, with occasional
+early-access builds being published.
 
-Interested developers are encouraged to experiment with these prototypes.
+Interested developers are encouraged to experiment with these early releases.
 
 -   [Early Access Builds](https://jdk.java.net/valhalla/)
 -   [GitHub repository](https://github.com/openjdk/valhalla)
