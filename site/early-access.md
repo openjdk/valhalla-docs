@@ -26,11 +26,13 @@ variables or passed between methods.
 
 Interested users are encouraged to explore the performance and migration impact
 of value objects on their applications, and to provide feedback at
-`valhalla-dev@openjdk.java.net`.
+<span style="hyphens:none;">`valhalla-dev@openjdk.java.net`</span>.
 
 Support for flattened fields and arrays is still experimental, and must be
-activated using the `javac` flag `-XDenablePrimitiveClasses` and the `java` flag
-`-XX:+EnablePrimitiveClasses`.
+activated using the `javac` flag
+<span style="hyphens:none;">`-XDenablePrimitiveClasses`</span>
+and the `java` flag
+<span style="hyphens:none;">`-XX:+EnablePrimitiveClasses`</span>.
 This unlocks features that generally align with
 [JEP 401](https://openjdk.org/jeps/401) (as of November 2022):
 classes may be declared `primitive`, uses of the primitive class name refer to a
@@ -41,7 +43,7 @@ treated as instances of supertype arrays (such as `Object[]`).
 At run time, primitive-typed fields and arrays typically store their primitive
 values' fields directly, and may be non-atomically modified.
 
-Notes:
+## Notes
 
 -   While these features are destined to be preview features, they currently
     work out of the box, without the `--enable-preview` flag.
