@@ -8,6 +8,8 @@ Many supplementary tools and APIs do not fully support the new features.
 The goal of this release is to solicit feedback and establish a milestone as we
 work toward a preview release in Java SE.
 
+
+
 ## LW4 Functionality
 
 This release is primarily focused on implementing the
@@ -25,23 +27,67 @@ and typically have inline, allocation-free encodings when stored in local
 variables or passed between methods.
 
 Interested users are encouraged to explore the performance and migration impact
-of value objects on their applications, and to provide feedback at
+of value objects on their applications, and to provide feedback to
 <span style="white-space:nowrap;">`valhalla-dev@openjdk.java.net`</span>.
 
 Support for flattened fields and arrays is still experimental, and must be
-activated using the `javac` flag
-<span style="white-space:nowrap;">`-XDenablePrimitiveClasses`</span>
-and the `java` flag
-<span style="white-space:nowrap;">`-XX:+EnablePrimitiveClasses`</span>.
-This unlocks features that generally align with
+activated using the command-line options documented below.
+The unlocked behavior is generally consistent with
 [JEP 401](https://openjdk.org/jeps/401) (as of November 2022):
-classes may be declared `primitive`, uses of the primitive class name refer to a
+Classes may be declared `primitive`, uses of the primitive class name refer to a
 *primitive value type*, and `.ref` can be appended to a primitive class name to
 get its corresponding reference type.
-Primitive value types are null-free; arrays of these types can be allocated and
-treated as instances of supertype arrays (such as `Object[]`).
+Primitive value types are null-free; covariant arrays of these types can be
+created (e.g., a `Point[]` can be treated as an `Object[]`).
 At run time, primitive-typed fields and arrays typically store their primitive
-values' fields directly, and may be non-atomically modified.
+values' fields directly; reads and writes are not guaranteed to be atomic.
+
+
+
+## Command-Line Options
+
+Special options supported by `javac`:
+
+-   `-XDenablePrimitiveClasses` to unlock experimental support for Primitive
+    Classes
+
+Special options supported by `java`:
+
+-   `-XX:-EnableValhalla` to deactivate support for Value Objects and revert to
+    standard JVM behavior
+
+-   `-XX:+EnablePrimitiveClasses` to unlock experimental support for Primitive
+    Classes
+
+-   `-XX:FlatArrayElementMaxSize=n`, when primitive class support is activated,
+    set the max number of bytes, `n`, stored in a flattened array component
+    (negative means unbounded; default is unbounded)
+
+-   `-XX:FlatArrayElementMaxOops=n`, when primitive class support is activated,
+    set the max number of of references, `n`, permitted in a single flattened
+    array component (negative means unbounded; default is 4)
+
+
+
+## Performance Guidance
+
+As
+[described by the JEP]([Value Objects JEP](https://openjdk.org/jeps/8277163#HotSpot-implementation),
+HotSpot optimizes the stack encodings of value objects within C2-generated code,
+avoiding heap allocation.
+Most performance benefits will be observed in code that would traditionally
+require allocation of a large number heap objects, to be referenced by local
+variables and passed between methods.
+
+Normal value objects will *not* be "flattened" into field and array storage.
+That behavior is part of the experimental Primitive Classes feature.
+
+Note that HotSpot's existing escape analysis and code inlining optimizations are
+quite effective at eliminating heap allocations for locally-contained identity
+objects. Performance improvements for value objects are achieved in cases where
+these optimizations would fail.
+
+
 
 ## Notes
 
@@ -49,22 +95,36 @@ values' fields directly, and may be non-atomically modified.
     work out of the box, without the
     <span style="white-space:nowrap;">`--enable-preview`</span> flag.
 
--   Only the x64 Linux, x64 macOS, and x64 Windows platforms are currently
-    supported.
-
--   The JVM's existing escape analysis and code inlining optimizations are quite
-    effective at eliminating the footprint of locally-contained identity
-    objects. Performance improvements for value objects are achieved in cases
-    where these optimizations would fail.
-
 -   Refactoring an `identity` class to be a `value` class will have various
     compatibility implications, as
-    [outlined](https://openjdk.org/jeps/8277163#Migration-of-existing-classes)
-    in the JEP.
+    [outlined in the JEP](https://openjdk.org/jeps/8277163#Migration-of-existing-classes).
 
--   `jshell` works with value classes but does not support the primitive class
-    flags.
+-   A value class may be declared as a record (`value record Foo(int x, int y)`)
+    and may be serializable (`value class Bar implements Serializable`).
+    These features are fully functional.
+
+-   Methods to dynamically test whether an object is an identity object or a
+    value object can be found in the `java.util.Objects` class.
+
+-   The `java.lang.ref` API rejects attempts to create references to value
+    objects. 
+
+-   Core reflection has added support for the `identity` and `value` modifiers.
+    A `MethodHandle` for value class instance creation can be produced using the
+    `Lookup.findStatic` method (with method name `"<vnew>"`).
+
+-   Value class files generated by `javac` are meant only for use with this
+    early access release, and will probably cause errors if loaded by other JVMs
+    or processed by third-party tools.
+
+-   When experimental primitive class support is active, primitive value types
+    are expressed in class files with special `Q` descriptors, and in core
+    reflection using special class objects, distinct from `ClassName.class`.
+
+-   HotSpot support for CDS, JVMTI, and the serviceability agent has not been
+    fully tested and unexpected behavior may occur.
+
+-   `jshell` works with value classes but does not support the experimental
+    primitive class features.
 
 -   `javap` recognizes all the new class file features.
-
--   ...
