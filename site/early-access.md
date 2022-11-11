@@ -88,8 +88,8 @@ That behavior is part of the experimental Primitive Classes feature.
 
 Note that HotSpot's existing escape analysis and code inlining optimizations are
 quite effective at eliminating heap allocations for locally-contained identity
-objects. Performance improvements for value objects are achieved in cases where
-these optimizations would fail.
+objects. Performance improvements for value objects will primarily be observed
+in cases where these identity object optimizations would fail.
 
 
 
