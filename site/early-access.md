@@ -59,20 +59,24 @@ Special options supported by `java`:
 -   `-XX:+EnablePrimitiveClasses` to unlock experimental support for Primitive
     Classes
 
+-   `-XX:InlineFieldMaxFlatSize=n`, when primitive class support is activated,
+    set the max number of bytes, `n`, stored in a flattened field (negative
+    means unbounded; default is 128)
+
 -   `-XX:FlatArrayElementMaxSize=n`, when primitive class support is activated,
     set the max number of bytes, `n`, stored in a flattened array component
     (negative means unbounded; default is unbounded)
 
 -   `-XX:FlatArrayElementMaxOops=n`, when primitive class support is activated,
-    set the max number of of references, `n`, permitted in a single flattened
-    array component (negative means unbounded; default is 4)
+    set the max number of references, `n`, permitted in a single flattened array
+    component (negative means unbounded; default is 4)
 
 
 
 ## Performance Guidance
 
 As
-[described by the JEP]([Value Objects JEP](https://openjdk.org/jeps/8277163#HotSpot-implementation),
+[described by the JEP](https://openjdk.org/jeps/8277163#HotSpot-implementation),
 HotSpot optimizes the stack encodings of value objects within C2-generated code,
 avoiding heap allocation.
 Most performance benefits will be observed in code that would traditionally
