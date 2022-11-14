@@ -14,7 +14,7 @@ work toward a preview release in Java SE.
 
 This release is primarily focused on implementing the
 [Value Objects JEP](https://openjdk.org/jeps/8277163).
-(See the [specification changes](http://cr.openjdk.java.net/~dlsmith/jep8277163/)
+(See the [specification changes](http://cr.openjdk.java.net/~dlsmith/jep8277163/latest)
 for more precise details.)
 
 Java programs can declare concrete `value` classes, and can also use the
