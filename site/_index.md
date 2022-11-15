@@ -71,7 +71,7 @@ early-access builds being published.
 
 Interested developers are encouraged to experiment with these early releases.
 
--   [Early Access Documentation](early-access) detailing the latest release
+-   [Early Access Documentation](early-access)
 -   [Early Access Builds](https://jdk.java.net/valhalla/)
 -   [GitHub repository](https://github.com/openjdk/valhalla)
 
