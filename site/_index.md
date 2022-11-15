@@ -1,6 +1,6 @@
 # Project Valhalla
 
-Project Valhalla plans to augment the Java object model with *value objects* and
+Project Valhalla is augmenting the Java object model with *value objects* and
 *user-defined primitives*, combining the abstractions of object-oriented
 programming with the performance characteristics of simple primitives.
 These features will be complemented with changes to Java's generics to preserve
@@ -71,6 +71,7 @@ early-access builds being published.
 
 Interested developers are encouraged to experiment with these early releases.
 
+-   [Early Access Documentation](early-access) detailing the latest release
 -   [Early Access Builds](https://jdk.java.net/valhalla/)
 -   [GitHub repository](https://github.com/openjdk/valhalla)
 

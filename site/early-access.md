@@ -1,6 +1,6 @@
 # Early Access Release
 
-The latest early access release of Valhalla features, codenamed *LW4*, will be
+The latest early access release of Valhalla features, codenamed *LW4*, is
 published at [jdk.java.net](https://jdk.java.net/valhalla/).
 
 Functionality, language syntax, and `class` file formats are subject to change.
