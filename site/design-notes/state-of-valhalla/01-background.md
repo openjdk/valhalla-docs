@@ -88,9 +88,9 @@ even more significant performance improvements than heap flattening.
 
 As an object-oriented language, the separation between primitives and objects
 embodies a significant compromise: an OO language would like to start from the
-premise of "everything is an object".  But, an `int` is not an object; it is
-something special and magical (and so are its arrays), and this non-uniformity
-ripples throughout the language, libraries, and runtime.
+premise of "everything is an object".  But, as Java is specified today, an `int`
+is not an object; it is something special and magical (and so are its arrays),
+and this non-uniformity ripples throughout the language, libraries, and runtime.
 
 The compromise made in 1995 was that _everything the user can define_ is an
 object, but there are eight additional built-in types that are not objects, and
@@ -101,15 +101,14 @@ been able to accomplish great things despite it, but it is an ongoing tax on
 developers, library designers, and users.
 
 When generics came along in 2004, it got slightly better -- and a lot worse.
-The "better" part is that autoboxing papered over some of the visible seams
-(though at a significant cost to the complexity of overload resolution), so we
-could freely use an `int` where an `Integer` was expected and vice-versa.  But,
-this addressed only the surface problem, not the underlying rift; the set
-of places where we had to be aware of the rift between primitive and reference
-types grew, because primitives could not be used as generic type parameters.
-Again, this was a pragmatic compromise -- and the only way known at the time to
-add generics to Java without massive compatibility pain -- but the ongoing tax
-only grew larger.
+Autoboxing papered over some of the visible seams (though at a significant cost
+to the complexity of overload resolution), so we could freely use an `int` where
+an `Integer` was expected and vice-versa.  But this addressed only the surface
+problem, not the underlying rift; the set of places where we had to be aware of
+the rift between primitive and reference types grew, because primitives could
+not be used as generic type parameters. Again, this was a pragmatic compromise
+-- and the only way known at the time to add generics to Java without massive
+compatibility pain -- but the ongoing tax only grew larger.
 
 It got worse again when lambdas came along in in 2014.  Lambdas build heavily on
 generics, so many of the consequences faced by generics were inherited by
@@ -137,13 +136,13 @@ types in a syntactically convenient way.  But there are sharp edges.  Objects
 have identity, whereas primitives do not; boxing is not able to fully paper over
 this gap.  Each time we convert from `Integer` to `int` the identity is lost,
 and each time we convert from `int` to an `Integer`, a fresh (but accidental)
-identity is created (which can inhibit valuable runtime optimizations).  While
+identity is created, which can inhibit valuable runtime optimizations.  While
 `int` boxes to `Integer`, `int[]` does not box to `Integer[]`.  And the
 relationships between primitives and their corresponding wrappers are entirely
 ad-hoc (they're even sometimes, but not always, spelled the same way!); you just
 have to keep this in your head (and in your code).
 
-Developers know that boxing is not only irregular, but also expensive; absent
+Developers know that boxing is not only irregular, but also costly; absent
 heroic optimizations, boxing conversion entails heap allocation, and using
 reference companion types as fields entails indirection.  Boxes have the same
 problems as we saw with points above, just with smaller payloads.  
@@ -153,17 +152,17 @@ problems as we saw with points above, just with smaller payloads.
 At the library level, developers face further difficult choices.  The most
 fundamental libraries -- collections and streams -- are prime examples of the
 tradeoffs that library designers have to navigate.  Collections reasonably made
-the choice to avoid specializing (there are libraries in the ecosystem, such as
-`trove` or Eclipse Collections, that go the other way, and that's fine too), and
-streams tried to walk a narrow line with hand-rolled specializations for `int`,
-`long`, and `double`, but the existence of `IntStream` at all is evidence of the
-contortions that library designers often have to twist themselves into.  Worse,
-hand specialization begets more hand specialization (`IntStream` gave rise to
-`IntToLongFunction` and `PrimitiveIterator.OfInt`), and there are always calls
-for more ("where's my `CharStream`?").  And hand-specialization almost always
-introduces asymmetries.  Finally, the mere existence of hand-specialized stream
-types was a significant constraint on the design and implementation of the
-library.
+the choice to avoid specializing for primitive types (there are libraries in the
+ecosystem, such as `trove` or Eclipse Collections, that go the other way, and
+that's fine too), and streams tried to walk a narrow line with hand-rolled
+specializations for `int`, `long`, and `double`, but the existence of
+`IntStream` at all is evidence of the contortions that library designers often
+have to twist themselves into.  Worse, hand specialization begets more hand
+specialization (`IntStream` gave rise to `IntToLongFunction` and
+`PrimitiveIterator.OfInt`), and there are always calls for more ("where's my
+`CharStream`?").  And hand-specialization almost always introduces asymmetries.
+Finally, the mere existence of hand-specialized stream types was a significant
+constraint on the design and implementation of the `java.util.stream` library.
 
 > _Library designers are too often faced with the bad choice between good memory
 behavior and good abstraction._
@@ -180,32 +179,32 @@ behavior and good abstraction hits users as hard as it does library designers.
 
 The unfortunate layout of `Point[]` above derives from _object identity_; that
 all object instances are uniquely identified. Identity enables mutability; in
-order to mutate a field of an object, we must know _which_ object we are trying
+order to mutate a field of an object, we must know _which_ instance we are trying
 to modify.  Identity also enables _layout polymorphism_, where subclasses share
 a common layout prefix with their superclasses, allowing a subclass instance to
 be safely operated on through a superclass reference.  Even for classes that
 eschew mutability and layout polymorphism (which includes most immutable
 concrete classes), identity can still be observed by various identity-sensitive
-operations, including object equality (`==`), synchronization,
+operations including object equality (`==`), synchronization,
 `System::identityHashCode`, weak references, etc.  
 
-Identity effectively requires that an object live in exactly one place, and if
+Identity effectively requires that an instance live in exactly one place, and if
 we want to access it, we go to the source.  This is why the `Point[]` layout is
 full of pointers; the array elements are merely references to the actual object.
-And identity requires that the VM pessimistically preserve identity just in case
-someone might eventually perform an identity-sensitive operation, inhibiting
-many useful optimizations.  In the early 90s, "everything is an Object" was an
-attractive mantra, and the performance costs of identity did not seem onerous at
-the time, but over time, the costs have increased.
+And identity requires that the VM pessimistically preserve this layout just in
+case someone might eventually perform an identity-sensitive operation,
+inhibiting many useful optimizations.  In the early 90s, "everything is an
+Object" was an attractive mantra, and the performance costs of identity did not
+seem onerous at the time, but over time, the costs have increased.
 
-The basic feature of Valhalla is that some classes may disavow their identity.
+The basic feature of Valhalla is that some classes may disavow object identity.
 Instances of these classes are just their state, and therefore can be routinely
 flattened into enclosing objects or arrays, and passed by value between methods.
 These classes give up some flexibility -- they must be immutable and cannot be
-layout-polymorphic -- but in return for giving up these characteristics, are be
-rewarded with a flatter and denser memory layout and optimized calling
-conventions.  These so-called _value classes_ combine the expressive power of
-classes with the runtime behavior of primitives.  The slogan for Valhalla is:
+layout-polymorphic -- but in return are rewarded with a flatter and denser
+memory layout and optimized calling conventions.  These so-called _value
+classes_ combine the expressive power of classes with the runtime behavior of
+primitives.  The slogan for Valhalla is:
 
 > _Codes like a class, works like an int._
 
@@ -217,7 +216,7 @@ There are applications for value classes at every level.  Aside from the obvious
 -- turning the built-in primitive types into real classes -- many API
 abstractions, such as numerics, dates, cursors, and wrappers like `Optional`,
 can be naturally modeled as value classes.  Additionally, many data structures
-can profitably use primitive classes in their implementations to improve
+can profitably use value classes in their implementations to improve
 efficiency.  And language compilers can use them as a compilation target for
 features like built-in numeric types, tuples, or multiple return.
 
