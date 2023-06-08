@@ -140,25 +140,11 @@ identity is created, which can inhibit valuable runtime optimizations.  While
 relationships between primitives and their corresponding wrappers are entirely
 ad-hoc (they're even sometimes, but not always, spelled the same way!); you just
 have to keep this in your head (and in your code).
-types in a syntactically convenient way.  But there are sharp edges.  Boxed
-`int`s have identity, whereas primitives do not; boxing is not able to fully
-paper over this gap.  Each time we convert from `Integer` to `int` the identity
-is lost, and each time we convert from `int` to an `Integer`, a fresh (but
-accidental) identity is created (which can inhibit valuable runtime
-optimizations).  While `int` boxes to `Integer`, `int[]` does not box to
-`Integer[]`.  And the relationships between primitive types and their
-corresponding box types are entirely ad-hoc (they're even sometimes, but not
-always, spelled the same way!); you just have to keep this in your head (and in
-your code).
 
 Developers know that boxing is not only irregular, but also costly; absent
 heroic optimizations, boxing conversion entails heap allocation, and using
 reference companion types as fields entails indirection.  Boxes have the same
 problems as we saw with points above, just with smaller payloads.  
-Developers know that boxing is not only irregular, but also expensive; absent
-heroic optimizations, boxing conversion entails heap allocation, and using box
-types as fields entails indirection.  Boxes have the same problems as we saw
-with points above, just with smaller payloads.  
 
 ### And the costs roll on 
 
