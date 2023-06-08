@@ -16,22 +16,22 @@ more flexible flattened data types to JVM-based languages, in order to restore
 alignment between the programming model and the performance characteristics of
 modern hardware.  (In some ways, it got started much earlier; the designers of
 Java wanted to include value types in the initial version of the language.)
-Initially, Valhalla was described in terms of the features we anticipated adding
-to meet this goal: _value classes_ (known in various iterations as _inline
-classes_ or _primitive classes_) and _specialized generics_.  In the initial
-phase of the project, we focused primarily on understanding how the language and
-JVM would have to evolve to support these features, and what the migration
+
+Valhalla anticipates adding three core features to the platform: _value
+objects_, _primitive classes_, and _specialized generics_.  In the initial phase
+of the project, we focused primarily on understanding how the language and JVM
+would have to evolve to support these features, and what the migration
 compatibility implications for user code would be.
 
 While it is possible to release these features incrementally, it is necessary to
 have an end-to-end picture of how they will all work together before committing
 to an implementation.  We present here a path to enhancing the Java language and
-virtual machine with primitive classes, migrating both the existing primitive
-types and existing value-based classes to primitive classes, having primitive
-classes interoperate cleanly with erased generics.  This set of documents
-summarizes that path, to be delivered in stages.  The first three of these are
-described in [JEP nnn][jepnnn], [JEP 401][jep401] and [JEP 402][jep402].  (If
-you want to compare with where we started, see our [founding
+virtual machine with value classes and primitive classes, migrating the existing
+primitive types and value-based classes to make use of these features, and
+allowing primitive types to interoperate cleanly with generics.  This set of
+documents summarizes that path, to be delivered in stages.  The first three of
+these are described in [a draft JEP][jep-values], [JEP 401][jep401], and [JEP
+402][jep402].  (If you want to compare with where we started, see our [founding
 document][values0].)
 
 However, Project Valhalla is not just about the features it will deliver, or
@@ -72,10 +72,10 @@ What we would like is to have the option to get a layout more like this:
 This layout is both flatter (no indirections) and denser (no headers) than the
 previous version.  Project Valhalla offers us a natural way to get to this
 layout, without having to obsessively focus on low-level details, by separating
-out, and giving users control over, the semantic concerns than necessitate the
+out, and giving users control over, the semantic concerns that necessitate the
 first layout.
 
-Flattening is not only about layout in the heap; we can also flatten _calling
+Flattening is not only about layout in the heap; we can also flatten the _calling
 convention_, which is how the JVM passes values from one method to another (on
 the stack, or in registers).  In the absence of heroic JVM optimizations, when a
 method passes a `Point` to another today, it passes a pointer and the callee
@@ -110,7 +110,7 @@ not be used as generic type parameters. Again, this was a pragmatic compromise
 -- and the only way known at the time to add generics to Java without massive
 compatibility pain -- but the ongoing tax only grew larger.
 
-It got worse again when lambdas came along in in 2014.  Lambdas build heavily on
+It got worse again when lambdas came along in 2014.  Lambdas build heavily on
 generics, so many of the consequences faced by generics were inherited by
 lambdas.  This rippled into the libraries: `java.util.function` suffers a
 combinatorial explosion of hand-specialized versions (`IntPredicate`,
@@ -121,14 +121,13 @@ getting harder to bridge.
 
 ### The costs of boxing
 
-Primitives are not objects, but they have _reference companions_, often called
-wrappers or boxes.  When primitives want to interact in the world of objects, 
-we transparently convert them to and from their corresponding wrapper.  
-Primitives don't implement interfaces like `Comparable` -- their reference
-companions do.  `Object` is the top type -- but only for classes.  So primitives
-cannot directly participate in generics or dynamically typed libraries such as
-reflection (where everything is expressed as `Object` or `Object[]`) -- they can
-only do so through their reference companions.
+Java's eight built-in primitive types are not objects, but they have _boxes_.
+When primitives want to interact in the world of objects,  we transparently
+convert them to and from their corresponding box.   Primitives don't implement
+interfaces like `Comparable` -- their boxes do.  `Object` is the top type -- but
+only for classes.  So primitives cannot directly participate in generics or
+dynamically typed libraries such as reflection (where everything is expressed as
+`Object` or `Object[]`) -- they can only do so through their boxes.
 
 Going through reference companions is not necessarily bad; the meaning of
 `ArrayList<Integer>` is clear enough, and autoboxing lets us deal with such
@@ -141,11 +140,25 @@ identity is created, which can inhibit valuable runtime optimizations.  While
 relationships between primitives and their corresponding wrappers are entirely
 ad-hoc (they're even sometimes, but not always, spelled the same way!); you just
 have to keep this in your head (and in your code).
+types in a syntactically convenient way.  But there are sharp edges.  Boxed
+`int`s have identity, whereas primitives do not; boxing is not able to fully
+paper over this gap.  Each time we convert from `Integer` to `int` the identity
+is lost, and each time we convert from `int` to an `Integer`, a fresh (but
+accidental) identity is created (which can inhibit valuable runtime
+optimizations).  While `int` boxes to `Integer`, `int[]` does not box to
+`Integer[]`.  And the relationships between primitive types and their
+corresponding box types are entirely ad-hoc (they're even sometimes, but not
+always, spelled the same way!); you just have to keep this in your head (and in
+your code).
 
 Developers know that boxing is not only irregular, but also costly; absent
 heroic optimizations, boxing conversion entails heap allocation, and using
 reference companion types as fields entails indirection.  Boxes have the same
 problems as we saw with points above, just with smaller payloads.  
+Developers know that boxing is not only irregular, but also expensive; absent
+heroic optimizations, boxing conversion entails heap allocation, and using box
+types as fields entails indirection.  Boxes have the same problems as we saw
+with points above, just with smaller payloads.  
 
 ### And the costs roll on 
 
@@ -168,7 +181,7 @@ constraint on the design and implementation of the `java.util.stream` library.
 behavior and good abstraction._
 
 Users are not immune from having to reason about the gap between primitives and
-objects either.  Nearly every Java developer has written an ad-hoc, hand-rolled
+boxes either.  Nearly every Java developer has written an ad-hoc, hand-rolled
 equivalent of `ArrayList<int>`, because `ArrayList<Integer>` was not (or was
 perceived to be not) good enough for the situation.  And this hand-rolled
 version rarely has any connection to `List`, which inhibits interoperability and
@@ -197,21 +210,41 @@ inhibiting many useful optimizations.  In the early 90s, "everything is an
 Object" was an attractive mantra, and the performance costs of identity did not
 seem onerous at the time, but over time, the costs have increased.
 
-The basic feature of Valhalla is that some classes may disavow object identity.
-Instances of these classes are just their state, and therefore can be routinely
-flattened into enclosing objects or arrays, and passed by value between methods.
-These classes give up some flexibility -- they must be immutable and cannot be
-layout-polymorphic -- but in return are rewarded with a flatter and denser
-memory layout and optimized calling conventions.  These so-called _value
-classes_ combine the expressive power of classes with the runtime behavior of
-primitives.  The slogan for Valhalla is:
+The basic feature of Valhalla is that some classes may disavow their identity.
+An object that lacks identity is a _value object_, and its class is a _value
+class_. These classes give up some flexibility -- for example, they must be
+immutable and cannot be layout-polymorphic -- but in return are rewarded with
+optimized performance. The lack of identity allows the JVM to freely copy and
+re-encode these objects, preserving just their state and requiring fewer
+indirections.
+
+Despite the restrictions on mutability and subclassing, value classes can
+use most mechanisms available to classes: methods, constructors, fields,
+encapsulation, interfaces, generics, annotations, etc.
+
+Additionally, some value classes may opt to represent a primitive type.
+Primitive types can't be `null` and are less strongly encapsulated than
+reference types. But their values are bare sequences of instance fields,
+maximizing the JVM's ability to achieve flat, dense memory layouts and optimized
+calling conventions. These so-called _primitive classes_ can combine the
+expressive power of classes with the runtime behavior of primitives. The slogan
+for Valhalla is:
 
 > _Codes like a class, works like an int._
 
-Despite the restrictions on mutability and subclassing, value classes can use
-most mechanisms available to classes: methods, constructors, fields,
-encapsulation, interfaces, generics, annotations, etc.
+Unlike the basic primitive types (`int`, `double`, etc.), primitive types
+declared by classes have fields and methods, and their values can be freely
+converted to value objects, as needed, without the overhead and ad hoc nature
+of boxing. Their arrays can be treated as object arrays.
 
+There are applications for primitive classes and value classes at every level.
+Aside from the obvious -- turning the built-in primitive types into real classes
+-- many API abstractions, such as numerics, dates, cursors, and wrappers like
+`Optional`, can be naturally modeled as value classes or primitive classes.
+Additionally, many data structures can profitably use primitive classes in their
+implementations to improve efficiency.  And language compilers can use them as a
+compilation target for features like built-in numeric types, tuples, or multiple
+return.
 There are applications for value classes at every level.  Aside from the obvious
 -- turning the built-in primitive types into real classes -- many API
 abstractions, such as numerics, dates, cursors, and wrappers like `Optional`,
@@ -259,16 +292,16 @@ of throwing away all their libraries, would have been a bad trade in 2004, when
 Java already had a large and vibrant installed base -- and would be a worse
 trade today.  
 
-The plan for generics has two phases: [_universal generics_][ugen] and
+The plan for generics has two phases: [_universal generics_][jep-generics] and
 _specialized generics_.  In the first phase, we heal the rift at the language
-level that prevents us from using primitives and value classes as generic type
+level that prevents us from using primitive types as generic type
 parameters, allowing generics to range over all types -- but still implemented
 via erasure. (This yields a more uniform and expressive language, but does not
-yet address the performance costs, though the cost of boxing is already reduced
-by taking away the identity of the primitive wrappers like `Integer`.)  In the
-second phase, we enable layout and code specialization in the JVM for generic
-classes and methods -- while retaining the all-important gradual migration
-capability that made generics successful the first time around.
+yet optimize the performance -- though some boxing costs have already been
+replaced with lighter-weight value object conversions.)  In the second phase, we
+enable layout and code specialization in the JVM for generic classes and methods
+-- while retaining the all-important gradual migration capability that made
+generics successful the first time around.
 
 ## Moving forward
 
@@ -277,9 +310,9 @@ affecting the `class` file format, JVM, language, libraries, and user model. (In
 2014, James Gosling described it as "six Ph.D theses, knotted together.") 
 
 We intend to divide delivery of Project Valhalla into three broad phases:
-identity-free [value classes][jepnnn] first, then [user-definable
-primitives][jep401], [migrating the existing primitives][jep402], and [universal
-generics][ugen], and finally specialized generics.  
+identity-free [value objects][jep-values] first; then [primitive
+classes][jep401], [migrating the existing primitives][jep402], and [universal
+generics][jep-generics]; and finally specialized generics.  
 
 
 [valhalla]: http://openjdk.java.net/projects/valhalla
@@ -287,8 +320,8 @@ generics][ugen], and finally specialized generics.
 [adventures]: https://www.youtube.com/watch?v=TkpcuL1t1lY
 [adventures-slides]: http://cr.openjdk.java.net/~briangoetz/valhalla/Adventures%20in%20Parametric%20Polymorphism.pdf
 [model3]: http://cr.openjdk.java.net/~briangoetz/valhalla/eg-attachments/model3-01.html
-[jepnnn]: https://openjdk.java.net/jeps/8277163
+[jep-values]: https://openjdk.java.net/jeps/8277163
 [jep401]: https://openjdk.java.net/jeps/401
 [jep402]: https://openjdk.java.net/jeps/402
-[ugen]: http://openjdk.java.net/jeps/8261529
-[erasure]: ../in-defense-of-erasure.md
+[jep-generics]: http://openjdk.java.net/jeps/8261529
+[erasure]: ../in-defense-of-erasure.html
