@@ -1,10 +1,9 @@
 # Project Valhalla
 
-Project Valhalla is augmenting the Java object model with *value objects* and
-*user-defined primitives*, combining the abstractions of object-oriented
-programming with the performance characteristics of simple primitives.
-These features will be complemented with changes to Java's generics to preserve
-performance gains through generic APIs.
+Project Valhalla is augmenting the Java object model with *value objects*,
+combining the abstractions of object-oriented programming with the performance
+characteristics of simple primitives. These features will be complemented with
+changes to Java's generics to preserve performance gains through generic APIs.
 
 This Project is sponsored by the
 [HotSpot Group](http://openjdk.java.net/groups/hotspot).
@@ -16,19 +15,22 @@ This process is [managed with JEPs](https://openjdk.java.net/jeps/1),
 each of which facilitates the development and integration into the JDK of a
 cohesive set of changes.
 
-There are four distinct feature sets under development:
+There are five distinct feature sets under development:
 
-1.  [Value Objects](https://openjdk.org/jeps/8277163), introducing class
+1.  *[Value Objects](https://openjdk.org/jeps/8277163)*, introducing class
     instances that lack identity
 
-2.  [User-defined Primitives](https://openjdk.org/jeps/401), supporting
-    null-free flattened storage
+2.  *[Flattened Heap Layouts for Value Objects](https://openjdk.org/jeps/401)*,
+    supporting null-free flattened storage
 
-3.  [Classes for the Basic Primitives](https://openjdk.org/jeps/402), bringing
-    value class features to the existing primitives
+3.  *[Enhanced Primitive Boxing](https://openjdk.org/jeps/402)*, allowing
+    primitives to be treated more like objects
 
-4.  [Enhanced Generics](https://openjdk.org/jeps/8261529), providing optimal
-    performance for value classes used with generic APIs
+4.  *Null-Restricted and Nullable Types*, providing language support for
+    managing nulls
+
+5.  *Parametric JVM*, preserving and optimizing generic class and method
+    parameterizations at runtime
 
 We've also worked on some supplementary tasks and features, including:
 
@@ -60,7 +62,7 @@ design considerations.
     - [2. The Language Model](design-notes/state-of-valhalla/02-object-model)
     - [3. The JVM Model](design-notes/state-of-valhalla/03-vm-model)
 
--   Enhanced generics
+-   Parametric JVM
     - [Background: How We Got the Generics We Have](design-notes/in-defense-of-erasure) (June 2020)
     - [The Saga of the Parametric VM](design-notes/parametric-vm/parametric-vm) (April 2021)
 
