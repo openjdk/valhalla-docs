@@ -50,10 +50,10 @@ We've also worked on some supplementary tasks and features, including:
 -   [JEP 390: Warnings for Value-Based Classes](https://openjdk.java.net/jeps/390)
     (delivered in 16)
 
-## Background Documents
+## Background Documents & Presentations
 
-These documents present a more holistic view of the Valhalla project's goals and
-design considerations.
+These documents and presentations present a more holistic view of the Valhalla
+project's goals and design considerations.
 
 -   The State of Valhalla (December 2021)
     - [1. The Road to Valhalla](design-notes/state-of-valhalla/01-background)
@@ -63,6 +63,8 @@ design considerations.
 -   Parametric JVM
     - [Background: How We Got the Generics We Have](design-notes/in-defense-of-erasure) (June 2020)
     - [The Saga of the Parametric VM](design-notes/parametric-vm/parametric-vm) (April 2021)
+
+-   [Dan Smith: Value Objects in Valhalla](https://www.youtube.com/watch?v=a3VRwz4zbdw) (JVM Language Summit, August 2023)
 
 ## Implementation
 

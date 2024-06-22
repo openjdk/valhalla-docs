@@ -9,7 +9,7 @@ for an overview of active work.
 
 -   [JEP 169: Larval State for Value Objects](https://openjdk.java.net/jeps/169)
     envisioned an alternate instance creation model in which value objects were
-    mutable during construction
+    mutable until explicitly "frozen"
 
 -   [JEP 218: Generics Over Primitive Types](https://openjdk.java.net/jeps/218)
     considered different strategies for achieving runtime specialization of
