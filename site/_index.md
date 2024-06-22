@@ -2,8 +2,8 @@
 
 Project Valhalla is augmenting the Java object model with *value objects*,
 combining the abstractions of object-oriented programming with the performance
-characteristics of simple primitives. These features will be complemented with
-changes to Java's generics to preserve performance gains through generic APIs.
+characteristics of simple primitives. Supplementary changes to Java's generics
+will carry these performance gains into generic APIs.
 
 This Project is sponsored by the
 [HotSpot Group](http://openjdk.java.net/groups/hotspot).
@@ -17,17 +17,18 @@ cohesive set of changes.
 
 There are five distinct feature sets under development:
 
-1.  *[Value Objects](https://openjdk.org/jeps/8277163)*, introducing class
-    instances that lack identity
+1.  *[Value Classes and Objects](https://openjdk.org/jeps/401)*, introducing
+    objects that lack identity and thus can have optimized encodings
 
-2.  *[Flattened Heap Layouts for Value Objects](https://openjdk.org/jeps/401)*,
-    supporting null-free flattened storage
+2.  *Null-Restricted and Nullable Types*, providing language support for
+    null-aware types and runtime enforcement of null restrictions
 
-3.  *[Enhanced Primitive Boxing](https://openjdk.org/jeps/402)*, allowing
+3.  *[Null-Restricted Value Class Types](https://openjdk.org/jeps/8316779)*,
+    improving the performance of fields and arrays with null-restricted
+    value class types
+
+4.  *[Enhanced Primitive Boxing](https://openjdk.org/jeps/402)*, allowing
     primitives to be treated more like objects
-
-4.  *Null-Restricted and Nullable Types*, providing language support for
-    managing nulls
 
 5.  *Parametric JVM*, preserving and optimizing generic class and method
     parameterizations at runtime
@@ -48,9 +49,6 @@ We've also worked on some supplementary tasks and features, including:
 
 -   [JEP 390: Warnings for Value-Based Classes](https://openjdk.java.net/jeps/390)
     (delivered in 16)
-
--   [Better-defined JVM class file validation](https://openjdk.java.net/jeps/8267650)
-    (draft)
 
 ## Background Documents
 
@@ -78,9 +76,8 @@ Interested developers are encouraged to experiment with these early releases.
 -   [GitHub repository](https://github.com/openjdk/valhalla)
 
 Branches in the repository include `lworld` (the main line of Valhalla
-development), `master` (tracking mainline OpenJDK), `jep*` (staging areas for
-the production-ready implementations of JEPs), and various others prototyping
-proposed features.
+development), `master` (tracking mainline OpenJDK), and various others
+prototyping proposed features.
 
 ## Community
 
