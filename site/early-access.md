@@ -25,7 +25,7 @@ Java programs can declare `value` classes and records, which have only `final`
 fields and lack object identity. At run time, the `==` operator compares
 value class instances according to their field values, without regard
 to when or where they were created. Other identity-sensitive operations
-are adjusted to appropriately to work with objects that lack identity.
+are adjusted to appropriately work with objects that lack identity.
 
 By enabling preview features, developers also get value-class versions of
 `java.lang.Integer`, `java.time.LocalDate`, `java.util.Optional`, and a
