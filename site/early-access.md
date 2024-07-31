@@ -1,7 +1,7 @@
 # Early Access Release
 
 The latest early access release of Valhalla features is published at
-[jdk.java.net](https://jdk.java.net/valhalla/).
+**[https://jdk.java.net/valhalla/](https://jdk.java.net/valhalla/)**.
 
 Functionality, language syntax, and `class` file formats are subject to change.
 Some supplementary tools and APIs do not fully support the new features.
