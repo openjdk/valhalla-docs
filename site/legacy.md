@@ -2,44 +2,44 @@
 
 This page preserves the history of earlier work in the Valhalla project, much of
 which has been superseded.
-See the [main project page](https://openjdk.java.net/projects/valhalla/)
+See the [main project page](https://openjdk.org/projects/valhalla/)
 for an overview of active work.
 
 ## JEPs
 
--   [JEP 169: Larval State for Value Objects](https://openjdk.java.net/jeps/169)
+-   [JEP 169: Larval State for Value Objects](https://openjdk.org/jeps/169)
     envisioned an alternate instance creation model in which value objects were
     mutable until explicitly "frozen"
 
--   [JEP 218: Generics Over Primitive Types](https://openjdk.java.net/jeps/218)
+-   [JEP 218: Generics Over Primitive Types](https://openjdk.org/jeps/218)
     considered different strategies for achieving runtime specialization of
     generic bytecode
 
--   [JEP 303: Intrinsics for the LDC and INVOKEDYNAMIC Instructions](https://openjdk.java.net/jeps/303)
+-   [JEP 303: Intrinsics for the LDC and INVOKEDYNAMIC Instructions](https://openjdk.org/jeps/303)
     explored Java language changes to directly work with the `CONSTANT_Dynamic`
     and `CONSTANT_InvokeDynamic` constant pool forms
 
 ## Documents
 
--   [State of the Values](http://cr.openjdk.java.net/~jrose/values/values.html)
+-   [State of the Values](https://cr.openjdk.org/~jrose/values/values.html)
     (April 2014)
 
--   [ClassDynamic](http://cr.openjdk.java.net/~briangoetz/valhalla/spec-classdyn.html)
+-   [ClassDynamic](https://cr.openjdk.org/~briangoetz/valhalla/spec-classdyn.html)
     (June 2014)
 
--   [State of the Specialization](http://cr.openjdk.java.net/~briangoetz/valhalla/specialization.html)
+-   [State of the Specialization](https://cr.openjdk.org/~briangoetz/valhalla/specialization.html)
     (December 2014)
 
--   [Minimal Value Types](http://cr.openjdk.java.net/~jrose/values/shady-values-0.html)
+-   [Minimal Value Types](https://cr.openjdk.org/~jrose/values/shady-values-0.html)
     (August 2016)
 
--   [A Universal Carrier in the JVM](http://cr.openjdk.java.net/~jrose/values/utype-representation.html)
+-   [A Universal Carrier in the JVM](https://cr.openjdk.org/~jrose/values/utype-representation.html)
     (January 2017)
 
--   [Template Classes](http://cr.openjdk.java.net/~jrose/values/template-classes.html)
+-   [Template Classes](https://cr.openjdk.org/~jrose/values/template-classes.html)
     (November 2017)
 
--   [Value Type Hygiene](http://cr.openjdk.java.net/~jrose/values/value-type-hygiene.html)
+-   [Value Type Hygiene](https://cr.openjdk.org/~jrose/values/value-type-hygiene.html)
     (May 2018)
 
 ## Presentations
@@ -79,8 +79,8 @@ for an overview of active work.
 
 ## Earlier Prototypes
 
--   [Minimal Value Types](https://wiki.openjdk.java.net/display/valhalla/Minimal+Value+Types)
+-   [Minimal Value Types](https://wiki.openjdk.org/display/valhalla/Minimal+Value+Types)
     (2017)
 
--   [L-World](https://wiki.openjdk.java.net/display/valhalla/L-World)
+-   [L-World](https://wiki.openjdk.org/display/valhalla/L-World)
     (2019)

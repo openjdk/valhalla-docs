@@ -17,7 +17,7 @@ used for performance benchmarking.
 
 The features implemented by this release are described in
 [JEP 401: Value Classes and Objects (Preview)](https://openjdk.org/jeps/401).
-(See the [specification changes](http://cr.openjdk.java.net/~dlsmith/jep401/latest)
+(See the [specification changes](https://cr.openjdk.org/~dlsmith/jep401/latest)
 for more precise details.)
 
 When [preview features](https://openjdk.org/jeps/12) are turned on,
@@ -34,7 +34,7 @@ to test their code against these modified libraries, and to experiment with thei
 own value-candidate classes.
 
 Please provide any feedback to
-<span style="white-space:nowrap;">`valhalla-dev@openjdk.java.net`</span>.
+<span style="white-space:nowrap;">`valhalla-dev@openjdk.org`</span>.
 
 
 ## Notes

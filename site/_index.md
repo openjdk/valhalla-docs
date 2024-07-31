@@ -6,12 +6,12 @@ characteristics of simple primitives. Supplementary changes to Java's generics
 will carry these performance gains into generic APIs.
 
 This Project is sponsored by the
-[HotSpot Group](http://openjdk.java.net/groups/hotspot).
+[HotSpot Group](http://openjdk.org/groups/hotspot).
 
 ## JEPs
 
 Valhalla project features will be added to Java over multiple releases.
-This process is [managed with JEPs](https://openjdk.java.net/jeps/1),
+This process is [managed with JEPs](https://openjdk.org/jeps/1),
 each of which facilitates the development and integration into the JDK of a
 cohesive set of changes.
 
@@ -35,19 +35,19 @@ There are five distinct feature sets under development:
 
 We've also worked on some supplementary tasks and features, including:
 
--   [JEP 181: Nest-Based Access Control](https://openjdk.java.net/jeps/181)
+-   [JEP 181: Nest-Based Access Control](https://openjdk.org/jeps/181)
     (delivered in 11)
 
--   [JEP 309: Dynamic Class-File Constants](https://openjdk.java.net/jeps/309)
+-   [JEP 309: Dynamic Class-File Constants](https://openjdk.org/jeps/309)
     (delivered in 11)
 
 -   [JEP 334: JVM Constants API](https://openjdk.org/jeps/334)
     (delivered in 12)
 
--   [JEP 371: Hidden Classes](https://openjdk.java.net/jeps/371)
+-   [JEP 371: Hidden Classes](https://openjdk.org/jeps/371)
     (delivered in 15)
 
--   [JEP 390: Warnings for Value-Based Classes](https://openjdk.java.net/jeps/390)
+-   [JEP 390: Warnings for Value-Based Classes](https://openjdk.org/jeps/390)
     (delivered in 16)
 
 ## Background Documents & Presentations
@@ -83,27 +83,27 @@ prototyping proposed features.
 
 ## Community
 
--   [Members](http://openjdk.java.net/census#valhalla)
+-   [Members](http://openjdk.org/census#valhalla)
 
 -   Mailing lists
 
-    -   [valhalla-dev](http://mail.openjdk.java.net/mailman/listinfo/valhalla-dev),
+    -   [valhalla-dev](http://mail.openjdk.org/mailman/listinfo/valhalla-dev),
         for technical discussion related to Project Valhalla
-        ([archives](http://mail.openjdk.java.net/pipermail/valhalla-dev/))
+        ([archives](http://mail.openjdk.org/pipermail/valhalla-dev/))
 
-    -   [valhalla-spec-experts](http://mail.openjdk.java.net/mailman/listinfo/valhalla-spec-experts),
+    -   [valhalla-spec-experts](http://mail.openjdk.org/mailman/listinfo/valhalla-spec-experts),
         for moderated design discussion among expert group members only
-        ([archives](http://mail.openjdk.java.net/pipermail/valhalla-spec-experts/))
+        ([archives](http://mail.openjdk.org/pipermail/valhalla-spec-experts/))
 
-    -   [valhalla-spec-observers](http://mail.openjdk.java.net/mailman/listinfo/valhalla-spec-observers),
+    -   [valhalla-spec-observers](http://mail.openjdk.org/mailman/listinfo/valhalla-spec-observers),
         for those who wish to monitor discussions in the *valhalla-spec-experts*
         list; public replies are allowed, but not forwarded to the experts list
-        ([archives](http://mail.openjdk.java.net/pipermail/valhalla-spec-observers/))
+        ([archives](http://mail.openjdk.org/pipermail/valhalla-spec-observers/))
 
-    -   [valhalla-spec-comments](http://mail.openjdk.java.net/mailman/listinfo/valhalla-spec-comments),
+    -   [valhalla-spec-comments](http://mail.openjdk.org/mailman/listinfo/valhalla-spec-comments),
         for sending specification-related comments, suggestions, and other
         feedback to the expert group
-        ([archives](http://mail.openjdk.java.net/pipermail/valhalla-spec-comments/))
+        ([archives](http://mail.openjdk.org/pipermail/valhalla-spec-comments/))
 
 -   [Documentation repository](https://github.com/openjdk/valhalla-docs)
     (allows updating this page!)
