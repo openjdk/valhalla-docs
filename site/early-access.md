@@ -48,3 +48,11 @@ Please provide any feedback to
 -   Deserialization of a value class is only supported by the `ObjectInputStream`
     API if the class is a record class or is instantiated via `readResolve`.
     Improved support for deserialization will be coming later.
+
+-   On macOS, after expanding the `tar.gz` archive, you may need to remove the quarantine
+    attribute from the bits before commands can be executed. Use Terminal to execute the
+    following command:
+
+    ```
+    xattr -d com.apple.quarantine ./jdk-23.jdk
+    ```
