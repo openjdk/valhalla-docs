@@ -55,6 +55,10 @@ We've also worked on some supplementary tasks and features, including:
 These documents and presentations present a more holistic view of the Valhalla
 project's goals and design considerations.
 
+-   [Brian Goetz: Valhalla - Where Are We?](https://www.youtube.com/watch?v=IF9l8fYfSnI) (JVM Language Summit, July 2024)
+
+-   [Dan Smith: Value Objects in Valhalla](https://www.youtube.com/watch?v=a3VRwz4zbdw) (JVM Language Summit, August 2023)
+
 -   The State of Valhalla (December 2021)
     - [1. The Road to Valhalla](design-notes/state-of-valhalla/01-background)
     - [2. The Language Model](design-notes/state-of-valhalla/02-object-model)
@@ -63,8 +67,6 @@ project's goals and design considerations.
 -   Parametric JVM
     - [Background: How We Got the Generics We Have](design-notes/in-defense-of-erasure) (June 2020)
     - [The Saga of the Parametric VM](design-notes/parametric-vm/parametric-vm) (April 2021)
-
--   [Dan Smith: Value Objects in Valhalla](https://www.youtube.com/watch?v=a3VRwz4zbdw) (JVM Language Summit, August 2023)
 
 ## Implementation
 
