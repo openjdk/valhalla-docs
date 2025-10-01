@@ -15,45 +15,57 @@ This process is [managed with JEPs](https://openjdk.org/jeps/1),
 each of which facilitates the development and integration into the JDK of a
 cohesive set of changes.
 
-There are five distinct feature sets under development:
+There are four distinct feature sets under development:
 
 1.  *[Value Classes and Objects](https://openjdk.org/jeps/401)*, introducing
     objects that lack identity and thus can have optimized encodings
 
 2.  *Null-Restricted and Nullable Types*, providing language support for
-    null-aware types and runtime enforcement of null restrictions
+    null-aware types and run-time enforcement of null restrictions
 
-3.  *[Null-Restricted Value Class Types](https://openjdk.org/jeps/8316779)*,
-    improving the performance of fields and arrays with null-restricted
-    value class types
-
-4.  *[Enhanced Primitive Boxing](https://openjdk.org/jeps/402)*, allowing
-    primitives to be treated more like objects
+4.  *Unifying Primitives and Classes* with improved use of boxing for method
+    invocations and generics, and custom conversions and operators for value
+    classes
 
 5.  *Parametric JVM*, preserving and optimizing generic class and method
-    parameterizations at runtime
+    parameterizations at run time
 
 We've also worked on some supplementary tasks and features, including:
 
--   [JEP 181: Nest-Based Access Control](https://openjdk.org/jeps/181)
-    (delivered in 11)
-
--   [JEP 309: Dynamic Class-File Constants](https://openjdk.org/jeps/309)
-    (delivered in 11)
-
--   [JEP 334: JVM Constants API](https://openjdk.org/jeps/334)
-    (delivered in 12)
-
--   [JEP 371: Hidden Classes](https://openjdk.org/jeps/371)
-    (delivered in 15)
+-   [JEP draft: Strict Field Initialization in the JVM](https://openjdk.org/jeps/8350458)
+    (in progress)
 
 -   [JEP 390: Warnings for Value-Based Classes](https://openjdk.org/jeps/390)
     (delivered in 16)
 
+-   [JEP 371: Hidden Classes](https://openjdk.org/jeps/371)
+    (delivered in 15)
+
+-   [JEP 334: JVM Constants API](https://openjdk.org/jeps/334)
+    (delivered in 12)
+
+-   [JEP 309: Dynamic Class-File Constants](https://openjdk.org/jeps/309)
+    (delivered in 11)
+
+-   [JEP 181: Nest-Based Access Control](https://openjdk.org/jeps/181)
+    (delivered in 11)
+
 ## Background Documents & Presentations
 
-These documents and presentations present a more holistic view of the Valhalla
+These documents and presentations provide a more holistic view of the Valhalla
 project's goals and design considerations.
+
+-   [Brian Goetz: Growing the Java Language](https://www.youtube.com/watch?v=Gz7Or9C0TpM)
+    (JVM Language Summit 2025)
+
+-   [Dan Smith: A New Model for Java Object Initialization](https://www.youtube.com/watch?v=XtvR4kqK8lo)
+    (JavaOne 2025)
+
+-   [Brian Goetz: Valhalla—Where Are We?](https://www.youtube.com/watch?v=IF9l8fYfSnI)
+    (JVM Language Summit 2024)
+
+-   [Dan Smith: Value Objects in Valhalla](https://www.youtube.com/watch?v=a3VRwz4zbdw)
+    (JVM Language Summit 2023)
 
 -   The State of Valhalla (December 2021)
     - [1. The Road to Valhalla](design-notes/state-of-valhalla/01-background)
@@ -63,8 +75,6 @@ project's goals and design considerations.
 -   Parametric JVM
     - [Background: How We Got the Generics We Have](design-notes/in-defense-of-erasure) (June 2020)
     - [The Saga of the Parametric VM](design-notes/parametric-vm/parametric-vm) (April 2021)
-
--   [Dan Smith: Value Objects in Valhalla](https://www.youtube.com/watch?v=a3VRwz4zbdw) (JVM Language Summit, August 2023)
 
 ## Implementation
 
