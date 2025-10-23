@@ -72,7 +72,8 @@ Please provide any feedback to
     Or, with compressed oops disabled:
 
     ```
-    java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders -XX:-UseCompressedOops
+    java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders \
+         -XX:-UseCompressedOops
     ```
 
     These commands will add a new file (`classes_coh_valhalla.jsa` or
