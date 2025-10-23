@@ -65,11 +65,15 @@ Please provide any feedback to
     Compact Object Headers are being used, developers can generate an
     appropriate CDS archive to optimize start-up performance as follows:
 
-    `java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders`
+    ```
+    java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders
+    ```
 
     Or, with compressed oops disabled:
 
-    `java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders -XX:-UseCompressedOops`
+    ```
+    java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders -XX:-UseCompressedOops
+    ```
 
     These commands will add a new file (`classes_coh_valhalla.jsa` or
     `classes_nocoops_coh_valhalla.jsa`) to the directory where other CDS
