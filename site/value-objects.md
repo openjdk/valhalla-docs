@@ -26,8 +26,8 @@ To get started, you can review this
 **[short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/)**
 at *inside.java*, which illustrates some of the new behavior.
 
-For a more in-depth overview, the
-**[Value Classes and Objects JEP](https://openjdk.org/jeps/401)**
+For a more in-depth overview,
+**[JEP 401: Value Classes and Objects (Preview)](https://openjdk.org/jeps/401)**
 describes the new feature, and detailed language and VM
 **[specification changes](https://cr.openjdk.org/~dlsmith/jep401/latest)**
 are available.
