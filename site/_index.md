@@ -11,8 +11,9 @@ This Project is sponsored by the
 
 **October 2025:** Check out the latest
 [early-access build](https://jdk.java.net/valhalla/)
-implementing value classes and objects! We encourage Java developers to try it
-out on their real-world applications and report their experiences.
+implementing [value classes and objects](value-objects)!
+We encourage Java developers to try it out on their real-world applications and
+report their experiences.
 
 To get started, you can review this
 [short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/)
@@ -29,8 +30,8 @@ releases.
 
 There are five distinct feature sets under development:
 
-1.  *[Value Classes and Objects](value-objects.html)*, introducing
-    objects that lack identity and thus can have optimized encodings
+1.  *[Value Classes and Objects](value-objects)*, introducing objects that lack
+    identity and thus can have optimized encodings
 
 2.  *Null Checking* at both compile time and run time to manage the flow of
     null references through programs
