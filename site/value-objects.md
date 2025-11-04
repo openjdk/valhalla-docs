@@ -7,8 +7,7 @@ fields and lack object identity.
 
 The latest early-access build is published at
 **<https://jdk.java.net/valhalla/>**.
-Interested developers are encouraged to download and experiment with this
-early-access build!
+Interested developers are encouraged to download and experiment with it!
 
 ## Introducing Value Objects
 
@@ -56,7 +55,7 @@ and try it out on their performance-sensitive workloads.
 Profiling tools like
 [JDK Mission Control](https://docs.oracle.com/en/java/java-components/jdk-mission-control/)
 and the
-[Java Microbenchmark Harness](https://github.com/openjdk/jmh)
+[Java Microbenchmark Harness (JMH)](https://github.com/openjdk/jmh)
 can help to track how performance changes with value objects.
 
 Some important notes about value object performance:
