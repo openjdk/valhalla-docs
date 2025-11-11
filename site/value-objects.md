@@ -9,22 +9,15 @@ The latest early-access build is published at
 **<https://jdk.java.net/valhalla/>**.
 Interested developers are encouraged to download and experiment with it!
 
-## Introducing Value Objects
+## Getting Started
 
-When the `--enable-preview` command-line flag is used, Java programs are allowed
-to declare `value` classes and records, and to create value object instances.
-At run time, the `==` operator compares value objects according to their field
-values, without regard to when or where they were created. Other
-identity-sensitive operations have been adjusted to appropriately work with
-objects that lack identity.
-
-With preview features enabled, certain standard library classes are made value
-classes, including `java.lang.Integer`, `java.time.LocalDate`, and
-`java.util.Optional`.
+*Value objects* model immutable domain values. A value object is an instance of
+a *value class*, declared with the `value` modifier. Developers can save memory
+and improve performance by using value objects for immutable data.
 
 To get started, you can review this
 **[short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/)**
-at *inside.java*, which illustrates some of the new behavior.
+to value classes and objects at *inside.java*.
 
 For a more in-depth overview,
 **[JEP 401: Value Classes and Objects (Preview)](https://openjdk.org/jeps/401)**
@@ -34,15 +27,9 @@ are available.
 
 ## Value Object Performance
 
-Developers can save memory and improve performance by using value objects for
-immutable data. Because programs cannot tell the difference between two value
-objects with identical field values (not even with `==`), the Java Virtual
-Machine is able to change how a value object is laid out in memory without
-affecting the program.
-
-In this release, we've focused on two optimizations: *heap flattening*, which
-reduces the memory footprint of value objects stored in fields and arrays, and
-*scalarization*, which avoids memory allocation for value objects in
+This release focuses on two optimizations for value objects: *heap flattening*,
+which reduces the memory footprint of value objects stored in fields and arrays,
+and *scalarization*, which avoids memory allocation for value objects in
 JIT-compiled code. Details of these optimizations are
 [discussed in the JEP](https://openjdk.org/jeps/401#Run-time-optimizations-for-value-objects).
 You can also learn more with a

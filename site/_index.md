@@ -22,7 +22,7 @@ Learn more with a
 [presentation by Frederic Parain](https://www.youtube.com/watch?v=NF4CpL_EWFI)
 about the JVM optimizations applied to value objects.
 
-## Features & JEPs
+## New Features
 
 The anticipated Valhalla language and performance features will not be delivered
 all at once, but through a steady stream of enhancements across multiple JDK
