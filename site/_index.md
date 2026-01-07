@@ -64,6 +64,12 @@ project's goals and design considerations.
 -   [Brian Goetz: Valhalla—Where Are We?](https://www.youtube.com/watch?v=IF9l8fYfSnI)
     (JVM Language Summit 2024)
 
+-   [Dan Smith: Variable Initialization 2.0](https://www.youtube.com/watch?v=ThtrTwooKDc)
+    (JVM Language Summit 2024)
+
+-   [John Rose: encodings for flattened heap values](https://cr.openjdk.org/~jrose/values/flattened-values.html)
+    (May 2024)
+
 -   [Dan Smith: Value Objects in Valhalla](https://www.youtube.com/watch?v=a3VRwz4zbdw)
     (JVM Language Summit 2023)
 
@@ -132,7 +138,7 @@ JEPs are under active development or have been delivered.
 JEP                            Feature              Status
 -----------------------------  -------------------  ----------------
 [JEP 401: Value Classes and    Value Classes        Submitted
-Objects (Preview)][390]
+Objects (Preview)][401]
 
 [Strict Field Initialization   Supplementary        Draft (to be
 in the JVM][8350458]                                submitted)
