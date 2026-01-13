@@ -132,7 +132,7 @@ JEPs are under active development or have been delivered.
 JEP                            Feature              Status
 -----------------------------  -------------------  ----------------
 [JEP 401: Value Classes and    Value Classes        Submitted
-Objects (Preview)][390]
+Objects (Preview)][401]
 
 [Strict Field Initialization   Supplementary        Draft (to be
 in the JVM][8350458]                                submitted)
