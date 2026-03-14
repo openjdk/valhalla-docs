@@ -88,7 +88,7 @@ serialization (`java.io.ObjectOutputStream` and `java.io.ObjectInputStream`),
 deep reflection (`java.lang.reflect.Field.setAccessible`), and garbage
 collection (`java.lang.ref` and `java.util.WeakHashMap`).
 
-**CDS archives:** The EA build includes multiple CDS archives in
+**CDS archives:** The EA build now includes multiple CDS archives in
 `<jdk>/lib/server` to support different run-time configurations. Compact object
 headers, compressed oops, and value classes (`--enable-preview`) are all
 supported, and can each be enabled or disabled independently without impacting
