@@ -88,27 +88,11 @@ serialization (`java.io.ObjectOutputStream` and `java.io.ObjectInputStream`),
 deep reflection (`java.lang.reflect.Field.setAccessible`), and garbage
 collection (`java.lang.ref` and `java.util.WeakHashMap`).
 
-**Compact Object Headers:** In the EA build, CDS archives that support the
-Compact Object Headers feature while using the `--enable-preview` flag are not
-included by default in the EA build. If Compact Object Headers are being used,
-developers can generate an appropriate CDS archive to optimize start-up
-performance as follows:
-
-```
-java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders
-```
-
-Or, with compressed oops disabled:
-
-```
-java -Xshare:dump --enable-preview -XX:+UseCompactObjectHeaders \
-        -XX:-UseCompressedOops
-```
-
-These commands will add a new file (`classes_coh_valhalla.jsa` or
-`classes_nocoops_coh_valhalla.jsa`) to the directory where other CDS
-archives are stored (e.g., `<jdk>/lib/server`).
-
+**CDS archives:** The EA build includes multiple CDS archives in
+`<jdk>/lib/server` to support different run-time configurations. Compact object
+headers, compressed oops, and value classes (`--enable-preview`) are all
+supported, and can each be enabled or disabled independently without impacting
+the start-up optimizations provided by CDS archives.
 
 ## Sending Feedback
 
