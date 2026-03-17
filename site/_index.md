@@ -9,7 +9,7 @@ This Project is sponsored by the
 
 ## What's New?
 
-**October 2025:** Check out the latest
+**March 2026:** Check out the latest
 [early-access build](https://jdk.java.net/valhalla/)
 implementing [value classes and objects](value-objects)!
 We encourage Java developers to try it out on their real-world applications and
