@@ -38,8 +38,7 @@ There are five distinct feature sets under development:
 1.  *[Value Classes and Objects](value-objects)*, introducing objects that lack
     identity and thus can have optimized encodings
 
-2.  *Null Checking* at both compile time and run time to manage the flow of
-    null references through programs
+2.  *Null-Restricted Storage* of value objects to improve memory layouts
 
 3.  *Array Enhancements* to support properties like immutability and safe
     initialization, and to facilitate interop between primitive and reference
@@ -142,9 +141,6 @@ Objects (Preview)][401]
 [Strict Field Initialization   Supplementary        Draft (to be
 in the JVM][8350458]                                submitted)
 
-[Null-Restricted and Nullable  Null Checking        Draft
-Types (Preview)][8303099]
-
 [Null-Restricted Value Class   Null Checking        Draft
 Types (Preview)][8316779]
 
@@ -177,7 +173,6 @@ Control][181]
 [390]: https://openjdk.org/jeps/390
 [401]: https://openjdk.org/jeps/401
 [402]: https://openjdk.org/jeps/402
-[8303099]: https://openjdk.org/jeps/8303099
 [8316779]: https://openjdk.org/jeps/8316779
 [8350458]: https://openjdk.org/jeps/8350458
 

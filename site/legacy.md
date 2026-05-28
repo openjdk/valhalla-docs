@@ -19,6 +19,9 @@ for an overview of active work.
     explored Java language changes to directly work with the `CONSTANT_Dynamic`
     and `CONSTANT_InvokeDynamic` constant pool forms
 
+-   [Null-Restricted and Nullable Types (Preview)][https://openjdk.org/jeps/8303099]
+    proposed general-purpose typing features for managing nulls in Java
+
 ## Documents
 
 -   [State of the Values](https://cr.openjdk.org/~jrose/values/values.html)
