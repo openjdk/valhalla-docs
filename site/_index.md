@@ -9,18 +9,19 @@ This Project is sponsored by the
 
 ## What's New?
 
-**March 2026:** A new [early-access build](https://jdk.java.net/valhalla)
-for [value classes and object](value-objects) incorporates bug fixes and
+**March 2026:**
+: A new [early-access build](https://jdk.java.net/valhalla)
+for [value classes and objects](value-objects) incorporates bug fixes and
 enhancements from the last five months.
 We welcome feedback as we prepare for integration into a future JDK release.
 
-**October 2025:** Check out the latest
-[early-access build](https://jdk.java.net/valhalla/)
+**October 2025:**
+: Check out the latest [early-access build](https://jdk.java.net/valhalla/)
 implementing [value classes and objects](value-objects)!
 We encourage Java developers to try it out on their real-world applications and
 report their experiences.
 
-To get started, you can review this
+: To get started, you can review this
 [short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/)
 at *inside.java*.
 Learn more with a
