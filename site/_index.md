@@ -138,11 +138,11 @@ JEP                            Feature              Status
 [JEP 401: Value Classes and    Value Classes        Submitted
 Objects (Preview)][401]
 
-[Strict Field Initialization   Supplementary        Draft (to be
-in the JVM][8350458]                                submitted)
+[Strict Field Initialization   Supplementary        Submitted
+in the JVM][8350458]
 
-[Null-Restricted Value Class   Null Checking        Draft
-Types (Preview)][8316779]
+[Null-Restricted Value Class   Null-Restricted      Draft
+Types (Preview)][8316779]      Storage
 
 [JEP 402: Enhanced Primitive   Unifying Primitives  Draft
 Boxing (Preview)][402]
