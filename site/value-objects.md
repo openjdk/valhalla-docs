@@ -1,43 +1,42 @@
-# Value Classes and Objects
+# Value Objects
 
-[Value Classes and Objects](https://openjdk.org/jeps/401) are a transformative
-new Java feature, currently being developed for inclusion in a future JDK
-release. *Value objects* are instances of *value classes*, which have only final
-fields and lack object identity.
+[*Value objects*](https://openjdk.org/jeps/401) are immutable objects that
+lack identity. They are distinguished solely by the values of their fields, and
+can be represented by Java Virtual Machines in ways that improve performance.
 
-The latest early-access build is published at
-**<https://jdk.java.net/valhalla/>**.
-Interested developers are encouraged to download and experiment with it!
+Value objects will be available in JDK 28 as a preview feature.
+Early-access builds are published at **<https://jdk.java.net/28/>**.
+Interested developers are encouraged to download and experiment with these builds!
 
 ## Getting Started
 
-*Value objects* model immutable domain values. A value object is an instance of
+*Value objects* model immutable data. A value object is an instance of
 a *value class*, declared with the `value` modifier. Developers can save memory
 and improve performance by using value objects for immutable data.
 
 To get started, you can review this
 **[short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/)**
-to value classes and objects at *inside.java*.
+to value objects at *inside.java*.
 
 For a more in-depth overview,
-**[JEP 401: Value Classes and Objects (Preview)](https://openjdk.org/jeps/401)**
+**[JEP 401: Value Objects (Preview)](https://openjdk.org/jeps/401)**
 describes the new feature, and detailed language and VM
-**[specification changes](https://cr.openjdk.org/~dlsmith/jep401/latest)**
+**[specification changes](https://download.java.net/java/early_access/jdk28/docs/specs/value-objects-jls.html)**
 are available.
 
 ## Value Object Performance
 
-This release focuses on two optimizations for value objects: *heap flattening*,
+JDK 28 focuses on two optimizations for value objects: *reference flattening*,
 which reduces the memory footprint of value objects stored in fields and arrays,
-and *scalarization*, which avoids memory allocation for value objects in
-JIT-compiled code. Details of these optimizations are
+and *reference scalarization*, which avoids memory allocation for value objects
+in JIT-compiled code. Details of these optimizations are
 [discussed in the JEP](https://openjdk.org/jeps/401#Run-time-optimizations-for-value-objects).
 You can also learn more with a
 [presentation by Frederic Parain](https://www.youtube.com/watch?v=NF4CpL_EWFI)
 from the 2025 JVM Language Summit.
 
 Interested developers should download the
-[early-access build](https://jdk.java.net/valhalla/)
+[early-access build](https://jdk.java.net/28/)
 and try it out on their performance-sensitive workloads. 
 Profiling tools like
 [JDK Mission Control](https://docs.oracle.com/en/java/java-components/jdk-mission-control/)
@@ -82,17 +81,11 @@ Most classes that meet the requirements can be compatibly migrated without any
 issues, but there are some behavioral changes to be aware of.
 
 **Library support:** The JEP discusses
-[limitations of some Java Platform APIs](https://openjdk.org/jeps/401#Value-classes-and-the-Java-Platform)
+[limitations of some Java Platform APIs](https://openjdk.org/jeps/401#Value-classes-in-the-Java-Platform)
 when interacting with value objects. Potential areas of concern include
 serialization (`java.io.ObjectOutputStream` and `java.io.ObjectInputStream`),
 deep reflection (`java.lang.reflect.Field.setAccessible`), and garbage
 collection (`java.lang.ref` and `java.util.WeakHashMap`).
-
-**CDS archives:** The EA build now includes multiple CDS archives in
-`<jdk>/lib/server` to support different run-time configurations. Compact object
-headers, compressed oops, and value classes (`--enable-preview`) are all
-supported, and can each be enabled or disabled independently without impacting
-the start-up optimizations provided by CDS archives.
 
 ## Sending Feedback
 
@@ -101,6 +94,5 @@ Feedback at **<valhalla-dev@openjdk.org>** is welcome and encouraged!
 [subscribe to the mailing list](http://mail.openjdk.org/mailman/listinfo/valhalla-dev).)
 
 We are particularly interested in experiences using real-world applications and
-workloads. The early-access build is beta software, and it's sure to have some
-bugs and surprising performance pitfalls. Your feedback is a valuable tool to
-help us identify these issues.
+workloads. Let us know how you're using the feature, and whether there are any
+bugs or performance pitfalls we should be aware of.

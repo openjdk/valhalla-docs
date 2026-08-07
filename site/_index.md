@@ -9,24 +9,17 @@ This Project is sponsored by the
 
 ## What's New?
 
-**March 2026:**
-: A new [early-access build](https://jdk.java.net/valhalla)
-for [value classes and objects](value-objects) incorporates bug fixes and
-enhancements from the last five months.
-We welcome feedback as we prepare for integration into a future JDK release.
+**August 2026:**
+: [JEP 401: Value Objects (Preview)][401] and
+    [JEP 539: Strict Field Initialization in the JVM (Preview)][539]
+    are now integrated and will be included in JDK 28!
+    Try out value objects today with an [early-access JDK 28](https://jdk.java.net/28/)
+    build.
 
-**October 2025:**
-: Check out the latest [early-access build](https://jdk.java.net/valhalla/)
-implementing [value classes and objects](value-objects)!
-We encourage Java developers to try it out on their real-world applications and
-report their experiences.
-
-: To get started, you can review this
-[short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/)
-at *inside.java*.
-Learn more with a
-[presentation by Frederic Parain](https://www.youtube.com/watch?v=NF4CpL_EWFI)
-about the JVM optimizations applied to value objects.
+    For background, you can [read the JEP][401] or review this
+    [short introduction](https://inside.java/2025/10/27/try-jep-401-value-classes/).
+    For some broader context, see this JavaOne talk about programming with
+    [immutable data in Java](https://www.youtube.com/watch?v=BdLND9D81lI).
 
 ## New Features
 
@@ -36,7 +29,7 @@ releases.
 
 There are five distinct feature sets under development:
 
-1.  *[Value Classes and Objects](value-objects)*, introducing objects that lack
+1.  *[Value Objects](value-objects)*, introducing objects that lack
     identity and thus can have optimized encodings
 
 2.  *Null-Restricted Storage* of value objects to improve memory layouts
@@ -56,6 +49,9 @@ There are five distinct feature sets under development:
 
 These documents and presentations provide a more holistic view of the Valhalla
 project's goals and design considerations.
+
+-   [Dan Smith: Better Tools for Immutable Data](https://www.youtube.com/watch?v=BdLND9D81lI)
+    (JavaOne 2026)
 
 -   [Frederic Parain: Value Classes & Heap Flattening](https://www.youtube.com/watch?v=NF4CpL_EWFI)
     (JVM Language Summit 2025)
@@ -83,17 +79,15 @@ project's goals and design considerations.
 
 ## Implementation
 
-Development takes place in a public OpenJDK repository, with occasional
-early-access builds being published.
+[JEP 401: Value Objects (Preview)][401] and
+[JEP 539: Strict Field Initialization in the JVM (Preview)][539]
+are integrated into the JDK will be included in JDK 28.
 
-Interested developers are encouraged to experiment with these early releases.
+Interested developers are encouraged to experiment with early-access builds at
+<https://jdk.java.net/28/>.
 
--   [Early-Access Builds](https://jdk.java.net/valhalla/)
--   [GitHub repository](https://github.com/openjdk/valhalla)
-
-Branches in the repository include `lworld` (the main line of Valhalla
-development), `master` (tracking main-line OpenJDK), and various others
-prototyping proposed features.
+Other features are prototyped in various branches of the
+[Valhalla GitHub repository](https://github.com/openjdk/valhalla).
 
 ## Community
 
@@ -102,7 +96,7 @@ prototyping proposed features.
 -   Mailing lists
 
     -   [valhalla-dev](http://mail.openjdk.org/mailman/listinfo/valhalla-dev),
-        for technical discussion related to Project Valhalla
+        for technical discussion and user experiences related to Project Valhalla
         ([archives](http://mail.openjdk.org/pipermail/valhalla-dev/))
 
     -   [valhalla-spec-experts](http://mail.openjdk.org/mailman/listinfo/valhalla-spec-experts),
@@ -136,11 +130,11 @@ JEPs are under active development or have been delivered.
 --------------------------------------------------------------------
 JEP                            Feature              Status
 -----------------------------  -------------------  ----------------
-[JEP 401: Value Classes and    Value Classes        Submitted
+[JEP 401: Value Classes and    Value Classes        Integrated
 Objects (Preview)][401]
 
-[Strict Field Initialization   Supplementary        Submitted
-in the JVM][8350458]
+[Strict Field Initialization   Supplementary        Integrated
+in the JVM][539]
 
 [Null-Restricted Value Class   Null-Restricted      Draft
 Types (Preview)][8316779]      Storage
@@ -174,8 +168,8 @@ Control][181]
 [390]: https://openjdk.org/jeps/390
 [401]: https://openjdk.org/jeps/401
 [402]: https://openjdk.org/jeps/402
+[539]: https://openjdk.org/jeps/539
 [8316779]: https://openjdk.org/jeps/8316779
-[8350458]: https://openjdk.org/jeps/8350458
 
 
 ## Legacy Links

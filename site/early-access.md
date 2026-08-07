@@ -1,7 +1,7 @@
 # Early Access Release
 
-The latest early access release of Valhalla features is published at
-**[https://jdk.java.net/valhalla/](https://jdk.java.net/valhalla/)**.
+Early access releases of Valhalla features are occasionally published at
+**<https://jdk.java.net/valhalla/>**.
 
-See [Value Classes and Objects](value-objects) for an overview of the included
-features.
+The [value objects](value-objects) feature is now integrated into JDK 28;
+early-access builds can be found at **<https://jdk.java.net/28/>**.

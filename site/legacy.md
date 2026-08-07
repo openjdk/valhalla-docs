@@ -2,8 +2,7 @@
 
 This page preserves the history of earlier work in the Valhalla project, much of
 which has been superseded.
-See the [main project page](https://openjdk.org/projects/valhalla/)
-for an overview of active work.
+See the [main project page](index.html) for an overview of active work.
 
 ## JEPs
 
