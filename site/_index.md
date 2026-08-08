@@ -130,11 +130,12 @@ JEPs are under active development or have been delivered.
 --------------------------------------------------------------------
 JEP                            Feature              Status
 -----------------------------  -------------------  ----------------
-[JEP 401: Value Classes and    Value Classes        Integrated
-Objects (Preview)][401]
+[JEP 401: Value Objects        Value Objects        Integrated
+(Preview)][401]
 
-[Strict Field Initialization   Supplementary        Integrated
-in the JVM][539]
+[JEP 539: Strict Field         Supplementary        Integrated
+Initialization in the JVM
+(Preview)][539]
 
 [Null-Restricted Value Class   Null-Restricted      Draft
 Types (Preview)][8316779]      Storage
@@ -142,8 +143,8 @@ Types (Preview)][8316779]      Storage
 [JEP 402: Enhanced Primitive   Unifying Primitives  Draft
 Boxing (Preview)][402]
 
-[Warnings for Value-Based      Value Classes        Delivered in 16
-Classes][390]
+[JEP 390: Warnings for         Value Objects        Delivered in 16
+Value-Based Classes][390]
 
 [JEP 371: Hidden               Supplementary        Delivered in 15
 Classes][371]
